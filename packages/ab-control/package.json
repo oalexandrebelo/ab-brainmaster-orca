@@ -1,0 +1,22 @@
+{
+  "name": "@ab-brainmaster/control",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "ab-control": "./dist/cli.mjs",
+    "ab-control-mcp": "./dist/mcp.mjs"
+  },
+  "type": "module",
+  "exports": "./sdk.mjs",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "test:integration": "node --test --test-isolation=none tests/*.integration.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

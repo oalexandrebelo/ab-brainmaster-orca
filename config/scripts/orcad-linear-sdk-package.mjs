@@ -5,7 +5,7 @@ import { ORCAD_SERVER_BUILD_TARGET } from './orcad-entry-build.mjs'
 
 // Bundle @linear/sdk into one CJS file for lazy require: copying would expose chunk names that change each release.
 export async function stageOrcadLinearSdk(root, outputDir) {
-  await build({
+  const result = await build({
     stdin: {
       contents: "module.exports = require('@linear/sdk')",
       resolveDir: root,
@@ -18,6 +18,8 @@ export async function stageOrcadLinearSdk(root, outputDir) {
     outfile: join(outputDir, ORCAD_LINEAR_SDK_ENTRY),
     minify: true,
     sourcemap: false,
+    metafile: true,
     logLevel: 'error'
   })
+  return result.metafile
 }

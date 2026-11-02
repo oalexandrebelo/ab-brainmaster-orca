@@ -20,6 +20,7 @@ export function ConnectionDiagnosticsView({
   copied,
   copyDiagnostics,
   diagnosis,
+  canSubmit = true,
   submissionState,
   sendDiagnostics,
   entries,
@@ -33,6 +34,7 @@ export function ConnectionDiagnosticsView({
   copied: boolean
   copyDiagnostics: () => Promise<void>
   diagnosis: ConnectionDiagnosis | null
+  canSubmit?: boolean
   submissionState: DiagnosticsSubmissionState | 'idle'
   sendDiagnostics: () => Promise<void>
   entries: readonly ConnectionLogEntry[]
@@ -103,7 +105,7 @@ export function ConnectionDiagnosticsView({
               </Text>
               <Text style={styles.diagnosisText}>{diagnosis.likelyCause}</Text>
               <Text style={styles.diagnosisNext}>{diagnosis.nextStep}</Text>
-              {diagnosis.reportability === 'orca-relay' && (
+              {canSubmit && diagnosis.reportability === 'orca-relay' && (
                 <>
                   <Text style={styles.privacyHint}>
                     {t(

@@ -1,9 +1,8 @@
 import { createHash } from 'node:crypto'
 import path from 'node:path'
 import type { AppIdentity } from '../../shared/app-identity'
+import { getDistributionIdentity } from '../../shared/distribution-identity'
 
-const BASE_APP_NAME = 'Orca'
-const BASE_APP_USER_MODEL_ID = 'com.stablyai.orca'
 const MAX_LABEL_LENGTH = 80
 
 export type DevInstanceIdentity = AppIdentity & {
@@ -43,28 +42,30 @@ function formatLabel(branch: string | null, worktreeName: string | null): string
 }
 
 function createDevAppUserModelId(identityKey: string | null): string {
+  const baseId = getDistributionIdentity().appId
   if (!identityKey) {
-    return BASE_APP_USER_MODEL_ID
+    return baseId
   }
   const hash = createHash('sha1').update(identityKey).digest('hex').slice(0, 10)
-  return `${BASE_APP_USER_MODEL_ID}.dev.${hash}`
+  return `${baseId}.dev.${hash}`
 }
 
 export function getDevInstanceIdentity(
   isDev: boolean,
   env: NodeJS.ProcessEnv = process.env
 ): DevInstanceIdentity {
+  const { productName, appId } = getDistributionIdentity()
   if (!isDev) {
     return {
-      name: BASE_APP_NAME,
-      appName: BASE_APP_NAME,
+      name: productName,
+      appName: productName,
       isDev: false,
       devLabel: null,
       devBranch: null,
       devWorktreeName: null,
       devRepoRoot: null,
       dockBadgeLabel: null,
-      appUserModelId: BASE_APP_USER_MODEL_ID
+      appUserModelId: appId
     }
   }
 
@@ -75,12 +76,12 @@ export function getDevInstanceIdentity(
     cleanEnvValue(path.basename(repoRoot ?? process.cwd()))
   const devLabel = cleanEnvValue(env.ORCA_DEV_INSTANCE_LABEL) ?? formatLabel(branch, worktreeName)
   const dockTitle =
-    cleanEnvValue(env.ORCA_DEV_DOCK_TITLE) ?? `${BASE_APP_NAME}: ${branch ?? devLabel ?? 'dev'}`
+    cleanEnvValue(env.ORCA_DEV_DOCK_TITLE) ?? `${productName}: ${branch ?? devLabel ?? 'dev'}`
 
   return {
     name: dockTitle,
     // Share one dev Keychain key; branch identity remains in the display name.
-    appName: `${BASE_APP_NAME} Dev`,
+    appName: `${productName} Dev`,
     isDev: true,
     devLabel,
     devBranch: branch,

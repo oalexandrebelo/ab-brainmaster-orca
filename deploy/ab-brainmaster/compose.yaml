@@ -1,0 +1,36 @@
+name: ab-brainmaster-orca
+services:
+  core:
+    build:
+      context: ../..
+      dockerfile: deploy/ab-brainmaster/Dockerfile
+    image: ab-brainmaster-orca:local
+    init: false
+    user: '1000:1000'
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    cpus: '4.0'
+    mem_limit: 4g
+    pids_limit: 256
+    stop_grace_period: 30s
+    environment:
+      AB_CONTROL_PUBLISHED_PORT: ${AB_CONTROL_PORT:?Set the assigned control port}
+    ports:
+      - '127.0.0.1:${AB_CONTROL_PORT:?Set the assigned control port}:8080'
+      - '127.0.0.1:${AB_RUNTIME_PORT:?Set the assigned runtime port}:8081'
+    volumes:
+      - profile:/var/lib/ab-brainmaster
+      - workspaces:/workspaces
+      - home:/home/node
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=256m,mode=1777
+    networks: [control]
+networks:
+  control:
+    driver: bridge
+volumes:
+  profile:
+  workspaces:
+  home:

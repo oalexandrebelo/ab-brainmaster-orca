@@ -1,0 +1,4 @@
+.proof-assets/
+.proof-output/
+node_modules/
+dist/

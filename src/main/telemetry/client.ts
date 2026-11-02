@@ -1,6 +1,7 @@
 // All main/IPC telemetry shares shutdown → burst cap → consent → validation → capture ordering. Cap before settings reads to bound renderer flood cost; disable person profiles per capture because the Node SDK lacks an init-time equivalent.
 
 import { randomUUID } from 'node:crypto'
+import { getDistributionIdentity } from '../../shared/distribution-identity'
 import type { PostHog } from 'posthog-node'
 import type { CommonProps, EventName, EventProps, OptInVia } from '../../shared/telemetry-events'
 import type { AgentDashboardSurface } from '../../shared/telemetry-agent-dashboard-event-schemas'
@@ -29,6 +30,7 @@ const WRITE_KEY: string | null =
     ? ORCA_POSTHOG_WRITE_KEY
     : ((globalThis as { ORCA_POSTHOG_WRITE_KEY?: string | null }).ORCA_POSTHOG_WRITE_KEY ?? null)
 const IS_OFFICIAL_BUILD: boolean =
+  getDistributionIdentity().upstreamTelemetry &&
   (BUILD_IDENTITY === 'stable' || BUILD_IDENTITY === 'rc') &&
   typeof WRITE_KEY === 'string' &&
   WRITE_KEY.length > 0

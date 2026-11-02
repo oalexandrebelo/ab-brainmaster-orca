@@ -112,13 +112,15 @@ const NON_UNIT_TEST_RUNNERS = [
     name: 'AB extension unit tests',
     include: [
       'packages/ab-bill-context/tests/*.test.mjs',
-      'packages/ab-upstream-review/tests/*.test.mjs'
+      'packages/ab-upstream-review/tests/*.test.mjs',
+      'packages/ab-context-bridge/tests/*.test.mjs'
     ],
     sources: ['.github/workflows/ab-extensions.yml'],
     mirrors: [
       'node --test --test-isolation=none',
       'packages/ab-bill-context/tests/*.test.mjs',
-      'packages/ab-upstream-review/tests/*.test.mjs'
+      'packages/ab-upstream-review/tests/*.test.mjs',
+      'packages/ab-context-bridge/tests/*.test.mjs'
     ]
   },
   {
@@ -126,9 +128,14 @@ const NON_UNIT_TEST_RUNNERS = [
     manual: true,
     include: [
       'packages/ab-bill-context/tests/*.integration.mjs',
-      'packages/ab-upstream-review/tests/*.integration.mjs'
+      'packages/ab-upstream-review/tests/*.integration.mjs',
+      'packages/ab-context-bridge/tests/*.integration.mjs'
     ],
-    sources: ['packages/ab-bill-context/package.json', 'packages/ab-upstream-review/package.json'],
+    sources: [
+      'packages/ab-bill-context/package.json',
+      'packages/ab-upstream-review/package.json',
+      'packages/ab-context-bridge/package.json'
+    ],
     mirrors: ['"test:integration"', 'node --test --test-isolation=none tests/*.integration.mjs']
   },
   {
@@ -136,6 +143,26 @@ const NON_UNIT_TEST_RUNNERS = [
     include: ['mobile/scripts/ab-ios-signing.test.mjs'],
     sources: ['.github/workflows/ab-ios-native.yml'],
     mirrors: ['node --test scripts/ab-ios-signing.test.mjs']
+  },
+  {
+    name: 'AB control contracts and real runtime integration',
+    include: [
+      'packages/ab-control/tests/*.test.mjs',
+      'packages/ab-control/tests/*.integration.mjs'
+    ],
+    sources: ['deploy/ab-brainmaster/Dockerfile', '.github/workflows/ab-runtime.yml'],
+    mirrors: [
+      'node --test --test-isolation=none',
+      'packages/ab-control/tests/*.test.mjs',
+      'packages/ab-control/tests/*.integration.mjs',
+      'docker build --target acceptance'
+    ]
+  },
+  {
+    name: 'AB local runtime contracts and recovery',
+    include: ['packages/ab-local-runtime/tests/*.test.mjs'],
+    sources: ['.github/workflows/ab-offline-proof.yml'],
+    mirrors: ['node --test --test-isolation=none packages/ab-local-runtime/tests/*.test.mjs']
   }
 ]
 

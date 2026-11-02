@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   getPlatform: vi.fn(),
   getVersion: vi.fn(),
   readFeedbackImageFiles: vi.fn(),
+  writeClipboardText: vi.fn(),
   submit: vi.fn(),
   toastWarning: vi.fn()
 }))
@@ -63,6 +64,7 @@ import { useAppStore } from '@/store'
 
 beforeEach(() => {
   mocks.readFeedbackImageFiles.mockReset()
+  mocks.writeClipboardText.mockReset().mockResolvedValue(undefined)
   mocks.submit.mockReset()
   mocks.toastWarning.mockReset()
   mocks.getPlatform.mockReset()
@@ -86,15 +88,49 @@ beforeEach(() => {
       platform: {
         get: mocks.getPlatform
       },
-      updater: { getVersion: mocks.getVersion }
+      updater: { getVersion: mocks.getVersion },
+      ui: { writeClipboardText: mocks.writeClipboardText }
     }
   })
 })
 
 afterEach(() => {
   cleanup()
+  vi.unstubAllGlobals()
   // The draft intentionally outlives dialogs; clear the store between tests.
   useAppStore.getState().clearFeedbackDraft()
+})
+
+describe('AB local support reports', () => {
+  it('copies a retained local draft without looking up identity or submitting feedback', async () => {
+    vi.stubGlobal('ORCA_DISTRIBUTION_ID', 'ab-brainmaster')
+    render(<SidebarFeedbackDialog open onOpenChange={vi.fn()} />)
+    fireEvent.change(screen.getByRole('textbox', { name: 'Report text' }), {
+      target: { value: 'A local report for AB' }
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Copy text' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Copied' })).toBeTruthy())
+    expect(mocks.writeClipboardText).toHaveBeenCalledWith('A local report for AB')
+    expect(useAppStore.getState().feedbackDraft.feedback).toBe('A local report for AB')
+    expect(window.api.gh.viewer).not.toHaveBeenCalled()
+    expect(mocks.submit).not.toHaveBeenCalled()
+  })
+
+  it('preserves the draft and reports a local clipboard failure', async () => {
+    vi.stubGlobal('ORCA_DISTRIBUTION_ID', 'ab-brainmaster')
+    mocks.writeClipboardText.mockRejectedValue(new Error('Clipboard unavailable'))
+    render(<SidebarFeedbackDialog open onOpenChange={vi.fn()} />)
+    fireEvent.change(screen.getByRole('textbox', { name: 'Report text' }), {
+      target: { value: 'Keep this draft' }
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Copy text' }))
+    await waitFor(() =>
+      expect(screen.getByRole('alert').textContent).toContain('could not be copied')
+    )
+    expect(useAppStore.getState().feedbackDraft.feedback).toBe('Keep this draft')
+    expect(window.api.gh.viewer).not.toHaveBeenCalled()
+    expect(mocks.submit).not.toHaveBeenCalled()
+  })
 })
 
 describe('SidebarFeedbackDialog environment prefill', () => {

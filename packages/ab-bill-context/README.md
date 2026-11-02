@@ -2,7 +2,9 @@
 
 Este pacote implementa um candidato de plugin Orca para ligar/desligar compressão de conversas em **novos terminais Claude CLI de workspaces locais de pasta, com chave de API, em Linux/macOS**. O proxy real é o `billion-context` 0.1.212. O plugin começa desligado, não instala dependências e não baixa modelos.
 
-**Limite de instalação observado:** o checkout Orca auditado declara `1.4.214`, enquanto os próprios esquemas declaram `agent.launch.before` e `workspace.list` a partir de `1.4.248`. O manifest exige `>=1.4.248`. A validação com o schema real passa, e o teste confirma que `1.4.214` é recusado. Não foi feito um backport do core, alteração de versão ou desvio dessa verificação. Este pacote ainda não é uma integração instalada e validada no aplicativo.
+**Compatibilidade do host verificada em P1:** o pacote do aplicativo continua `1.4.214`. O core upstream já calcula `pluginHostVersion(app.getVersion())` como o maior valor entre a versão do aplicativo e o schema mais novo: neste checkout, `1.4.248`. A instalação real usa esse valor; não houve aumento artificial de versão, redução do engine `>=1.4.248` nem backport. O teste mantém a recusa de um host que anuncie diretamente `1.4.214` e aceita a versão efetiva calculada pelo core.
+
+No build Linux AB real, o módulo foi instalado e consentido, o painel preparou Node 24.22.1, billion-context 0.1.212 (`daa082ea`) e Claude Code 2.1.316 oficiais, e passou pelo ciclo OFF → ON → OFF via interface/teclado. O plano produzido pelo painel também iniciou o proxy real e confirmou health/PID/watchdog. Isso não homologa uma tarefa Claude com provedor externo: nenhuma credencial ou chamada a modelo foi usada. Veja `docs/ab-brainmaster/P1_HOST.md` para evidências e limites.
 
 ## Fluxo implementado
 
@@ -40,7 +42,7 @@ O processo proxy recebe um ambiente reduzido, separado do ambiente original do C
 
 - `BILI_AUTO_MODE_FORGE=0` e `autoModeForge.enabled=false` são obrigatórios. O upstream auditado ativa por padrão uma resposta local de autorização em certo classificador Claude; isso fica desativado. Um teste com o proxy real comprova que uma resposta sintética de bloqueio chega do upstream e é preservada.
 - Atualização automática, reinício automático, download de engine SQLite, MITM, relay administrativo, dump de corpo, keepalive de cache e resumo por provedor externo ficam desativados neste perfil.
-- `BILI_PARENT_PID` arma o watchdog do proxy. O health precisa anunciar o PID do supervisor desta execução. SIGTERM normal recebe prazo de dois segundos antes de SIGKILL do filho criado.
+- `BILI_PARENT_PID` arma o watchdog do proxy. O health precisa anunciar o PID do supervisor desta execução. SIGTERM recebe prazo de dois segundos antes de SIGKILL do filho criado. O cleanup aguarda mais até dois segundos para confirmar o término após SIGKILL; se não confirmar, devolve erro explícito e não grava um encerramento normal. Desligar o toggle não chama esse cleanup para sessões já abertas.
 - A execução exige Node 24+ para SQLite nativo; o upstream em si anuncia Node 20+.
 - A sessão recebe diretório aleatório novo com modo POSIX 0700; config/plano/recibos usam 0600. Não se reusa estado de outro projeto. Instâncias e sessões preexistentes do usuário não são modificadas.
 - As conversas e resumos ficam persistidos em SQLite e envelopes JSON **sem criptografia própria neste perfil**. A criptografia de disco e o acesso do usuário do sistema operacional continuam relevantes. Logs diagnósticos internos do upstream não foram certificados como completamente livres de conteúdo sensível.

@@ -1,0 +1,17 @@
+{
+  "name": "@ab-brainmaster/local-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "ab-local": "./cli.mjs"
+  },
+  "type": "module",
+  "exports": "./runtime.mjs",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test --test-isolation=none tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=24.22.1"
+  }
+}

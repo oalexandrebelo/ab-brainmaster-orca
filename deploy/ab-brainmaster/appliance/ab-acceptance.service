@@ -1,0 +1,19 @@
+[Unit]
+Description=AB appliance explicit CI boot acceptance
+After=ab-brainmaster.service
+Requires=ab-brainmaster.service
+ConditionKernelCommandLine=ab.acceptance=1
+ConditionPathExists=/var/lib/ab-brainmaster/.ab-acceptance-enabled
+
+[Service]
+Type=oneshot
+User=abbrainmaster
+Group=abbrainmaster
+ExecStart=/usr/local/bin/node /opt/ab-deploy/acceptance.mjs
+ExecStartPost=+/bin/systemctl poweroff
+TimeoutStartSec=180
+StandardOutput=append:/dev/ttyS0
+StandardError=append:/dev/ttyS0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=AB appliance operator public-key access
+After=network.target
+ConditionPathExists=/etc/ab-admin/authorized_keys
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/mkdir -p /run/sshd
+ExecStartPre=/bin/sh -c 'test -f /etc/ab-admin/hostkey || ssh-keygen -q -t ed25519 -N "" -f /etc/ab-admin/hostkey'
+ExecStart=/usr/sbin/sshd -D -e -f /etc/ssh/sshd_config_ab
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

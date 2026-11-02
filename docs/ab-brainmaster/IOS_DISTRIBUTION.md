@@ -30,7 +30,7 @@ As personalizações nativas upstream para APIs mais novas usam guardas de dispo
 - `mobile/plugins/ab-ios-push-capability.js`: remove a capacidade APNs e o modo de push em segundo plano quando desativados, inclusive após a aplicação automática de plugins pelo Expo.
 - `mobile/scripts/ab-ios.mjs`: comandos `config`, `preflight`, `build`, `verify` e `install`, documentados em `--help`.
 - `.github/workflows/ab-ios-native.yml`: compilação Release para dispositivo em macOS, com assinatura desativada, ações fixadas por SHA, permissões somente de leitura e limite de 45 minutos.
-- Runtime nativo: não registra tokens remotos quando push está desativado; utiliza o ambiente APNs embutido quando ativado; não consulta atualizações da App Store upstream; a tela de bloqueio de versão explica a atualização manual AB.
+- Runtime nativo: não registra tokens remotos quando push está desativado; utiliza o ambiente APNs embutido quando ativado; não consulta atualizações da App Store upstream; a tela de bloqueio de versão explica a atualização manual AB. Na variante AB, a tela de diagnóstico mantém a cópia local do relatório e não oferece envio ao suporte Orca; a função de envio também recusa a chamada antes de acessar a rede.
 
 O caminho AB não usa as lanes `build_and_upload` / `release` de `mobile/fastlane/Fastfile`: elas pertencem à distribuição upstream e publicam no App Store Connect. O fluxo AB não faz login Apple, compra, upload, registro automático de dispositivos, importação de chave privada ou alteração de permissões do Keychain.
 

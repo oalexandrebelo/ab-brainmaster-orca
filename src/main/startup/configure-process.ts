@@ -1,4 +1,5 @@
 import { app } from 'electron'
+import { getDistributionIdentity } from '../../shared/distribution-identity'
 import { guardExternalOpensInE2E } from './e2e-external-open-guard'
 import { quitProcess } from './process-quit-request'
 import { existsSync, mkdirSync } from 'node:fs'
@@ -204,6 +205,10 @@ export function configureDevUserDataPath(isDev: boolean): void {
   }
 
   if (!isDev) {
+    const identity = getDistributionIdentity()
+    if (identity.id !== 'orca') {
+      app.setPath('userData', join(app.getPath('appData'), identity.profileDirectory))
+    }
     return
   }
   const overrideUserDataPath = process.env.ORCA_DEV_USER_DATA_PATH
@@ -213,7 +218,10 @@ export function configureDevUserDataPath(isDev: boolean): void {
     return
   }
   // Why: launches that bypass the dev runner still need a dev-only path, or they overwrite the packaged app's runtime pointer under userData and break the orca CLI.
-  app.setPath('userData', join(app.getPath('appData'), 'orca-dev'))
+  app.setPath(
+    'userData',
+    join(app.getPath('appData'), getDistributionIdentity().devProfileDirectory)
+  )
 }
 
 function areSameE2EHomePath(left: string, right: string): boolean {

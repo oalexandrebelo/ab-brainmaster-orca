@@ -1,0 +1,112 @@
+name: AB desktop Linux development package
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['ab-brainmaster/**']
+    paths:
+      - 'src/**'
+      - 'config/**'
+      - 'native/**'
+      - 'resources/**'
+      - 'packages/ab-bill-context/**'
+      - 'packages/ab-upstream-review/**'
+      - 'mobile/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'electron.vite.config.ts'
+      - '.github/workflows/ab-desktop-native.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ab-desktop-native-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-development:
+    if: github.repository == 'oalexandrebelo/ab-brainmaster-orca'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      ORCA_BACKGROUND_LAUNCH: '1'
+      ORCA_DISTRIBUTION: ab-brainmaster
+      ORCA_CLI_BUILD_COMPILER: tsrs
+      ORCA_BUILD_IDENTITY: ''
+      ORCA_POSTHOG_WRITE_KEY: ''
+      ORCA_DIAGNOSTICS_TOKEN_URL: ''
+      ROLLDOWN_WORKER_THREADS: '2'
+      RAYON_NUM_THREADS: '2'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - name: Install locked dependencies and native prerequisites
+        run: |
+          set -euo pipefail
+          mkdir -p notes/ab-desktop-ci/p1
+          docker version
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential python3 pkg-config libgtk-3-0 libnss3 libasound2t64 libgbm1
+          npm install --global pnpm@12.14.0
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm --dir mobile install --frozen-lockfile
+          node config/scripts/build-workspace-packages.mjs
+          node config/scripts/install-electron-package-binary.mjs
+          node config/scripts/ensure-native-runtime.mjs --runtime=electron 2>&1 | tee notes/ab-desktop-ci/p1/native-runtime.log
+      - name: Verify host identity and real plugin workers
+        run: |
+          set -euo pipefail
+          node config/scripts/run-typecheck-projects-in-parallel.mjs --project=config/tsconfig.node.json --compiler=tsrs 2>&1 | tee notes/ab-desktop-ci/p1/typecheck.log
+          node node_modules/vitest/vitest.mjs run --config config/vitest.config.ts config/scripts/distribution-identity.test.mjs src/main/plugins/ab-plugin-runtime.integration.test.ts src/main/updater.ab-distribution.test.ts src/main/cli/cli-installer-ab-distribution.test.ts src/main/telemetry/client-ab-distribution.test.ts src/main/app-icon.test.ts src/main/ipc/feedback-ab-distribution.test.ts src/main/ipc/feedback.test.ts src/main/ipc/feedback-request-ownership.test.ts src/renderer/src/components/sidebar/SidebarFeedbackDialog.test.tsx src/renderer/src/components/crash-report/CrashReportDialogSurface-ab-distribution.test.tsx --maxWorkers=2 2>&1 | tee notes/ab-desktop-ci/p1/contracts.log
+          AB_ORCA_TEST_SOURCE="$PWD" AB_ORCA_TEST_ZOD="$PWD/node_modules/zod/index.js" node --test --test-isolation=none packages/ab-bill-context/tests/orca-schema.integration.mjs packages/ab-upstream-review/tests/orca-schema.integration.mjs packages/ab-bill-context/tests/cleanup.test.mjs 2>&1 | tee notes/ab-desktop-ci/p1/plugin-schema-cleanup.log
+      - name: Build the AB host and real web resources
+        run: |
+          set -euo pipefail
+          node config/scripts/build-ab-host.mjs 2>&1 | tee notes/ab-desktop-ci/p1/build.log
+          node config/scripts/verify-cli-bin.mjs --fix-executable --fix-package-json
+          node config/scripts/project-renderer-web-client.mjs
+          node config/scripts/verify-web-build.mjs
+          node config/scripts/build-mobile-web-app-bundle.mjs
+          node config/scripts/verify-mobile-web-app-bundle.mjs
+      - name: Build and test the official Wayland helper
+        run: |
+          set -euo pipefail
+          node config/scripts/build-wayland-clipboard.mjs --arch x64 2>&1 | tee notes/ab-desktop-ci/p1/wayland.log
+      - name: Package the Linux development directory with all upstream gates
+        run: |
+          set -euo pipefail
+          node config/scripts/ensure-native-runtime.mjs --runtime=electron
+          pnpm exec electron-builder --config config/electron-builder.ab.config.cjs --linux dir --x64 --publish never 2>&1 | tee notes/ab-desktop-ci/p1/package.log
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+          import { extractFile } from '@electron/asar'
+          const resources = 'dist/ab-brainmaster/linux-unpacked/resources'
+          const asar = `${resources}/app.asar`
+          const metadata = JSON.parse(extractFile(asar, 'package.json').toString())
+          const identity = JSON.parse(extractFile(asar, 'out/main/distribution.json').toString())
+          const version = JSON.parse(fs.readFileSync('package.json')).version
+          if (metadata.name !== 'ab-brainmaster' || metadata.version !== version || identity.id !== 'ab-brainmaster' || identity.automaticUpdates || identity.upstreamTelemetry || identity.upstreamSupport) throw new Error('Packaged AB identity mismatch')
+          if (fs.existsSync(`${resources}/app-update.yml`)) throw new Error('Unexpected updater feed in AB package')
+          fs.writeFileSync('notes/ab-desktop-ci/p1/package-receipt.json', JSON.stringify({ revision: process.env.GITHUB_SHA, version, identity, target: 'linux-x64-dir', development: true, signedInstaller: false, orcadTemplateIncluded: fs.existsSync(`${resources}/orcad-template`), gates: 'electron-builder beforePack and afterPack completed' }, null, 2) + '\n')
+          NODE
+          tar -czf notes/ab-desktop-ci/AB-BRAINMASTER-LINUX-X64-DEVELOPMENT.tar.gz -C dist/ab-brainmaster linux-unpacked
+          sha256sum notes/ab-desktop-ci/AB-BRAINMASTER-LINUX-X64-DEVELOPMENT.tar.gz > notes/ab-desktop-ci/AB-BRAINMASTER-LINUX-X64-DEVELOPMENT.tar.gz.sha256
+          printf 'Linux development directory only; no signed installer or public release. The complete SSH template is not required for this upstream-supported local target.\n' >> "$GITHUB_STEP_SUMMARY"
+          cat notes/ab-desktop-ci/p1/package-receipt.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve package and gate evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: AB-BRAINMASTER-LINUX-DEVELOPMENT-${{ github.sha }}
+          path: notes/ab-desktop-ci/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0

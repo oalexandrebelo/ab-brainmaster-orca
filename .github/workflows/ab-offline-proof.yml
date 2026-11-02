@@ -1,0 +1,117 @@
+name: AB real local model with network blocked
+
+on:
+  push:
+    branches: ['ab-brainmaster/**']
+    paths:
+      - 'packages/ab-local-runtime/**'
+      - 'packages/ab-context-bridge/**'
+      - 'packages/ab-control/**'
+      - 'src/main/**'
+      - 'src/shared/**'
+      - 'src/packages/**'
+      - 'native/**'
+      - 'config/scripts/**'
+      - 'config/tsconfig*.json'
+      - 'config/pnpmfile.cjs'
+      - 'config/patches/**'
+      - 'patches/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.npmrc'
+      - '.github/workflows/ab-offline-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ab-offline-proof-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  real-offline-pty:
+    if: github.repository == 'oalexandrebelo/ab-brainmaster-orca'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ORCA_BACKGROUND_LAUNCH: '1'
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      NODE_OPTIONS: --max-old-space-size=4096
+      AB_PROOF_ASSETS: packages/ab-local-runtime/.proof-assets
+      AB_PROOF_BASE_IMAGE: ubuntu:24.04@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.22.1'
+      - name: Install locked dependencies and build the real host
+        run: |
+          npm install --global pnpm@12.14.0
+          pnpm install --frozen-lockfile
+          npm ci --prefix packages/ab-context-bridge --ignore-scripts --omit=optional --no-audit --no-fund
+          npm ci --prefix packages/ab-control --ignore-scripts --omit=optional --no-audit --no-fund
+          pnpm run build:orcad
+          node packages/ab-control/build.mjs
+          node packages/ab-local-runtime/build.mjs
+          node --test --test-isolation=none packages/ab-local-runtime/tests/*.test.mjs
+      - name: Prepare official BBrainX at its reviewed commit
+        run: |
+          mkdir -p "$AB_PROOF_ASSETS"
+          git init "$AB_PROOF_ASSETS/bbrainx"
+          git -C "$AB_PROOF_ASSETS/bbrainx" fetch --depth=1 https://github.com/oalexandrebelo/BBrainX.git 7943b40167ea58fa64e208281eb6b95a26da6663
+          git -C "$AB_PROOF_ASSETS/bbrainx" checkout --detach FETCH_HEAD
+          test "$(git -C "$AB_PROOF_ASSETS/bbrainx" rev-parse HEAD)" = 7943b40167ea58fa64e208281eb6b95a26da6663
+          npm ci --prefix "$AB_PROOF_ASSETS/bbrainx" --ignore-scripts --no-audit --no-fund
+      - name: Download pinned Ollama and model before isolation
+        run: |
+          curl --fail --location --retry 3 https://github.com/ollama/ollama/releases/download/v0.40.13/ollama-linux-amd64.tar.zst --output "$AB_PROOF_ASSETS/ollama.tar.zst"
+          printf '%s  %s\n' c9490e0f520be21271d969e6703f012268b1d39f8b70dd58854e5bfef7a75bb6 "$AB_PROOF_ASSETS/ollama.tar.zst" | sha256sum --check
+          mkdir -p "$AB_PROOF_ASSETS/ollama"
+          tar --zstd --extract --file "$AB_PROOF_ASSETS/ollama.tar.zst" --directory "$AB_PROOF_ASSETS/ollama" --exclude='lib/ollama/cuda*' --exclude='lib/ollama/vulkan*'
+          rm "$AB_PROOF_ASSETS/ollama.tar.zst"
+          node packages/ab-local-runtime/proof/fetch-model.mjs "$AB_PROOF_ASSETS/models"
+      - name: Build the isolated proof image
+        run: |
+          node packages/ab-local-runtime/proof/stage-image.mjs
+          docker pull "$AB_PROOF_BASE_IMAGE"
+          docker build --tag ab-offline-proof:local "$AB_PROOF_ASSETS/stage"
+          mkdir -p "$RUNNER_TEMP/ab-offline-evidence"
+          docker image inspect "$AB_PROOF_BASE_IMAGE" --format '{{json .RepoDigests}}' > "$RUNNER_TEMP/ab-offline-evidence/base-image-digests.json"
+          docker image inspect ab-offline-proof:local --format '{{json .Id}}' > "$RUNNER_TEMP/ab-offline-evidence/proof-image-id.json"
+      - name: Execute real Orca PTY to BBrainX to Qwen with no network
+        run: |
+          docker create --name ab-offline-proof --network none --cap-drop ALL --security-opt no-new-privileges --cpus 2 --memory 4g --pids-limit 256 --env GITHUB_SHA --mount "type=bind,src=$RUNNER_TEMP/ab-offline-evidence,dst=/evidence" ab-offline-proof:local
+          docker inspect ab-offline-proof --format '{{json .HostConfig}}' > "$RUNNER_TEMP/ab-offline-evidence/container-host-config.json"
+          docker start --attach ab-offline-proof
+          test "$(docker inspect ab-offline-proof --format '{{.State.ExitCode}}')" = 0
+          cat "$RUNNER_TEMP/ab-offline-evidence/receipt.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Check factual extraction separately from transport and recovery
+        run: |
+          node --input-type=module - <<'NODE'
+          import assert from 'node:assert/strict'
+          import { readFile } from 'node:fs/promises'
+          const receipt = JSON.parse(await readFile(`${process.env.RUNNER_TEMP}/ab-offline-evidence/receipt.json`, 'utf8'))
+          console.log(JSON.stringify(receipt.quality, null, 2))
+          assert.equal(receipt.quality.passed, true, 'The factual extraction failed; transport evidence remains in the uploaded receipt.')
+          NODE
+      - name: Upload the exact task, recovered result and isolation evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: AB-OFFLINE-REAL-PTY-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/ab-offline-evidence/receipt.json
+            ${{ runner.temp }}/ab-offline-evidence/task-result.json
+            ${{ runner.temp }}/ab-offline-evidence/recovered-result.json
+            ${{ runner.temp }}/ab-offline-evidence/idempotent-result.json
+            ${{ runner.temp }}/ab-offline-evidence/index.json
+            ${{ runner.temp }}/ab-offline-evidence/container-host-config.json
+            ${{ runner.temp }}/ab-offline-evidence/base-image-digests.json
+            ${{ runner.temp }}/ab-offline-evidence/proof-image-id.json
+            ${{ runner.temp }}/ab-offline-evidence/ollama.log
+          if-no-files-found: warn
+          retention-days: 14

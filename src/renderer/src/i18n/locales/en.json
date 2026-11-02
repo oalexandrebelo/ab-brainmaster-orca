@@ -17213,7 +17213,11 @@
             "uiErrorNotesPlaceholder": "Optional: what were you doing before this UI error?",
             "closedNotesPlaceholder": "Optional: what were you doing before Orca closed?",
             "renderErrorIn": "React render error in {{surface}}",
-            "renderError": "React render error"
+            "renderError": "React render error",
+            "localTitle": "Local crash details",
+            "localDescription": "AB Brainmaster keeps this report local. Copy details for troubleshooting.",
+            "localMissingReport": "No automatic crash report was captured. You can copy your notes with the local environment details.",
+            "localClose": "Close"
           }
         }
       },
@@ -21609,7 +21613,9 @@
   },
   "common": {
     "retry": "Retry",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "close": "Close",
+    "copied": "Copied"
   },
   "terminal": {
     "sessionSaveFailure": {
@@ -23558,6 +23564,15 @@
       "cancel": "Cancel",
       "message": "{{plugin}} wants to open {{host}}",
       "alwaysAllow": "Always allow {{host}} for this plugin"
+    }
+  },
+  "abBrainmaster": {
+    "support": {
+      "localReport": "Local report",
+      "localDescription": "This draft stays on this computer. Copy the text to retain it or share it yourself.",
+      "reportText": "Report text",
+      "copyFailed": "The text could not be copied. Your draft is still available.",
+      "copyText": "Copy text"
     }
   }
 }

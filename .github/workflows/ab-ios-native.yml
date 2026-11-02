@@ -50,8 +50,8 @@ jobs:
         run: |
           node --test scripts/ab-ios-signing.test.mjs
           node scripts/ab-ios.mjs preflight --unsigned
-      - name: Verify native push and protocol behavior
-        run: pnpm exec vitest run src/notifications/push-token.test.ts src/components/ProtocolBlockScreen.test.ts --maxWorkers=2
+      - name: Verify native push, protocol and local diagnostics
+        run: pnpm exec vitest run src/notifications/push-token.test.ts src/components/ProtocolBlockScreen.test.ts src/diagnostics/connection-diagnostics-submission.test.ts src/diagnostics/native-diagnostics-operations.test.ts --maxWorkers=2
       - name: Archive physical-device Release without signing
         run: node scripts/ab-ios.mjs build --unsigned --output build/ab-ios-ci
       - name: Preserve the unsigned archive

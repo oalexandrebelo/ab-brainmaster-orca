@@ -6,7 +6,9 @@ const logStore = vi.hoisted(() => ({
   hydrate: vi.fn<() => Promise<void>>(),
   get: () => []
 }))
+const distribution = vi.hoisted(() => ({ isAbIosDistribution: false }))
 
+vi.mock('../platform/ab-ios-distribution', () => distribution)
 vi.mock('react-native', () => ({ Platform: { OS: 'ios', Version: '26' } }))
 vi.mock('expo-constants', () => ({ default: { expoConfig: { version: '0.0.60' } } }))
 vi.mock('../transport/persisted-connection-log-store', () => ({ connectionLogStore: logStore }))
@@ -39,6 +41,16 @@ function createContext() {
 describe('native connection diagnostic reports', () => {
   beforeEach(() => {
     logStore.hydrate.mockReset().mockResolvedValue(undefined)
+    distribution.isAbIosDistribution = false
+  })
+
+  it('keeps local reports available while disabling AB support uploads', async () => {
+    distribution.isAbIosDistribution = true
+    const device = createNativeDiagnosticsOperations(host, createContext(), '1.4.214')
+    expect(device.canSubmit).toBe(false)
+    const { report } = await device.report()
+    expect(report).toContain('State: connected')
+    expect(report).toContain('Host Orca version: 1.4.214')
   })
 
   it('keeps the live version while its connection remains current', async () => {

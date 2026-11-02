@@ -36,6 +36,7 @@ import type * as SidebarFeedbackDialogModule from './SidebarFeedbackDialog'
 import { translate } from '@/i18n/i18n'
 import { getUpdateCheckClickOptions, getUpdateCheckHint } from '@/lib/update-check-click-options'
 import { openAppHttpLink } from '@/lib/app-http-link-open'
+import { getDistributionIdentity } from '../../../../shared/distribution-identity'
 
 // Keep feedback off the boot graph; menu warming and selection share the same lazy module entry.
 const loadSidebarFeedbackDialog = (): Promise<typeof SidebarFeedbackDialogModule> =>
@@ -249,10 +250,12 @@ export function SidebarSettingsHelpMenu(): React.JSX.Element {
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={handleOpenFeedback}>
               <MessageSquareText className="size-3.5" />
-              {translate(
-                'auto.components.sidebar.SidebarSettingsHelpMenu.4cf5b868d7',
-                'Send Feedback'
-              )}
+              {getDistributionIdentity().upstreamSupport
+                ? translate(
+                    'auto.components.sidebar.SidebarSettingsHelpMenu.4cf5b868d7',
+                    'Send Feedback'
+                  )
+                : translate('abBrainmaster.support.localReport', 'Local report')}
             </DropdownMenuItem>
             {showMilestones ? (
               <DropdownMenuItem onSelect={openMilestones}>

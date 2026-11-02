@@ -1,0 +1,29 @@
+[Unit]
+Description=AB-BRAINMASTER-ORCA persistent runtime
+After=local-fs.target
+ConditionPathExists=/var/lib/ab-brainmaster/.ab-persistence-enabled
+
+[Service]
+Type=simple
+User=abbrainmaster
+Group=abbrainmaster
+WorkingDirectory=/workspaces
+Environment=ORCA_BACKGROUND_LAUNCH=1 AB_CONTROL_PORT=8080 AB_RUNTIME_PORT=8081 SHELL=/bin/bash
+ExecStart=/usr/local/bin/node /opt/ab-deploy/entrypoint.mjs
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+NoNewPrivileges=true
+CapabilityBoundingSet=
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/ab-brainmaster /workspaces /home/abbrainmaster /tmp
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryMax=4G
+CPUQuota=400%
+TasksMax=256
+StandardOutput=append:/dev/ttyS0
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

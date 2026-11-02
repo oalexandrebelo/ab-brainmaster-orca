@@ -29,6 +29,23 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+it('pins AB packaged and development data before app naming or instance locks', async () => {
+  vi.stubGlobal('ORCA_DISTRIBUTION_ID', 'ab-brainmaster')
+  onTestFinished(() => {
+    vi.unstubAllGlobals()
+  })
+  const { app } = await import('electron')
+  const { configureDevUserDataPath } = await import('./configure-process')
+  configureDevUserDataPath(false)
+  expect(app.getPath('userData')).toBe(join(app.getPath('appData'), 'ab-brainmaster'))
+  vi.stubEnv('ORCA_DEV_USER_DATA_PATH', '')
+  onTestFinished(() => {
+    vi.unstubAllEnvs()
+  })
+  configureDevUserDataPath(true)
+  expect(app.getPath('userData')).toBe(join(app.getPath('appData'), 'ab-brainmaster-dev'))
+})
+
 describe('patchPackagedProcessPath', () => {
   const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform')
   const originalHome = process.env.HOME

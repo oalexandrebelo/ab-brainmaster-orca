@@ -71,7 +71,12 @@ async function runVitest() {
     runTemp = createRunTempDirectory()
     return await waitForVitest({
       program: pinnedBun ?? 'bun',
-      args: ['--bun', resolve(root, 'node_modules/vitest/vitest.mjs'), ...vitestArgs],
+      args: [
+        ...(process.env.ORCA_TEST_LOW_MEMORY === '1' ? ['--smol'] : []),
+        '--bun',
+        resolve(root, 'node_modules/vitest/vitest.mjs'),
+        ...vitestArgs
+      ],
       cwd: root,
       env: {
         ...process.env,

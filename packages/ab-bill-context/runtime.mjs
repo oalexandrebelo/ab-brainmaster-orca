@@ -156,6 +156,12 @@ export async function stopOwnedChild(child) {
   }
   if (child.exitCode === null && child.signalCode === null) {
     child.kill('SIGKILL')
+    for (let i = 0; i < 40 && child.exitCode === null && child.signalCode === null; i++) {
+      await delay(50)
+    }
+    if (child.exitCode === null && child.signalCode === null) {
+      throw new Error('Não foi possível confirmar o encerramento do processo criado nesta sessão.')
+    }
   }
 }
 

@@ -10,7 +10,9 @@
   },
   "common": {
     "retry": "Tentar novamente",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "copied": "Copiado"
   },
   "quickOpen": {
     "moreMatchesAvailable": "Mais resultados podem estar disponíveis. Refine sua busca para reduzir os resultados.",
@@ -18886,7 +18888,11 @@
             "uiErrorNotesPlaceholder": "Opcional: o que você estava fazendo antes deste erro de UI?",
             "closedNotesPlaceholder": "Opcional: o que você estava fazendo antes de o Orca fechar?",
             "renderErrorIn": "Erro de renderização do React em {{surface}}",
-            "renderError": "Erro de renderização do React"
+            "renderError": "Erro de renderização do React",
+            "localTitle": "Detalhes locais da falha",
+            "localDescription": "O AB Brainmaster mantém este relatório local. Copie os detalhes para investigar a falha.",
+            "localMissingReport": "Nenhum relatório automático da falha foi capturado. Você pode copiar suas anotações com os detalhes locais do ambiente.",
+            "localClose": "Fechar"
           }
         }
       },
@@ -23490,5 +23496,14 @@
   "wslDistroHold": {
     "terminalStopped": "A distribuição WSL {{distro}} está parada, então o Orca não iniciou este terminal. Inicie a distribuição e tente novamente.",
     "terminalUnverifiable": "O Orca não conseguiu verificar se a distribuição WSL {{distro}} está em execução, então não iniciou este terminal. Inicie a distribuição e tente novamente."
+  },
+  "abBrainmaster": {
+    "support": {
+      "localReport": "Relato local",
+      "localDescription": "Este rascunho permanece neste computador. Copie o texto para guardar ou compartilhar por conta própria.",
+      "reportText": "Texto do relato",
+      "copyFailed": "Não foi possível copiar o texto. Seu rascunho continua disponível.",
+      "copyText": "Copiar texto"
+    }
   }
 }

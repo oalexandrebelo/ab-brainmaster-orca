@@ -1,6 +1,7 @@
 import { mkdir, unlink } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import type { CliInstallStatus } from '../../shared/cli-install-types'
+import { getDistributionIdentity } from '../../shared/distribution-identity'
 import {
   pruneAppImageExtractedRoots,
   removeAppImageInstalledPayloads
@@ -31,6 +32,22 @@ export class CliInstaller extends CliPathRegistration {
   }
 
   async getStatus(): Promise<CliInstallStatus> {
+    if (!getDistributionIdentity().manageOrcaCli) {
+      return {
+        platform: this.platform,
+        commandName: this.commandName,
+        commandPath: null,
+        pathDirectory: null,
+        pathConfigured: false,
+        launcherPath: null,
+        installMethod: null,
+        supported: false,
+        state: 'unsupported',
+        currentTarget: null,
+        unsupportedReason: 'launch_mode_unavailable',
+        detail: 'This AB Brainmaster build does not manage Orca CLI commands.'
+      }
+    }
     const defaultSpec = this.resolveInstallSpec()
     if (!defaultSpec) {
       return {
@@ -104,6 +121,9 @@ export class CliInstaller extends CliPathRegistration {
   }
 
   async install(): Promise<CliInstallStatus> {
+    if (!getDistributionIdentity().manageOrcaCli) {
+      throw new Error('This AB Brainmaster build does not manage Orca CLI commands.')
+    }
     return this.runAppImageRegistrationOperation(() => this.installUnlocked())
   }
 
@@ -161,6 +181,9 @@ export class CliInstaller extends CliPathRegistration {
   }
 
   async remove(): Promise<CliInstallStatus> {
+    if (!getDistributionIdentity().manageOrcaCli) {
+      return this.getStatus()
+    }
     return this.runAppImageRegistrationOperation(() => this.removeUnlocked())
   }
 

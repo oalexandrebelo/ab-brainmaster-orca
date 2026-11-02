@@ -16,6 +16,7 @@ import { NATIVE_APP_LOG_ID } from './native-render-log'
 import { submitConnectionDiagnostics } from './connection-diagnostics-submission'
 import type { DiagnosticsDeviceOperations } from './diagnostics-device-operations'
 import { BRIDGE_PROTOCOL_VERSION } from '../mobile-web-shell/bridge/bridge-frame-fields'
+import { isAbIosDistribution } from '../platform/ab-ios-distribution'
 
 export function createNativeDiagnosticsOperations(
   host: HostProfile | null,
@@ -28,6 +29,7 @@ export function createNativeDiagnosticsOperations(
   const versionConnectedAt =
     host && context.getState(host.id) === 'connected' ? context.getLastConnectedAt(host.id) : null
   return {
+    canSubmit: !isAbIosDistribution,
     async report() {
       const appVersion = Constants.expoConfig?.version ?? 'unknown'
       const platform = `${Platform.OS} ${Platform.Version ?? ''}`.trim()

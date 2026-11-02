@@ -4037,5 +4037,10 @@
         }
       }
     }
+  },
+  "abBrainmaster": {
+    "diagnostics": {
+      "localOnly": "Use o relatório de diagnóstico local na distribuição AB."
+    }
   }
 }

@@ -9,6 +9,7 @@ export type ConnectionDiagnosticsReport = ConnectionDiagnosticsSubmission & {
 }
 
 export interface DiagnosticsDeviceOperations {
+  canSubmit?: boolean
   report(): Promise<ConnectionDiagnosticsReport>
   submit(
     submission: ConnectionDiagnosticsSubmission

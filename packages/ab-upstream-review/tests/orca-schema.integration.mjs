@@ -43,6 +43,12 @@ test(
       assert.equal(satisfiesOrcaEngineRange('1.4.214', raw.engines.orca), false)
       assert.equal(satisfiesOrcaEngineRange('1.4.246', raw.engines.orca), true)
       assert.equal(parsePluginManifest({ ...raw, engines: { orca: '>=1.4.214' } }).ok, false)
+      const { pluginHostVersion } = await import(
+        pathToFileURL(path.join(source, 'src/shared/plugins/installation/plugin-host-version.ts'))
+          .href
+      )
+      const { version } = JSON.parse(await fs.readFile(path.join(source, 'package.json'), 'utf8'))
+      assert.equal(satisfiesOrcaEngineRange(pluginHostVersion(version), raw.engines.orca), true)
     } finally {
       hooks.deregister()
     }

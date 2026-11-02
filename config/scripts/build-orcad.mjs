@@ -61,6 +61,7 @@ import { orcadAgentBrowserNativeName } from '../../src/shared/orcad-agent-browse
 import { runProcessSync } from '@orca/process-host'
 import { describeProcessFailure } from './process-failure-message.mjs'
 import { resolveBuildSourceCommit } from './build-source-commit.mjs'
+import { writeReleaseBuildMetadata } from './ab-release-build-metadata.mjs'
 
 const { darkBuildMarkers } = createRequire(import.meta.url)('../dark-build-switches.cjs')
 
@@ -107,7 +108,7 @@ async function stageParcelWatcher(target) {
   const nativeSource = await materializeWatcherPackage(target)
   const wrapperSource = requireFromWatcher.resolve('@parcel/watcher/wrapper.js')
   mkdirSync(WATCHER_MODULE_DIR, { recursive: true })
-  await build({
+  const result = await build({
     ...ORCAD_COMMONJS_MODULE_OPTIONS,
     stdin: {
       contents:
@@ -124,9 +125,11 @@ async function stageParcelWatcher(target) {
     external: ['./watcher.node'],
     minify: true,
     sourcemap: false,
+    metafile: true,
     logLevel: 'error'
   })
   copyFileSync(nativeSource, join(OUT_DIR, ORCAD_PARCEL_WATCHER_NATIVE))
+  return result.metafile
 }
 
 /** node-pty's JS plus only this target's prebuild slot, laid out the way node-pty's loader looks. */
@@ -170,7 +173,7 @@ writeFileSync(
   `${runtimeAsset.executableSha256}\n`
 )
 stageNodePty(BUILD_TARGET)
-await stageParcelWatcher(BUILD_TARGET)
+const watcherMetafile = await stageParcelWatcher(BUILD_TARGET)
 stageOrcadWindowsProcessTree(ROOT, OUT_DIR, BUILD_TARGET)
 stageOrcadWindowsCliLauncher(ROOT, OUT_DIR, BUILD_TARGET)
 stageOrcadWindowsSecurity(ROOT, OUT_DIR, BUILD_TARGET, undefined, undefined, {
@@ -183,7 +186,7 @@ copyFileSync(
   createRequire(import.meta.url).resolve('emojibase-data/en/shortcodes/emojibase.json'),
   emojiDatasetOutput
 )
-await stageOrcadLinearSdk(ROOT, OUT_DIR)
+const linearMetafile = await stageOrcadLinearSdk(ROOT, OUT_DIR)
 // The desktop template omits it: ~10 MB per target, and orcad already treats it as optional.
 if (existsSync(AGENT_BROWSER_SOURCE) && process.env.ORCAD_OMIT_AGENT_BROWSER !== '1') {
   copyFileSync(AGENT_BROWSER_SOURCE, AGENT_BROWSER_OUTPUT)
@@ -408,6 +411,11 @@ if (process.exitCode !== 1) {
     agentBrowserFilename: AGENT_BROWSER_NAME
   })
   writeFileSync(join(OUT_DIR, ORCAD_VERSION_FILENAME), fullVersion)
+  await writeReleaseBuildMetadata(
+    'orcad',
+    [...metafiles, watcherMetafile, linearMetafile],
+    [join(OUT_DIR, ORCAD_VERSION_FILENAME)]
+  )
   console.log(
     `[build-orcad] ok — ${fullVersion}, ${(output.bytes / 1024 / 1024).toFixed(2)} MB, ${Object.keys(output.inputs).length} modules, zero electron and node:sqlite imports, Node ${NODE_RUNTIME_PIN.version} referenced.`
   )

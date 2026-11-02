@@ -1,0 +1,127 @@
+name: AB runtime and appliance
+
+on:
+  push:
+    branches: ['ab-brainmaster/**']
+    paths:
+      - 'src/**'
+      - 'native/**'
+      - 'resources/**'
+      - 'mobile/**'
+      - 'config/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'packages/ab-control/**'
+      - 'packages/ab-context-bridge/**'
+      - 'packages/ab-local-runtime/**'
+      - 'deploy/ab-brainmaster/**'
+      - 'config/scripts/ab-release-*.mjs'
+      - '.github/workflows/ab-runtime.yml'
+      - '!**/*.md'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'native/**'
+      - 'resources/**'
+      - 'mobile/**'
+      - 'config/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'packages/ab-control/**'
+      - 'packages/ab-context-bridge/**'
+      - 'packages/ab-local-runtime/**'
+      - 'deploy/ab-brainmaster/**'
+      - 'config/scripts/ab-release-*.mjs'
+      - '.github/workflows/ab-runtime.yml'
+      - '!**/*.md'
+  workflow_dispatch:
+    inputs:
+      appliance:
+        type: boolean
+        description: Build Debian live ISO and prove two persistent boots in QEMU
+        default: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  container:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ORCA_BACKGROUND_LAUNCH: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.22.1'
+      - name: Build and test real runtime, control surfaces and rollback
+        run: docker build --target acceptance -f deploy/ab-brainmaster/Dockerfile -t ab-brainmaster-acceptance:ci .
+      - name: Build nonroot runtime image
+        run: docker build -f deploy/ab-brainmaster/Dockerfile -t ab-brainmaster-orca:ci .
+      - name: Export verified release for appliance
+        run: |
+          mkdir -p artifact
+          docker create --name ab-release-export ab-brainmaster-orca:ci
+          docker cp ab-release-export:/opt/ab-release artifact/release
+          docker cp ab-release-export:/opt/ab-release.sha256 artifact/release.sha256
+          docker rm ab-release-export
+          tar -C artifact -czf artifact/ab-release.tar.gz release release.sha256
+      - name: Isolated container restart acceptance
+        run: |
+          set -euo pipefail
+          docker create --name ab-harness-export ab-brainmaster-acceptance:ci
+          docker cp ab-harness-export:/build/src/packages/process-host artifact/process-host
+          docker rm ab-harness-export
+          mkdir -p node_modules/@orca
+          ln -s ../../artifact/process-host node_modules/@orca/process-host
+          node deploy/ab-brainmaster/container-acceptance.mjs | tee artifact/container-receipt.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ab-runtime-release-linux-x64
+          path: |
+            artifact/ab-release.tar.gz
+            artifact/container-receipt.json
+          if-no-files-found: error
+
+  appliance:
+    needs: container
+    if: github.repository == 'oalexandrebelo/ab-brainmaster-orca' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.appliance))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Fetch release from this workflow run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "$GITHUB_RUN_ID" --name ab-runtime-release-linux-x64 --dir artifact
+      - name: Build Debian live image
+        run: |
+          tar -xzf artifact/ab-release.tar.gz -C artifact
+          docker build -f deploy/ab-brainmaster/appliance/Dockerfile -t ab-live-builder:ci deploy/ab-brainmaster/appliance
+          docker run --rm --privileged -v "$PWD:/source:ro" -v "$PWD/artifact:/output" ab-live-builder:ci /source/deploy/ab-brainmaster/appliance/build.sh /output/release /output/release.sha256 /output
+      - name: Boot the same ISO twice with a dedicated persistence disk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 e2fsprogs
+          bash deploy/ab-brainmaster/appliance/make-state.sh artifact/state.img --acceptance
+          python3 deploy/ab-brainmaster/appliance/qemu-acceptance.py artifact/ab-brainmaster-amd64.iso artifact/ab-brainmaster-ci-amd64.iso artifact/state.img artifact
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: ab-appliance-boot-evidence
+          path: |
+            artifact/ab-brainmaster-amd64.iso
+            artifact/ab-brainmaster-amd64.iso.sha256
+            artifact/ab-brainmaster-ci-amd64.iso
+            artifact/ab-brainmaster-ci-amd64.iso.sha256
+            artifact/qemu-*.log
+            artifact/appliance-receipt.json
+          if-no-files-found: error

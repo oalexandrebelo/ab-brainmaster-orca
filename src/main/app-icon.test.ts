@@ -12,6 +12,10 @@ vi.mock('../../resources/icon.png?asset', () => ({
   default: 'classic-icon'
 }))
 
+vi.mock('../../resources/build/ab-brainmaster.png?asset', () => ({
+  default: 'ab-icon'
+}))
+
 vi.mock('../../resources/icon-dev.png?asset', () => ({
   default: 'classic-dev-icon'
 }))
@@ -32,7 +36,7 @@ vi.mock('../../resources/app-icons/orca-blue.png?asset&asarUnpack', () => ({
   default: 'blue-icon-unpacked'
 }))
 
-import { persistMacDockIcon } from './app-icon'
+import { getAppIconPath, persistMacDockIcon } from './app-icon'
 
 function waitForQueuedPersistence(): Promise<void> {
   return new Promise((resolve) => setImmediate(resolve))
@@ -55,6 +59,16 @@ function createMockChildProcess(): EventEmitter & { kill: ReturnType<typeof vi.f
 describe('app icon selection', () => {
   afterEach(() => {
     vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
+
+  it('uses the AB monogram and does not persist an upstream macOS icon for AB', () => {
+    vi.stubGlobal('ORCA_DISTRIBUTION_ID', 'ab-brainmaster')
+    expect(getAppIconPath('classic')).toBe('ab-icon')
+    expect(getAppIconPath('blue')).toBe('ab-icon')
+    const execFile = vi.fn()
+    persistMacDockIcon('blue', { platform: 'darwin', isDevApp: false, execFile })
+    expect(execFile).not.toHaveBeenCalled()
   })
 
   it('restores the bundle Dock icon only after the custom icon clear succeeds', async () => {

@@ -1,4 +1,5 @@
 import type { App } from 'electron'
+import { getDistributionIdentity } from '../../shared/distribution-identity'
 
 /**
  * Registers `orca://` with Windows, which NSIS installs leave unregistered; macOS reads it from
@@ -9,14 +10,15 @@ export function registerOrcaProtocolClient(
   app: Pick<App, 'isPackaged' | 'isDefaultProtocolClient' | 'setAsDefaultProtocolClient'>,
   options: { platform: NodeJS.Platform; desktopLaunch: boolean }
 ): boolean {
-  if (options.platform !== 'win32' || !app.isPackaged || !options.desktopLaunch) {
+  const protocol = getDistributionIdentity().protocol
+  if (!protocol || options.platform !== 'win32' || !app.isPackaged || !options.desktopLaunch) {
     return false
   }
-  if (app.isDefaultProtocolClient('orca')) {
+  if (app.isDefaultProtocolClient(protocol)) {
     return false
   }
   try {
-    return app.setAsDefaultProtocolClient('orca')
+    return app.setAsDefaultProtocolClient(protocol)
   } catch (error) {
     console.warn('[protocol] Failed to register orca:// links:', error)
     return false

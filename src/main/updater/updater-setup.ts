@@ -1,4 +1,8 @@
 import { app, powerMonitor } from 'electron'
+import {
+  AB_UPDATE_DISABLED_MESSAGE,
+  getDistributionIdentity
+} from '../../shared/distribution-identity'
 import type { BrowserWindow } from 'electron'
 import type { ReleaseBuild, ReleaseChannel } from '../../shared/release-channel'
 import type { ReleaseBuildListOptions } from '../updater-release-build-cache'
@@ -39,18 +43,33 @@ export type UpdaterSetupOptions = {
 
 export class UpdaterSetup extends UpdaterDownloadInstall {
   checkForUpdates(): void {
+    if (!getDistributionIdentity().automaticUpdates) {
+      return
+    }
     this.checkForUpdatesInBackground()
   }
 
   checkForUpdatesFromMenu(options?: UpdateCheckOptions): void {
+    if (!getDistributionIdentity().automaticUpdates) {
+      this.sendErrorStatus(AB_UPDATE_DISABLED_MESSAGE, true)
+      return
+    }
     super.checkForUpdatesFromMenu(options)
   }
 
   downloadUpdate(): void {
+    if (!getDistributionIdentity().automaticUpdates) {
+      this.sendErrorStatus(AB_UPDATE_DISABLED_MESSAGE, true)
+      return
+    }
     super.downloadUpdate()
   }
 
   quitAndInstall(): void {
+    if (!getDistributionIdentity().automaticUpdates) {
+      this.sendErrorStatus(AB_UPDATE_DISABLED_MESSAGE, true)
+      return
+    }
     super.quitAndInstall()
   }
 
@@ -101,6 +120,9 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
     channel: ReleaseChannel,
     options?: ReleaseBuildListOptions
   ): Promise<ReleaseBuild[]> {
+    if (!getDistributionIdentity().automaticUpdates) {
+      return []
+    }
     return super.listAvailableReleaseBuilds(channel, options)
   }
 
@@ -137,7 +159,7 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
       this.sendErrorStatus(`The server update did not complete: ${serveHandoffFailure}`, true)
     }
 
-    if (!app.isPackaged) {
+    if (!app.isPackaged || !getDistributionIdentity().automaticUpdates) {
       return
     }
 

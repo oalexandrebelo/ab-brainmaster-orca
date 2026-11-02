@@ -23,11 +23,12 @@ const MAX_PATH_ARGUMENT_CHARS = 24_000
 const LINTABLE = /\.[cm]?[jt]sx?$/
 const ANTI_SLOP_ROOTS = ['src/', 'config/', 'tests/', 'mobile/']
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const options = {
     force: false,
     base: null,
     maxWorkers: null,
+    concurrency: null,
     stepTimeoutMs: DEFAULT_STEP_TIMEOUT_MINUTES * 60_000
   }
   for (const argument of argv) {
@@ -39,11 +40,17 @@ function parseArgs(argv) {
       options.base = argument.slice('--base='.length)
     } else if (/^--max-?workers=\d+$/i.test(argument)) {
       options.maxWorkers = argument.split('=')[1]
+    } else if (argument.startsWith('--concurrency=')) {
+      const value = Number(argument.slice('--concurrency='.length))
+      if (!Number.isSafeInteger(value) || value < 1 || value > 64) {
+        throw new Error('Concurrency must be an integer from 1 to 64.')
+      }
+      options.concurrency = value
     } else if (/^--timeout=\d+$/.test(argument)) {
       options.stepTimeoutMs = Number(argument.split('=')[1]) * 60_000
     } else {
       throw new Error(
-        `Unknown option ${argument}. Use --force, --base=<ref>, --maxWorkers=<n>, --timeout=<minutes>.`
+        `Unknown option ${argument}. Use --force, --base=<ref>, --maxWorkers=<n>, --concurrency=<n>, --timeout=<minutes>.`
       )
     }
   }
@@ -250,7 +257,7 @@ async function runTask(task, { root, env, runProcess, stepTimeoutMs }) {
   return { task, ok: true, output, elapsed: seconds(startedAt) }
 }
 
-async function runPool(tasks, concurrency, run) {
+export async function runPool(tasks, concurrency, run) {
   const results = []
   let next = 0
   await Promise.all(
@@ -315,7 +322,7 @@ export async function main(root, argv) {
   )
 
   // Typecheck and tests lead the queue: they take longest, so the short checks fill in around them.
-  const concurrency = Math.max(3, Math.floor(availableParallelism() / 3))
+  const concurrency = options.concurrency ?? Math.max(3, Math.floor(availableParallelism() / 3))
   const running = new Map()
   // Why: output is buffered until a task ends, so long test runs would otherwise look hung.
   const heartbeat = setInterval(() => {

@@ -24,6 +24,7 @@ import {
   routePathnameFromKey
 } from './mobile-web-app/mobile-web-app-route-manifest.mjs'
 import { MOBILE_WEB_PAGE_ROUTES } from './mobile-web-page-routes.mjs'
+import { writeReleaseBuildMetadata } from './ab-release-build-metadata.mjs'
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url))
 const mobileDir = join(projectDir, 'mobile')
@@ -397,10 +398,11 @@ function localeCatalogOutputs(metafile) {
   )
 }
 
-export async function bundleMobileWebApp({ appDir = defaultAppDir } = {}) {
+export async function bundleMobileWebApp({ appDir = defaultAppDir, recordMetafile } = {}) {
   const routes = await collectMobileWebAppRoutes(appDir)
   await assertRoutesCarryNoSynchronousExports(routes)
   const result = await esbuild.build(mobileWebAppBuildOptions(routes))
+  recordMetafile?.(result.metafile)
   const entryOutputPath = Object.keys(result.metafile.outputs).find(
     (path) => basename(path) === `${ENTRY_CHUNK_NAME}.js`
   )
@@ -461,7 +463,8 @@ export function resolveMobileWebPageRoutes(routeKeys, declared = MOBILE_WEB_PAGE
 export async function buildMobileWebAppBundle({
   appDir,
   outDir = defaultOutDir,
-  pageRoutes = MOBILE_WEB_PAGE_ROUTES
+  pageRoutes = MOBILE_WEB_PAGE_ROUTES,
+  recordMetafile
 } = {}) {
   const [
     desktopVersion,
@@ -471,7 +474,7 @@ export async function buildMobileWebAppBundle({
   ] = await Promise.all([
     readDesktopVersion(),
     readProtocolWindow(),
-    bundleMobileWebApp({ appDir }),
+    bundleMobileWebApp({ appDir, recordMetafile }),
     readFile(join(projectDir, 'src/shared/styles/scrollbar-sleek.css'), 'utf8').then((style) =>
       // The shared desktop stylesheet can be checked out as CRLF on Windows.
       style.replace(/\r\n/g, '\n')
@@ -533,8 +536,14 @@ if (isDirectInvocation(import.meta.url, process.argv[1])) {
     process.exit(1)
   }
   try {
+    let buildMetafile
     const { manifest, outDir, routeKeys, entryStaticBytes, chunkCount } =
-      await buildMobileWebAppBundle()
+      await buildMobileWebAppBundle({
+        recordMetafile: (metafile) => {
+          buildMetafile = metafile
+        }
+      })
+    await writeReleaseBuildMetadata('mobile-web', [buildMetafile], [join(outDir, 'manifest.json')])
     console.log(
       `[build-mobile-web-app-bundle] OK — ${String(routeKeys.length)} route(s), ` +
         `${String(chunkCount)} chunk(s), ${String(entryStaticBytes)} bytes before the first route, ` +

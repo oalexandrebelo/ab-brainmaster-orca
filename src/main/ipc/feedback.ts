@@ -1,5 +1,9 @@
 import os from 'node:os'
 import { app, ipcMain } from 'electron'
+import {
+  AB_SUPPORT_LOCAL_MESSAGE,
+  getDistributionIdentity
+} from '../../shared/distribution-identity'
 import { readFeedbackImagesDelivered, validateFeedbackImages } from './feedback-image-attachments'
 import type {
   FeedbackImageAttachment,
@@ -183,6 +187,9 @@ async function submitFeedbackWithDiagnosticBundle(
 export async function submitFeedback(
   args: InternalFeedbackSubmitArgs
 ): Promise<FeedbackSubmitResult> {
+  if (!getDistributionIdentity().upstreamSupport) {
+    return { ok: false, status: null, error: AB_SUPPORT_LOCAL_MESSAGE }
+  }
   // Ignore discarded crash-lane images instead of rejecting over unused attachments.
   if (args.submissionType !== 'crash' && args.images !== undefined) {
     const imageError = validateFeedbackImages(args.images)

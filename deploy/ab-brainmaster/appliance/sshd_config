@@ -1,0 +1,13 @@
+Port 22
+HostKey /etc/ab-admin/hostkey
+AuthorizedKeysFile /etc/ab-admin/authorized_keys
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+UsePAM yes
+AllowUsers abadmin
+AllowTcpForwarding local
+PermitOpen 127.0.0.1:8080 127.0.0.1:8081
+X11Forwarding no
+PermitTunnel no
+Subsystem sftp internal-sftp

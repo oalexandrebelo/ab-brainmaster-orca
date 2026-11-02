@@ -1,0 +1,73 @@
+import assert from 'node:assert/strict'
+import { createWriteStream } from 'node:fs'
+import { mkdir } from 'node:fs/promises'
+import { once } from 'node:events'
+import path from 'node:path'
+import { runProcess, spawnProcess } from '@orca/process-host'
+import { verifyBlockedEgress } from './blocked-egress.mjs'
+
+await verifyBlockedEgress()
+const directory = process.env.AB_PROOF_DIRECTORY
+assert.ok(directory && path.isAbsolute(directory))
+await mkdir(directory, { recursive: true })
+const log = createWriteStream(path.join(directory, 'ollama.log'))
+const server = spawnProcess({
+  program: '/proof/ollama/bin/ollama',
+  args: ['serve'],
+  stdio: 'pipe',
+  env: {
+    ...process.env,
+    OLLAMA_HOST: '127.0.0.1:11435',
+    OLLAMA_MODELS: '/proof/models',
+    OLLAMA_NO_CLOUD: '1',
+    OLLAMA_NUM_PARALLEL: '1',
+    OLLAMA_MAX_LOADED_MODELS: '1',
+    OLLAMA_MAX_QUEUE: '1',
+    CUDA_VISIBLE_DEVICES: '-1',
+    ROCR_VISIBLE_DEVICES: '-1'
+  }
+})
+server.stdin.end()
+server.stdout.pipe(log, { end: false })
+server.stderr.pipe(log, { end: false })
+try {
+  const deadline = Date.now() + 60000
+  let ready = false
+  while (Date.now() < deadline) {
+    try {
+      ready = (
+        await fetch('http://127.0.0.1:11435/api/version', { signal: AbortSignal.timeout(1000) })
+      ).ok
+    } catch {}
+    if (ready) {
+      break
+    }
+    if (server.exitCode !== null || server.signalCode !== null) {
+      throw new Error('Ollama exited before readiness.')
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+  assert.ok(ready, 'Ollama readiness timed out.')
+  const result = await runProcess({
+    program: process.execPath,
+    args: [path.join(import.meta.dirname, 'run-proof.mjs')],
+    env: {
+      ...process.env,
+      AB_OFFLINE_REQUIRED: '1',
+      AB_BBRAINX_SOURCE: '/proof/bbrainx',
+      AB_OLLAMA_ENDPOINT: 'http://127.0.0.1:11435',
+      ORCA_BACKGROUND_LAUNCH: '1'
+    },
+    timeoutMs: 480000
+  })
+  process.stdout.write(result.stdout)
+  process.stderr.write(result.stderr)
+  assert.equal(result.code, 0, 'The real offline PTY proof failed.')
+} finally {
+  if (server.exitCode === null && server.signalCode === null) {
+    const stopped = once(server, 'exit')
+    server.kill('SIGTERM')
+    await stopped
+  }
+  log.end()
+}

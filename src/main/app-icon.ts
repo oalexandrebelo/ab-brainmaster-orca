@@ -6,12 +6,14 @@ import {
 import { dirname, resolve } from 'node:path'
 import { app, BrowserWindow, nativeImage } from 'electron'
 import classicIcon from '../../resources/icon.png?asset'
+import abIcon from '../../resources/build/ab-brainmaster.png?asset'
 import classicDevIcon from '../../resources/icon-dev.png?asset'
 import watercolorIcon from '../../resources/app-icons/orca-watercolor.png?asset'
 import watercolorMacDockIcon from '../../resources/app-icons/orca-watercolor.png?asset&asarUnpack'
 import blueIcon from '../../resources/app-icons/orca-blue.png?asset'
 import blueMacDockIcon from '../../resources/app-icons/orca-blue.png?asset&asarUnpack'
 import { normalizeAppIconId, type AppIconId } from '../shared/app-icon'
+import { getDistributionIdentity } from '../shared/distribution-identity'
 
 const APP_ICON_PATHS = {
   classic: !app.isPackaged ? classicDevIcon : classicIcon,
@@ -73,6 +75,9 @@ let macDockIconPersistenceGeneration = 0
 let macDockIconPersistenceQueue = Promise.resolve()
 
 export function getAppIconPath(value: unknown): string {
+  if (getDistributionIdentity().id === 'ab-brainmaster') {
+    return abIcon
+  }
   return APP_ICON_PATHS[normalizeAppIconId(value)]
 }
 
@@ -259,6 +264,9 @@ function clearMacCustomIconMetadata(execFile: ExecFile, appBundlePath: string): 
 }
 
 export function persistMacDockIcon(value: unknown, options: PersistMacDockIconOptions = {}): void {
+  if (getDistributionIdentity().id === 'ab-brainmaster') {
+    return
+  }
   const platform = options.platform ?? process.platform
   const isDevApp = options.isDevApp ?? !app.isPackaged
   if (platform !== 'darwin' || isDevApp) {

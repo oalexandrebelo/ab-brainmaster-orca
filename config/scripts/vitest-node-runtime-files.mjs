@@ -119,6 +119,8 @@ const NODE_RUNTIME_INCLUDE = [
   'src/renderer/src/lib/flatten-retained-slice.test.ts',
   'src/shared/own-retained-string.test.ts',
   'src/main/agent-hooks/server-transport-interference.test.ts',
+  // The AB integration starts the same real Node plugin workers.
+  'src/main/plugins/ab-plugin-runtime.integration.test.ts',
   'src/main/plugins/workers/plugin-worker-supervision.integration.test.ts',
   'src/main/plugins/workers/plugin-worker-dev-restart-storage.integration.test.ts',
   // Worker TypeScript loads through node:module registerHooks, which Bun lacks.

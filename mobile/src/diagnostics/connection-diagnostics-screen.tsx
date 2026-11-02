@@ -67,7 +67,13 @@ export function ConnectionDiagnosticsScreen({
   }, [device, hostId, writeClipboard])
 
   const sendDiagnostics = useCallback(async () => {
-    if (!device || !hostId || !submissionKey || submissionState === 'sending') {
+    if (
+      !device ||
+      device.canSubmit === false ||
+      !hostId ||
+      !submissionKey ||
+      submissionState === 'sending'
+    ) {
       return
     }
     const startedKey = submissionKey
@@ -97,6 +103,7 @@ export function ConnectionDiagnosticsScreen({
       diagnosis={diagnosis}
       copied={copied}
       copyDiagnostics={copyDiagnostics}
+      canSubmit={device !== null && device.canSubmit !== false}
       submissionState={submissionState}
       sendDiagnostics={sendDiagnostics}
       onBack={onBack}

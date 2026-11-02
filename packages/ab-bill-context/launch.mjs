@@ -44,7 +44,9 @@ export async function launch(planPath, args, baseEnv = process.env) {
     shell: false
   })
   const onSignal = () => {
-    void stopOwnedChild(client)
+    void stopOwnedChild(client).catch((error) => {
+      process.stderr.write(`Contexto: ${error.message}\n`)
+    })
   }
   process.on('SIGINT', onSignal)
   process.on('SIGTERM', onSignal)
@@ -55,7 +57,7 @@ export async function launch(planPath, args, baseEnv = process.env) {
       process.stderr.write(
         '\nContexto: o proxy encerrou. A sessão Claude foi interrompida; o histórico foi preservado. Não houve desvio para a API direta.\n'
       )
-      void stopOwnedChild(client)
+      onSignal()
     }
   }
   sidecar.child.once('exit', onProxyExit)
@@ -71,8 +73,11 @@ export async function launch(planPath, args, baseEnv = process.env) {
     process.off('SIGINT', onSignal)
     process.off('SIGTERM', onSignal)
     sidecar.child.off('exit', onProxyExit)
-    await stopOwnedChild(client)
-    await sidecar.stop()
+    try {
+      await stopOwnedChild(client)
+    } finally {
+      await sidecar.stop()
+    }
     await fs.writeFile(
       path.join(sidecar.runDirectory, 'closed.json'),
       `${JSON.stringify({ closedAt: new Date().toISOString(), proxyFailed })}\n`,

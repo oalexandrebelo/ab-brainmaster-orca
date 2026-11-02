@@ -1,4 +1,6 @@
 import { clampUtf8TextPrefix } from '../../../src/shared/utf8-byte-limits'
+import { isAbIosDistribution } from '../platform/ab-ios-distribution'
+import { translate } from '../i18n/mobile-i18n'
 
 const CONNECTION_DIAGNOSTICS_ENDPOINT = 'https://www.onorca.dev/v1/feedback'
 const SUBMISSION_TIMEOUT_MS = 10_000
@@ -17,6 +19,15 @@ export async function submitConnectionDiagnostics(
   submission: ConnectionDiagnosticsSubmission,
   fetchImpl: (url: string, init: RequestInit) => Promise<Response> = fetch
 ): Promise<ConnectionDiagnosticsSubmissionResult> {
+  if (isAbIosDistribution) {
+    return {
+      ok: false,
+      error: translate(
+        'abBrainmaster.diagnostics.localOnly',
+        'Use the local diagnostic report in the AB distribution.'
+      )
+    }
+  }
   const report = boundConnectionDiagnosticsReport(submission.report)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), SUBMISSION_TIMEOUT_MS)

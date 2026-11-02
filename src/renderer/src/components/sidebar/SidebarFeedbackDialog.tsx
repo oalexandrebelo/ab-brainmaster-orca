@@ -25,6 +25,8 @@ import { SidebarFeedbackImageAttachments } from './SidebarFeedbackImageAttachmen
 import { useSidebarFeedbackEnvironmentPrefill } from './use-sidebar-feedback-environment-prefill'
 import { useSidebarFeedbackImages } from './use-sidebar-feedback-images'
 import { openAppHttpLink } from '@/lib/app-http-link-open'
+import { getDistributionIdentity } from '../../../../shared/distribution-identity'
+import { AbLocalFeedbackDialog } from './AbLocalFeedbackDialog'
 
 const GITHUB_ISSUES_URL = 'https://github.com/stablyai/orca/issues/'
 const DISCORD_URL = 'https://discord.gg/fzjDKHxv8Q'
@@ -54,7 +56,15 @@ function getSubmitIdentity(viewer: GitHubViewer | null, anonymous: boolean): Sub
   }
 }
 
-export function SidebarFeedbackDialog({
+export function SidebarFeedbackDialog(props: SidebarFeedbackDialogProps): React.JSX.Element {
+  return getDistributionIdentity().upstreamSupport ? (
+    <UpstreamFeedbackDialog {...props} />
+  ) : (
+    <AbLocalFeedbackDialog {...props} />
+  )
+}
+
+function UpstreamFeedbackDialog({
   open,
   onOpenChange
 }: SidebarFeedbackDialogProps): React.JSX.Element {

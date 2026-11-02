@@ -1,0 +1,26 @@
+{
+  "name": "@ab-brainmaster/context-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./bridge.mjs",
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "test:integration": "node --test --test-isolation=none tests/*.integration.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "gpt-tokenizer": "4.0.0"
+  },
+  "peerDependencies": {
+    "@orca/process-host": "*"
+  },
+  "peerDependenciesMeta": {
+    "@orca/process-host": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

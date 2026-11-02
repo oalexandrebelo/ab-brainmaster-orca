@@ -15,6 +15,10 @@ import { createViteCacheRetentionPlugin } from './config/build-plugins/vite-cach
 import { MAIN_BUILD_ENTRY_POINTS } from './config/build-plugins/main-build-entry-points'
 import { createPlainNodeEntryGuardPlugin } from './config/build-plugins/plain-node-entry-guard'
 import { createDevServeConfig } from './config/build-plugins/dev-serve-config'
+import {
+  createDistributionMarkerPlugin,
+  createDistributionTitlePlugin
+} from './config/build-plugins/distribution-identity-marker'
 import { resolveBuildSourceCommit } from './config/scripts/build-source-commit.mjs'
 
 const BUNDLED_MAIN_DEPENDENCIES = new Set([
@@ -33,23 +37,17 @@ const BUNDLED_MAIN_DEPENDENCIES = new Set([
   // Windows NSIS copies app.asar before external resources; bootstrap must not race resources/node_modules.
   'zod'
 ])
-// Official CI alone injects ORCA_BUILD_IDENTITY (stable|rc) and ORCA_POSTHOG_WRITE_KEY secrets; other builds substitute literal null.
-// Compile-time substitution gates telemetry at module load without runtime env fallback; declarations live in src/types/build-constants.d.ts.
-const orcaBuildIdentity = process.env.ORCA_BUILD_IDENTITY
-const ORCA_BUILD_IDENTITY_LITERAL =
-  orcaBuildIdentity === 'stable' || orcaBuildIdentity === 'rc'
-    ? JSON.stringify(orcaBuildIdentity)
-    : 'null'
-const orcaPostHogWriteKey = process.env.ORCA_POSTHOG_WRITE_KEY
-const ORCA_POSTHOG_WRITE_KEY_LITERAL =
-  typeof orcaPostHogWriteKey === 'string' && orcaPostHogWriteKey.length > 0
-    ? JSON.stringify(orcaPostHogWriteKey)
-    : 'null'
-const orcaDiagnosticsTokenUrl = process.env.ORCA_DIAGNOSTICS_TOKEN_URL
-const ORCA_DIAGNOSTICS_TOKEN_URL_LITERAL =
-  typeof orcaDiagnosticsTokenUrl === 'string' && orcaDiagnosticsTokenUrl.length > 0
-    ? JSON.stringify(orcaDiagnosticsTokenUrl)
-    : 'null'
+const {
+  resolveDistributionIdentity,
+  distributionBuildDefines
+}: {
+  resolveDistributionIdentity: () => { id: string; productName: string; upstreamTelemetry: boolean }
+  distributionBuildDefines: (identity: { upstreamTelemetry: boolean }) => Record<string, string>
+} = createRequire(import.meta.url)('./config/distribution-identity.cjs')
+const distributionIdentity = resolveDistributionIdentity()
+const orcaBuildIdentity = distributionIdentity.upstreamTelemetry
+  ? process.env.ORCA_BUILD_IDENTITY
+  : null
 
 const darkBuildSwitches: {
   darkBuildDefines: () => Record<string, string>
@@ -235,15 +233,15 @@ export const electronViteConfig: UserConfig = {
           createPlainNodeEntryGuardPlugin(),
           createProcessHostDevRebuildPlugin(),
           createDarkBuildMarkerPlugin(),
+          createDistributionMarkerPlugin(distributionIdentity),
           createBrowserExtensionWorkerShimPlugin(),
           createMainLocaleSubsetPlugin()
         ]
       }
     },
     define: {
-      ORCA_BUILD_IDENTITY: ORCA_BUILD_IDENTITY_LITERAL,
-      ORCA_POSTHOG_WRITE_KEY: ORCA_POSTHOG_WRITE_KEY_LITERAL,
-      ORCA_DIAGNOSTICS_TOKEN_URL: ORCA_DIAGNOSTICS_TOKEN_URL_LITERAL,
+      ORCA_DISTRIBUTION_ID: JSON.stringify(distributionIdentity.id),
+      ...distributionBuildDefines(distributionIdentity),
       ORCA_BUILD_COMMIT: ORCA_BUILD_COMMIT_LITERAL,
       ...DARK_BUILD_DEFINES
     },
@@ -272,6 +270,7 @@ export const electronViteConfig: UserConfig = {
     // Shared node_modules installs must not share dependency optimization state across worktrees.
     cacheDir: resolve('.cache/vite/renderer'),
     define: {
+      ORCA_DISTRIBUTION_ID: JSON.stringify(distributionIdentity.id),
       ORCA_BUILD_COMMIT: ORCA_BUILD_COMMIT_LITERAL,
       ...DARK_BUILD_DEFINES
     },
@@ -286,6 +285,7 @@ export const electronViteConfig: UserConfig = {
       react(),
       tailwindcss(),
       createPdfjsViewerAssetsPlugin(),
+      createDistributionTitlePlugin(distributionIdentity),
       createViteCacheRetentionPlugin()
     ],
     worker: {

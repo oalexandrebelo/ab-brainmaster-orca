@@ -1,0 +1,28 @@
+{
+  "orca": {
+    "id": "orca",
+    "productName": "Orca",
+    "appId": "com.stablyai.orca",
+    "profileDirectory": "orca",
+    "devProfileDirectory": "orca-dev",
+    "executableName": "orca-ide",
+    "protocol": "orca",
+    "automaticUpdates": true,
+    "manageOrcaCli": true,
+    "upstreamTelemetry": true,
+    "upstreamSupport": true
+  },
+  "ab-brainmaster": {
+    "id": "ab-brainmaster",
+    "productName": "AB Brainmaster",
+    "appId": "io.github.oalexandrebelo.abbrainmaster",
+    "profileDirectory": "ab-brainmaster",
+    "devProfileDirectory": "ab-brainmaster-dev",
+    "executableName": "ab-brainmaster",
+    "protocol": null,
+    "automaticUpdates": false,
+    "manageOrcaCli": false,
+    "upstreamTelemetry": false,
+    "upstreamSupport": false
+  }
+}

@@ -4504,5 +4504,10 @@
         }
       }
     }
+  },
+  "abBrainmaster": {
+    "diagnostics": {
+      "localOnly": "Use the local diagnostic report in the AB distribution."
+    }
   }
 }

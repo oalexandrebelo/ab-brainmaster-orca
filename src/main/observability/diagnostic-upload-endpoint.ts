@@ -1,4 +1,9 @@
+import { getDistributionIdentity } from '../../shared/distribution-identity'
+
 export function resolveDiagnosticBuildTokenEndpoint(): string | null {
+  if (!getDistributionIdentity().upstreamSupport) {
+    return null
+  }
   const endpoint =
     typeof ORCA_DIAGNOSTICS_TOKEN_URL !== 'undefined'
       ? ORCA_DIAGNOSTICS_TOKEN_URL
@@ -17,6 +22,9 @@ export function resolveDiagnosticBuildIdentity(): 'stable' | 'rc' | null {
 }
 
 export function resolveDiagnosticTokenEndpoint(): string | null {
+  if (!getDistributionIdentity().upstreamSupport) {
+    return null
+  }
   const buildEndpoint = resolveDiagnosticBuildTokenEndpoint()
   // Pin official builds to the support endpoint named by the UI, regardless of user environment.
   if (resolveDiagnosticBuildIdentity()) {

@@ -6,11 +6,13 @@ on:
     paths:
       - 'packages/ab-bill-context/**'
       - 'packages/ab-upstream-review/**'
+      - 'packages/ab-context-bridge/**'
       - '.github/workflows/ab-extensions.yml'
   pull_request:
     paths:
       - 'packages/ab-bill-context/**'
       - 'packages/ab-upstream-review/**'
+      - 'packages/ab-context-bridge/**'
       - '.github/workflows/ab-extensions.yml'
   workflow_dispatch:
 
@@ -30,8 +32,11 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.22.1'
-      - name: Run dependency-free contracts
+      - name: Install context adapter dependencies from shrinkwrap
+        run: npm ci --prefix packages/ab-context-bridge --ignore-scripts --omit=optional --no-audit --no-fund
+      - name: Run AB contracts
         run: >-
           node --test --test-isolation=none
           packages/ab-bill-context/tests/*.test.mjs
           packages/ab-upstream-review/tests/*.test.mjs
+          packages/ab-context-bridge/tests/*.test.mjs

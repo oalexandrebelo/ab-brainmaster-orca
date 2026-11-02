@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>AB Brainmaster</title>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#122333"/>
+  <path d="M78 364 149 148h44l71 216h-47l-15-50h-63l-15 50Zm73-92h38l-19-66Z" fill="#7be0d3" fill-rule="evenodd"/>
+  <path d="M282 148h72c48 0 74 23 74 58 0 24-12 40-31 49 25 8 39 26 39 51 0 39-29 58-80 58h-74Zm44 42v46h25c21 0 32-8 32-23s-11-23-32-23Zm0 86v46h29c25 0 36-7 36-23 0-15-11-23-36-23Z" fill="#f5f7fa" fill-rule="evenodd"/>
+</svg>

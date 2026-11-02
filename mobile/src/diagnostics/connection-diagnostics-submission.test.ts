@@ -1,10 +1,31 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   boundConnectionDiagnosticsReport,
   submitConnectionDiagnostics
 } from './connection-diagnostics-submission'
 
+const distribution = vi.hoisted(() => ({ isAbIosDistribution: false }))
+vi.mock('../platform/ab-ios-distribution', () => distribution)
+
 describe('submitConnectionDiagnostics', () => {
+  beforeEach(() => {
+    distribution.isAbIosDistribution = false
+  })
+
+  it('blocks upstream support uploads in the AB distribution before making a request', async () => {
+    distribution.isAbIosDistribution = true
+    const fetchImpl = vi.fn<typeof fetch>()
+    const result = await submitConnectionDiagnostics(
+      { report: 'local report', appVersion: '0.1.0', platform: 'ios' },
+      fetchImpl
+    )
+    expect(result).toEqual({
+      ok: false,
+      error: 'Use the local diagnostic report in the AB distribution.'
+    })
+    expect(fetchImpl).not.toHaveBeenCalled()
+  })
+
   it('bounds a long report without encoding each retained character', () => {
     const encode = vi.spyOn(TextEncoder.prototype, 'encode')
     let output: string

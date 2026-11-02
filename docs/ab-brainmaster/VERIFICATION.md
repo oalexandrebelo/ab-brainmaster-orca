@@ -1,6 +1,12 @@
-# Verificação da entrega AB
+# Verificação da base P0 e correções posteriores
 
-Data: 2 de novembro de 2026. Base de comportamento auditada: `d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb`. Plataforma de execução desta sessão: Linux, Node 24.22.1. As verificações abaixo têm escopos diferentes e não devem ser somadas como certificação do aplicativo inteiro.
+Data: 2 de novembro de 2026. Base de comportamento auditada: `d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb`. Plataforma de execução: Linux, Node 24.22.1. As tabelas abaixo preservam a evidência da entrega P0; verificações posteriores não alteram retroativamente esses resultados. Os escopos diferentes não devem ser somados como certificação do aplicativo inteiro.
+
+A implementação posterior e os gates próprios de host, contexto, servidor, modelo local, contêiner, appliance e iOS estão em [PHASES_P1_P5.md](PHASES_P1_P5.md).
+
+## Correção de compatibilidade na continuação P1
+
+A conclusão inicial de incompatibilidade baseada somente em `package.json` estava incompleta. O runtime usa `pluginHostVersion(appVersion)`, que escolhe a maior versão entre o aplicativo e os contratos de plugin implementados. `src/main/startup/main-process-plugins.ts` aplica essa versão efetiva. Os dois ensaios de schema foram corrigidos para testar a função real. Ambos passaram sem reduzir requisitos dos manifestos ou alterar a versão do pacote. A instalação imutável, consentimento por fingerprint, processos worker e bridge dos dois módulos também passaram no ensaio de runtime P1. Esses resultados não equivalem, por si só, à validação visual de todos os clientes e plataformas.
 
 ## Ensaios executados
 
@@ -77,9 +83,9 @@ pnpm check:changed \
   --maxWorkers=2 --timeout=5
 ```
 
-## Gates que permanecem abertos
+## Gates registrados ao término de P0
 
-- Executável Orca com versão/ABI compatíveis: base declara 1.4.214, painel de revisão exige 1.4.246 e contexto exige 1.4.248. Não reduzir os requisitos para silenciar essa diferença.
+- A hipótese de incompatibilidade pelo número `1.4.214` foi corrigida na continuação P1 conforme a seção inicial. Build, instalação e interface devem continuar sendo provados separadamente.
 - Carregamento e uso dos painéis em um build desktop compatível, incluindo teclado, contraste, leitor de tela e clientes remotos.
 - Ponte de identidade para worktrees Git antes de ampliar o toggle de contexto.
 - Integração instalada com BBrainX/AB-S00S, embora os contratos de fonte tenham sido inspecionados.
