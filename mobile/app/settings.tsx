@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router'
 import SettingsMenuScreen from '../src/settings/settings-menu-screen'
 import { PendingCredentialCleanupCard } from '../src/settings/pending-credential-cleanup-card'
 import { SettingsAppUpdateSection } from '../src/settings/settings-app-update-section'
+import { isAbIosDistribution } from '../src/platform/ab-ios-distribution'
 
 export default function NativeSettingsRoute() {
   const router = useRouter()
@@ -11,7 +12,7 @@ export default function NativeSettingsRoute() {
       push={(route) => router.push(route)}
       openExternal={(url) => Linking.openURL(url)}
     >
-      <SettingsAppUpdateSection />
+      {isAbIosDistribution ? null : <SettingsAppUpdateSection />}
       <PendingCredentialCleanupCard />
     </SettingsMenuScreen>
   )

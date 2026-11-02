@@ -18,6 +18,8 @@ const wallUpdate = vi.hoisted(() => {
 
 // The release the installed app's update check found; the real hook imports the checker module.
 vi.mock('../app-update/use-wall-app-update', () => ({ useWallAppUpdate: () => wallUpdate.current }))
+const distribution = vi.hoisted(() => ({ isAbIosDistribution: false }))
+vi.mock('../platform/ab-ios-distribution', () => distribution)
 
 vi.mock('react-native', () => ({
   Linking: { openURL: nativeTestState.openUrl },
@@ -65,6 +67,7 @@ describe('ProtocolBlockScreen', () => {
   beforeEach(() => {
     nativeTestState.openUrl.mockClear()
     nativeTestState.platform.OS = 'ios'
+    distribution.isAbIosDistribution = false
   })
 
   afterEach(() => {
@@ -73,6 +76,19 @@ describe('ProtocolBlockScreen', () => {
   })
 
   // Why: the protocol wall shipped before the bundle one; its copy is what users already see.
+  it('keeps a manual AB installation out of the upstream App Store listing', () => {
+    distribution.isAbIosDistribution = true
+    const output = render({
+      kind: 'blocked',
+      reason: 'mobile-too-old',
+      desktopVersion: 5,
+      requiredMobileVersion: 99
+    })
+    expect(output).toContain('Update AB BRAINMASTER ORCA')
+    expect(output).toContain('signed AB BRAINMASTER ORCA package')
+    expect(output).not.toContain('Open App Store')
+    expect(pressableCount()).toBe(1)
+  })
   it('keeps the existing protocol wall rendering unchanged', () => {
     const mobile = render({
       kind: 'blocked',

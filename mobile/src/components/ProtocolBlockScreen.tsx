@@ -1,5 +1,6 @@
 import { useWallAppUpdate } from '../app-update/use-wall-app-update'
 import { openExternalLink } from '../platform/external-link'
+import { isAbIosDistribution } from '../platform/ab-ios-distribution'
 import { useRouteHandoff } from '../navigation/route-handoff'
 import { Platform, Pressable, Text, View } from 'react-native'
 import { colors, radii, spacing, typography } from '../theme/mobile-theme'
@@ -118,17 +119,28 @@ export function ProtocolBlockScreen({ verdict }: Props) {
     : { label: mobileUpdateTarget.label, url: mobileUpdateTarget.url }
   // No download to offer when the fix is a refetch: reconnecting is what this screen leaves you to do.
   const primaryAction =
-    remedy === 'refresh-bundle'
+    remedy === 'refresh-bundle' || (isAbIosDistribution && remedy === 'update-mobile')
       ? null
       : remedy === 'update-mobile'
         ? mobileAction
         : {
             label: t('components.protocolBlockScreen.openGitHubReleases', 'Open GitHub Releases'),
-            url: RELEASES_URL
+            url: isAbIosDistribution
+              ? 'https://github.com/oalexandrebelo/ab-brainmaster-orca'
+              : RELEASES_URL
           }
 
-  const title = blockTitle(remedy, t)
-  const body = blockBody(verdict, remedy, t)
+  const title =
+    isAbIosDistribution && remedy === 'update-mobile'
+      ? t('components.protocolBlockScreen.updateAbMobileTitle', 'Update AB BRAINMASTER ORCA')
+      : blockTitle(remedy, t)
+  const body =
+    isAbIosDistribution && remedy === 'update-mobile'
+      ? t(
+          'components.protocolBlockScreen.updateAbMobileBody',
+          'Install the newer signed AB BRAINMASTER ORCA package supplied by your administrator, then reconnect to this host.'
+        )
+      : blockBody(verdict, remedy, t)
   const recoveryNote =
     remedy === 'refresh-bundle'
       ? t(

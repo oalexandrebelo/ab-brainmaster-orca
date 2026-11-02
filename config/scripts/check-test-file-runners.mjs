@@ -130,6 +130,12 @@ const NON_UNIT_TEST_RUNNERS = [
     ],
     sources: ['packages/ab-bill-context/package.json', 'packages/ab-upstream-review/package.json'],
     mirrors: ['"test:integration"', 'node --test --test-isolation=none tests/*.integration.mjs']
+  },
+  {
+    name: 'AB iOS signing contracts',
+    include: ['mobile/scripts/ab-ios-signing.test.mjs'],
+    sources: ['.github/workflows/ab-ios-native.yml'],
+    mirrors: ['node --test scripts/ab-ios-signing.test.mjs']
   }
 ]
 

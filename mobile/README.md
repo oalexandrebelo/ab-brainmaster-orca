@@ -2,6 +2,13 @@
 
 React Native companion app for Orca. Monitor worktrees, view terminal output, and send commands from your phone.
 
+For the separate **AB BRAINMASTER ORCA iOS** identity and signed device distribution, use
+[`docs/ab-brainmaster/IOS_DISTRIBUTION.md`](../docs/ab-brainmaster/IOS_DISTRIBUTION.md).
+The AB entry point is `node scripts/ab-ios.mjs`; `preflight` is read-only, `build` archives
+and exports locally, and `install` installs an already verified IPA on the selected device.
+`build --unsigned` produces a CI validation archive, not an installable IPA. The upstream
+Fastlane release lanes below are not the AB distribution workflow.
+
 Local development uses two processes:
 
 - Orca desktop/Electron from the repo root. This hosts the mobile WebSocket RPC server on port `6768`.

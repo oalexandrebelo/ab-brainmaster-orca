@@ -1151,7 +1151,9 @@
       "getVersion": "Get Orca {{version}}",
       "refreshRecoveryNote": "If this message stays, remove this host and pair it again.",
       "updateRecoveryNote": "Already updated? Go back to Hosts and refresh the connection. If this message stays, remove this host and pair it again.",
-      "backToHosts": "Back to hosts"
+      "backToHosts": "Back to hosts",
+      "updateAbMobileTitle": "Update AB BRAINMASTER ORCA",
+      "updateAbMobileBody": "Install the newer signed AB BRAINMASTER ORCA package supplied by your administrator, then reconnect to this host."
     },
     "setupHookTrustDrawer": {
       "scriptChangedTitle": "{{repoName}}'s setup script changed",

@@ -6,11 +6,21 @@ vi.mock('expo-notifications', () => ({
   getDevicePushTokenAsync: vi.fn(),
   addPushTokenListener: vi.fn()
 }))
+const distribution = vi.hoisted<{
+  abIosApnsEnvironment: 'sandbox' | 'production' | null
+  abIosRemotePushEnabled: boolean
+}>(() => ({
+  abIosApnsEnvironment: null,
+  abIosRemotePushEnabled: true
+}))
+vi.mock('../platform/ab-ios-distribution', () => distribution)
 
 const dev = globalThis as { __DEV__?: boolean }
 
 beforeEach(() => {
   vi.clearAllMocks()
+  distribution.abIosApnsEnvironment = null
+  distribution.abIosRemotePushEnabled = true
 })
 
 afterEach(() => {
@@ -18,6 +28,22 @@ afterEach(() => {
 })
 
 describe('getDevicePushToken', () => {
+  it('does not register a remote token when the AB capability is disabled', async () => {
+    distribution.abIosRemotePushEnabled = false
+    await expect(getDevicePushToken()).resolves.toBeNull()
+    addPushTokenListener(() => {})()
+    expect(Notifications.getDevicePushTokenAsync).not.toHaveBeenCalled()
+    expect(Notifications.addPushTokenListener).not.toHaveBeenCalled()
+  })
+  it('uses the embedded APNs environment for a Release build signed for development', async () => {
+    dev.__DEV__ = false
+    distribution.abIosApnsEnvironment = 'sandbox'
+    vi.mocked(Notifications.getDevicePushTokenAsync).mockResolvedValue({
+      type: 'ios',
+      data: 'a'.repeat(64)
+    } as never)
+    await expect(getDevicePushToken()).resolves.toMatchObject({ apnsEnvironment: 'sandbox' })
+  })
   it.each([
     [true, 'sandbox'],
     [false, 'production']

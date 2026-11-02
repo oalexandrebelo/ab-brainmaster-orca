@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications'
+import { abIosApnsEnvironment, abIosRemotePushEnabled } from '../platform/ab-ios-distribution'
 import type {
   MobilePushApnsEnvironment,
   MobilePushPlatform
@@ -14,6 +15,9 @@ export type MobilePushToken = {
 
 // Dev-client builds are debug and get sandbox APNs; TestFlight and App Store are release.
 function apnsEnvironment(): MobilePushApnsEnvironment {
+  if (abIosApnsEnvironment) {
+    return abIosApnsEnvironment
+  }
   return typeof __DEV__ !== 'undefined' && __DEV__ ? 'sandbox' : 'production'
 }
 
@@ -28,6 +32,9 @@ function toMobilePushToken(raw: { type: string; data: unknown }): MobilePushToke
 }
 
 export async function getDevicePushToken(): Promise<MobilePushToken | null> {
+  if (!abIosRemotePushEnabled) {
+    return null
+  }
   try {
     return toMobilePushToken(await Notifications.getDevicePushTokenAsync())
   } catch {
@@ -36,6 +43,9 @@ export async function getDevicePushToken(): Promise<MobilePushToken | null> {
 }
 
 export function addPushTokenListener(listener: (token: MobilePushToken) => void): () => void {
+  if (!abIosRemotePushEnabled) {
+    return () => {}
+  }
   try {
     const subscription = Notifications.addPushTokenListener((raw) => {
       const token = toMobilePushToken(raw)

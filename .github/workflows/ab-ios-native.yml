@@ -1,0 +1,73 @@
+name: AB iOS native archive (unsigned)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['ab-brainmaster/main', 'ab-brainmaster/ios-candidate']
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/ab-ios-native.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ab-ios-native-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios-native:
+    if: github.repository == 'oalexandrebelo/ab-brainmaster-orca'
+    runs-on: macos-15
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+      AB_IOS_VARIANT: brainmaster
+      AB_IOS_APS_ENVIRONMENT: disabled
+      BUNDLE_FROZEN: 'true'
+      EXPO_NO_TELEMETRY: '1'
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.22.1'
+      - name: Install pinned pnpm and mobile dependencies
+        run: |
+          npm install --global pnpm@12.14.0
+          pnpm install --frozen-lockfile
+      - uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: mobile
+      - name: Validate signing guards and configuration
+        run: |
+          node --test scripts/ab-ios-signing.test.mjs
+          node scripts/ab-ios.mjs preflight --unsigned
+      - name: Verify native push and protocol behavior
+        run: pnpm exec vitest run src/notifications/push-token.test.ts src/components/ProtocolBlockScreen.test.ts --maxWorkers=2
+      - name: Archive physical-device Release without signing
+        run: node scripts/ab-ios.mjs build --unsigned --output build/ab-ios-ci
+      - name: Preserve the unsigned archive
+        run: |
+          tar -czf build/AB-BRAINMASTER-ORCA-UNSIGNED.xcarchive.tar.gz -C build/ab-ios-ci AB-BRAINMASTER-ORCA-UNSIGNED.xcarchive
+          cat build/ab-ios-ci/build-evidence.json >> "$GITHUB_STEP_SUMMARY"
+          printf '\nThis is an unsigned device archive. It is not an installable IPA.\n' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload archive and build evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: AB-BRAINMASTER-ORCA-iOS-UNSIGNED-${{ github.sha }}
+          path: |
+            mobile/build/AB-BRAINMASTER-ORCA-UNSIGNED.xcarchive.tar.gz
+            mobile/build/ab-ios-ci/build-evidence.json
+            mobile/build/ab-ios-ci/preflight.json
+            mobile/build/ab-ios-ci/*.log
+          if-no-files-found: warn
+          retention-days: 7
