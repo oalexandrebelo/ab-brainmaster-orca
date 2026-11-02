@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AB-BRAINMASTER · Contexto</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        color: var(--orca-foreground);
+        background: var(--orca-background);
+        font:
+          13px Geist,
+          sans-serif;
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0;
+      }
+      p {
+        line-height: 1.5;
+      }
+      .muted,
+      small {
+        color: var(--orca-muted-foreground);
+      }
+      .card {
+        padding: 12px;
+        border: 1px solid var(--orca-border);
+        border-radius: var(--orca-radius);
+        background: var(--orca-card);
+        color: var(--orca-card-foreground);
+        margin: 16px 0;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      label {
+        display: block;
+        margin: 12px 0 6px;
+      }
+      input,
+      select {
+        width: 100%;
+        font: inherit;
+        padding: 8px;
+        border: 1px solid var(--orca-input);
+        color: var(--orca-foreground);
+        background: var(--orca-background);
+        border-radius: calc(var(--orca-radius) - 2px);
+      }
+      button {
+        font: inherit;
+        padding: 8px 12px;
+        cursor: pointer;
+        border: 1px solid var(--orca-border);
+        border-radius: calc(var(--orca-radius) - 2px);
+        color: var(--orca-secondary-foreground);
+        background: var(--orca-secondary);
+      }
+      button.primary {
+        color: var(--orca-primary-foreground);
+        background: var(--orca-primary);
+      }
+      button[role='switch'][aria-checked='true'] {
+        color: var(--orca-primary-foreground);
+        background: var(--orca-primary);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      :focus-visible {
+        outline: 2px solid var(--orca-ring);
+        outline-offset: 2px;
+      }
+      #message {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        min-height: 40px;
+      }
+      #message[data-error='true'] {
+        color: var(--orca-destructive);
+      }
+      .actions {
+        margin-top: 16px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      footer {
+        padding-top: 12px;
+        border-top: 1px solid var(--orca-border);
+        font-size: 12px;
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="row">
+      <h1>Contexto</h1>
+      <button
+        id="toggle"
+        type="button"
+        role="switch"
+        aria-checked="false"
+        aria-label="Compressão para novos terminais Claude"
+        disabled
+      >
+        Desligado
+      </button>
+    </div>
+    <p class="muted">
+      Compressão incremental para novas sessões Claude em um workspace local de pasta.
+    </p>
+    <section class="card" aria-label="Estado da integração">
+      <strong id="state">Carregando estado…</strong>
+      <p id="scope" class="muted">As sessões abertas mantêm seu proxy quando você desliga.</p>
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+    <details open>
+      <summary>Preparar execução local</summary>
+      <form id="setup">
+        <label for="workspaceId">Workspace local de pasta</label>
+        <select id="workspaceId" required>
+          <option value="">Selecione um workspace de pasta</option>
+        </select>
+        <label for="nodePath">Executável Node 24 ou superior</label>
+        <input id="nodePath" required autocomplete="off" placeholder="Caminho absoluto do node" />
+        <label for="biliEntry">billion-context 0.1.212 · dist/index.js</label>
+        <input
+          id="biliEntry"
+          required
+          autocomplete="off"
+          placeholder="Caminho absoluto do arquivo instalado"
+        />
+        <label for="claudePath">Executável Claude</label>
+        <input
+          id="claudePath"
+          required
+          autocomplete="off"
+          placeholder="Caminho absoluto do claude"
+        />
+        <label for="dataDirectory">Diretório para guardar as sessões</label>
+        <input
+          id="dataDirectory"
+          required
+          autocomplete="off"
+          placeholder="Escolha uma pasta local privada"
+        />
+        <label for="upstream">Endpoint Anthropic do modelo</label>
+        <input id="upstream" required type="url" value="https://api.anthropic.com" />
+        <label for="contextWindow">Limite de contexto do modelo · tokens</label>
+        <input
+          id="contextWindow"
+          required
+          type="number"
+          min="4096"
+          max="10000000"
+          step="1"
+          placeholder="Limite real da sua implantação"
+        />
+        <p>
+          <small
+            >A execução requer ANTHROPIC_API_KEY no terminal. Conversas e resumos ficam em disco;
+            cada chamada segue para o endpoint escolhido. A janela do modelo continua tendo seu
+            limite real.</small
+          >
+        </p>
+        <div class="actions">
+          <button class="primary" type="submit" id="prepare">Verificar configuração</button>
+        </div>
+      </form>
+    </details>
+    <p class="muted">
+      Compatível neste candidato: workspace de pasta, Linux/macOS, Claude CLI com chave de API,
+      sessão nova. Worktrees Git, OAuth, chat interno, retomadas, Windows, SSH e WSL ainda não são
+      cobertos. Requer Orca 1.4.248 ou superior; o checkout auditado declara 1.4.214.
+    </p>
+    <footer>
+      Usa
+      <a id="credits" href="https://github.com/ranxianglei/billion-context">billion-context</a> e
+      acp-kernel. Busca BBrainX/AB-S00S ainda não está conectada por este plugin.
+    </footer>
+    <script type="module">
+      const fields = [
+        'workspaceId',
+        'nodePath',
+        'biliEntry',
+        'claudePath',
+        'dataDirectory',
+        'upstream',
+        'contextWindow'
+      ]
+      const toggle = document.querySelector('#toggle'),
+        message = document.querySelector('#message')
+      let snapshot = { enabled: false, ready: false },
+        busy = false
+      const display = (state) => {
+        snapshot = state
+        toggle.setAttribute('aria-checked', String(state.enabled))
+        toggle.textContent = state.enabled ? 'Ligado' : 'Desligado'
+        toggle.disabled = busy || (!state.enabled && !state.ready)
+        document.querySelector('#state').textContent = state.enabled
+          ? 'Ligado para novos terminais'
+          : state.ready
+            ? 'Configuração verificada'
+            : 'Configuração pendente'
+        document.querySelector('#scope').textContent = state.workspaceId
+          ? `Workspace: ${state.workspaceId}. Sessões já abertas mantêm seu proxy.`
+          : 'Escolha o workspace e verifique os executáveis antes de ligar.'
+        if (state.error) {
+          message.textContent = state.error
+          message.dataset.error = 'true'
+        }
+      }
+      async function action(work) {
+        busy = true
+        display(snapshot)
+        document.querySelector('#prepare').disabled = true
+        message.textContent = 'Verificando…'
+        message.dataset.error = 'false'
+        try {
+          display(await work())
+          message.textContent = 'Configuração atualizada.'
+        } catch (error) {
+          message.textContent = error.message
+          message.dataset.error = 'true'
+        } finally {
+          busy = false
+          display(snapshot)
+          document.querySelector('#prepare').disabled = false
+        }
+      }
+      document.querySelector('#setup').addEventListener('submit', (event) => {
+        event.preventDefault()
+        void action(() =>
+          orca.plugin.request(
+            'context.prepare',
+            Object.fromEntries(fields.map((key) => [key, document.getElementById(key).value])),
+            { timeoutMs: 30000 }
+          )
+        )
+      })
+      toggle.addEventListener('click', () =>
+        action(() => orca.plugin.request('context.enable', { enabled: !snapshot.enabled }))
+      )
+      document.querySelector('#credits').addEventListener('click', (event) => {
+        event.preventDefault()
+        void orca.shell.openExternal(event.currentTarget.href)
+      })
+      orca.plugin.on('context.changed', display)
+      try {
+        display(await orca.plugin.request('context.state', {}))
+        const { workspaces } = await orca.plugin.request('context.workspaces', {})
+        for (const workspace of workspaces.filter(
+          (item) =>
+            [null, 'local'].includes(item.hostId) &&
+            item.kind === 'folder' &&
+            /^folder:.+/.test(item.id)
+        )) {
+          const option = document.createElement('option')
+          option.value = workspace.id
+          option.textContent = workspace.name
+          document.querySelector('#workspaceId').append(option)
+        }
+      } catch (error) {
+        message.textContent = error.message
+        message.dataset.error = 'true'
+      }
+    </script>
+  </body>
+</html>

@@ -1,3 +1,15 @@
+# AB-BRAINMASTER-ORCA — desenvolvimento
+
+Fork do Orca para o AB-BRAINMASTER, com base auditada e extensões isoladas.
+
+- [Estado, escopo e uso das extensões AB](AB_README.md)
+- [Plano de engenharia](docs/ab-brainmaster/MASTER_PLAN.md)
+- [Auditoria e mapas](docs/ab-brainmaster/maps/README.md)
+
+Esta branch contém fontes de desenvolvimento. Os downloads, marcas e instruções do projeto original abaixo pertencem ao Orca upstream; não são instaladores AB homologados.
+
+---
+
 <h1 align="center">
   <a href="https://onOrca.dev"><img src="resources/build/icon.png" alt="Orca" width="64" valign="middle" /></a> Orca
 </h1>

@@ -1,0 +1,142 @@
+[
+  {
+    "ok": true,
+    "status": "pass",
+    "gates": {
+      "validate": "pass",
+      "deliver": "pass",
+      "check": "pass",
+      "browser-check": "pass"
+    },
+    "diagnostics": [],
+    "specification": {
+      "path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/ab-brainmaster/maps/MAPA_ORCA_DESKTOP.json",
+      "sha256": "21be6eaed9c6d96966eee5d1e8ddd301192aa4584f214b347a8f2f879326c094",
+      "bytes": 36521
+    },
+    "artifact": {
+      "path": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/MAPA_ORCA_DESKTOP.html",
+      "sha256": "445a4345b720282fa602b60baf224313fe6fdb0e7be74abf4e4c004573f7cd95",
+      "bytes": 847150
+    },
+    "evidence": {
+      "receipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_DESKTOP/MAPA_ORCA_DESKTOP.~archify-faa6c2f3859475ff0ab6258499259ae17976aeb5cf01bdcfe6ab95f4136c953c.~archify-caa4c591389d241e173020e857793f8bc06df555162a90d9557ad9ac8b6d41ff.finalize.json",
+      "summaryReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_DESKTOP/MAPA_ORCA_DESKTOP.~archify-faa6c2f3859475ff0ab6258499259ae17976aeb5cf01bdcfe6ab95f4136c953c.~archify-caa4c591389d241e173020e857793f8bc06df555162a90d9557ad9ac8b6d41ff.finalize-summary.json",
+      "browserCheckReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_DESKTOP/MAPA_ORCA_DESKTOP.~archify-faa6c2f3859475ff0ab6258499259ae17976aeb5cf01bdcfe6ab95f4136c953c.browser-check.json"
+    },
+    "visualReview": "not-requested",
+    "map": "MAPA_ORCA_DESKTOP"
+  },
+  {
+    "ok": true,
+    "status": "pass",
+    "gates": {
+      "validate": "pass",
+      "deliver": "pass",
+      "check": "pass",
+      "browser-check": "pass"
+    },
+    "diagnostics": [],
+    "specification": {
+      "path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/ab-brainmaster/maps/MAPA_ORCA_PROJETO.json",
+      "sha256": "8f89b150aa12010df593eefb05ce6e67c9e663cf91b21f0d1837c0ec0cdbde3a",
+      "bytes": 37434
+    },
+    "artifact": {
+      "path": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/MAPA_ORCA_PROJETO.html",
+      "sha256": "e7aa9fe4320ab882b5de785e693190d5373f94da2058ce9f3e6e9ed3247d5ee2",
+      "bytes": 848270
+    },
+    "evidence": {
+      "receipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_PROJETO/MAPA_ORCA_PROJETO.~archify-ec0256668034f11985ac600abe9090222dc410e63624d911e9eae9e5b177969b.~archify-61a414c31bdeefe8a2c47e01fcd32e22bb266e5ff3efc81645e6fc1ccb7c3ba6.finalize.json",
+      "summaryReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_PROJETO/MAPA_ORCA_PROJETO.~archify-ec0256668034f11985ac600abe9090222dc410e63624d911e9eae9e5b177969b.~archify-61a414c31bdeefe8a2c47e01fcd32e22bb266e5ff3efc81645e6fc1ccb7c3ba6.finalize-summary.json",
+      "browserCheckReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_PROJETO/MAPA_ORCA_PROJETO.~archify-ec0256668034f11985ac600abe9090222dc410e63624d911e9eae9e5b177969b.browser-check.json"
+    },
+    "visualReview": "not-requested",
+    "map": "MAPA_ORCA_PROJETO"
+  },
+  {
+    "ok": true,
+    "status": "pass",
+    "gates": {
+      "validate": "pass",
+      "deliver": "pass",
+      "check": "pass",
+      "browser-check": "pass"
+    },
+    "diagnostics": [],
+    "specification": {
+      "path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/ab-brainmaster/maps/MAPA_ORCA_REMOTO.json",
+      "sha256": "05b96712f63879987617c043fc47703f0d72884fb9083f36068ed59f1abf2851",
+      "bytes": 36560
+    },
+    "artifact": {
+      "path": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/MAPA_ORCA_REMOTO.html",
+      "sha256": "e707010cdc8129f67fe2b2f8b341c7c1e40fa3e4aa9eb8b40fb42cfb56087d6e",
+      "bytes": 844909
+    },
+    "evidence": {
+      "receipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_REMOTO/MAPA_ORCA_REMOTO.~archify-6ee7973f23caa7b8ba8d18e30aa025ec9742308b020aa5e00b130654a8434cd7.~archify-b168537a0ec0dff382090a4269365e142a6439fa8a25cdf52f1cc08f5e180fbc.finalize.json",
+      "summaryReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_REMOTO/MAPA_ORCA_REMOTO.~archify-6ee7973f23caa7b8ba8d18e30aa025ec9742308b020aa5e00b130654a8434cd7.~archify-b168537a0ec0dff382090a4269365e142a6439fa8a25cdf52f1cc08f5e180fbc.finalize-summary.json",
+      "browserCheckReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_REMOTO/MAPA_ORCA_REMOTO.~archify-6ee7973f23caa7b8ba8d18e30aa025ec9742308b020aa5e00b130654a8434cd7.browser-check.json"
+    },
+    "visualReview": "not-requested",
+    "map": "MAPA_ORCA_REMOTO"
+  },
+  {
+    "ok": true,
+    "status": "pass",
+    "gates": {
+      "validate": "pass",
+      "deliver": "pass",
+      "check": "pass",
+      "browser-check": "pass"
+    },
+    "diagnostics": [],
+    "specification": {
+      "path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/ab-brainmaster/maps/MAPA_ORCA_PLUGINS.json",
+      "sha256": "d8eb282715adcb941e2cdb6a09c93d6d8d8bf7bf5e744d2ac9dd56fb2ff55f7f",
+      "bytes": 36859
+    },
+    "artifact": {
+      "path": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/MAPA_ORCA_PLUGINS.html",
+      "sha256": "347cc7aa52f11fe9423d977578b58bc4332b5da310283c1a424e283d79f55b03",
+      "bytes": 846413
+    },
+    "evidence": {
+      "receipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_PLUGINS/MAPA_ORCA_PLUGINS.~archify-4783d1fa3015c3be509a2430e7652d5fd0114e17fb6cca016459e5590ee65783.~archify-93d970e52f3a21a415ecf8edd35c88b8add125fa89400e4ca9a550a987dc4997.finalize.json",
+      "summaryReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_PLUGINS/MAPA_ORCA_PLUGINS.~archify-4783d1fa3015c3be509a2430e7652d5fd0114e17fb6cca016459e5590ee65783.~archify-93d970e52f3a21a415ecf8edd35c88b8add125fa89400e4ca9a550a987dc4997.finalize-summary.json",
+      "browserCheckReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_ORCA_PLUGINS/MAPA_ORCA_PLUGINS.~archify-4783d1fa3015c3be509a2430e7652d5fd0114e17fb6cca016459e5590ee65783.browser-check.json"
+    },
+    "visualReview": "not-requested",
+    "map": "MAPA_ORCA_PLUGINS"
+  },
+  {
+    "ok": true,
+    "status": "pass",
+    "gates": {
+      "validate": "pass",
+      "deliver": "pass",
+      "check": "pass",
+      "browser-check": "pass"
+    },
+    "diagnostics": [],
+    "specification": {
+      "path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/ab-brainmaster/maps/MAPA_AB_ALVO.json",
+      "sha256": "9887b7baa9367993220d85a727b0cc6c6c278a217c589b56bc1f6b0c5d90375c",
+      "bytes": 35491
+    },
+    "artifact": {
+      "path": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/MAPA_AB_ALVO.html",
+      "sha256": "915f5b2895d0d4e9c5e23acd9a443568a743c8ce47917f3e45689a67e0ab4491",
+      "bytes": 846604
+    },
+    "evidence": {
+      "receipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_AB_ALVO/MAPA_AB_ALVO.~archify-026a578b1124cb74fd8fa7666161f49b1a7a5e914f5d6fa1bf5c27312ea10157.~archify-f831f887db1f21cc564f7da2cd7f5f825e3a35299a1d7b855401c3d412bebdef.finalize.json",
+      "summaryReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_AB_ALVO/MAPA_AB_ALVO.~archify-026a578b1124cb74fd8fa7666161f49b1a7a5e914f5d6fa1bf5c27312ea10157.~archify-f831f887db1f21cc564f7da2cd7f5f825e3a35299a1d7b855401c3d412bebdef.finalize-summary.json",
+      "browserCheckReceipt": "/workspace/scratch/43e1295b55d4/brainmaster-delivery/maps/evidence/MAPA_AB_ALVO/MAPA_AB_ALVO.~archify-026a578b1124cb74fd8fa7666161f49b1a7a5e914f5d6fa1bf5c27312ea10157.browser-check.json"
+    },
+    "visualReview": "not-requested",
+    "map": "MAPA_AB_ALVO"
+  }
+]

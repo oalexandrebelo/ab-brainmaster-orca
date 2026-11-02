@@ -155,3 +155,10 @@ ci-shards/
 /.build/windows-native-benchmark/
 
 .local/static-analysis-research/
+
+# Durable AB architecture specifications; rendered evidence is distributed separately.
+!docs/ab-brainmaster/
+!docs/ab-brainmaster/**
+docs/ab-brainmaster/maps/*.html
+docs/ab-brainmaster/maps/evidence/
+docs/ab-brainmaster/maps/*.delivery*.json

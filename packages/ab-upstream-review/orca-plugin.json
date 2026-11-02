@@ -1,0 +1,30 @@
+{
+  "manifestVersion": 2,
+  "execution": "trusted-worker",
+  "id": "ab-upstream-review",
+  "name": "AB-BRAINMASTER · Atualizações do Orca",
+  "version": "0.1.0",
+  "description": "Compara a base fixada do fork com o upstream público após uma solicitação explícita.",
+  "license": "MIT",
+  "engines": { "orca": ">=1.4.246" },
+  "pluginApi": 1,
+  "main": "worker.mjs",
+  "capabilities": [],
+  "contributes": {
+    "panels": [
+      {
+        "id": "upstream",
+        "title": "Atualizações do Orca",
+        "icon": "branch",
+        "entry": "panel.html",
+        "ui": "html"
+      }
+    ],
+    "skills": [],
+    "mcpServers": [],
+    "taskSources": [],
+    "connections": [],
+    "sidebarCards": [],
+    "agentHarnesses": []
+  }
+}

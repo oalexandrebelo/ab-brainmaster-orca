@@ -1,0 +1,762 @@
+{
+  "format": 1,
+  "project": "AB-BRAINMASTER-ORCA",
+  "researchedAt": "2026-11-02",
+  "baseSha": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+  "implementation": "packages/ab-upstream-review",
+  "liveCommand": "node --use-env-proxy packages/ab-upstream-review/cli.mjs review",
+  "liveReview": {
+    "format": 1,
+    "repository": "stablyai/orca",
+    "baseSha": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+    "targetRef": "main",
+    "targetSha": "509461af4f25cd1b65d9c153b62ae299fb1bda65",
+    "checkedAt": "2026-11-02T17:46:56.857Z",
+    "status": "complete",
+    "scope": "metadata-only",
+    "commitsComplete": true,
+    "filesComplete": true,
+    "comparison": {
+      "status": "ahead",
+      "totalCommits": 1,
+      "aheadBy": 1,
+      "behindBy": 0,
+      "mergeBaseSha": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    "commits": [
+      {
+        "sha": "509461af4f25cd1b65d9c153b62ae299fb1bda65",
+        "subject": "test: remove 332 low-value renderer tests (#37517)",
+        "subjectTruncated": false,
+        "url": "https://github.com/stablyai/orca/commit/509461af4f25cd1b65d9c153b62ae299fb1bda65"
+      }
+    ],
+    "files": [
+      {
+        "filename": "config/reliability-gates.jsonc",
+        "status": "modified",
+        "additions": 42,
+        "deletions": 59,
+        "changes": 101
+      },
+      {
+        "filename": "config/scripts/ci-shard-timings.json",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 23,
+        "changes": 23
+      },
+      {
+        "filename": "src/renderer/src/lib/open-mobile-emulator-tab.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 122,
+        "changes": 122
+      },
+      {
+        "filename": "src/renderer/src/lib/open-tab-occupant-agent.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 214,
+        "changes": 214
+      },
+      {
+        "filename": "src/renderer/src/lib/orca-yaml-trust-prompt-slot-eviction.test.ts",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 4,
+        "changes": 6
+      },
+      {
+        "filename": "src/renderer/src/lib/orchestration-setup-state.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 32,
+        "changes": 32
+      },
+      {
+        "filename": "src/renderer/src/lib/orchestration-skill-coverage.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 357,
+        "changes": 357
+      },
+      {
+        "filename": "src/renderer/src/lib/order-empty-query-worktrees.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 12,
+        "changes": 12
+      },
+      {
+        "filename": "src/renderer/src/lib/os-file-drop-cancellation-guard.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 54,
+        "changes": 55
+      },
+      {
+        "filename": "src/renderer/src/lib/outside-dismiss-guard.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 32,
+        "changes": 32
+      },
+      {
+        "filename": "src/renderer/src/lib/paired-runtime-closed-tab-resume.test.ts",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 17,
+        "changes": 19
+      },
+      {
+        "filename": "src/renderer/src/lib/paired-web-client-host.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 99,
+        "changes": 99
+      },
+      {
+        "filename": "src/renderer/src/lib/palette-match/palette-match-performance.test.ts",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 121,
+        "changes": 123
+      },
+      {
+        "filename": "src/renderer/src/lib/palette-repo-resolution.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 73,
+        "changes": 73
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-agent-evidence.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 82,
+        "changes": 82
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/browser-mobile-driver-state.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 39,
+        "changes": 39
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/browser-remote-viewer-state.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 28,
+        "changes": 28
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/client-hosted-browser-row-ephemerality.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 15,
+        "changes": 15
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/client-hosted-browser-row-state.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 100,
+        "changes": 100
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/mobile-driver-state.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 74,
+        "changes": 74
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/mobile-fit-overrides-hydration.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 25,
+        "changes": 25
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/mobile-fit-overrides.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 324,
+        "changes": 324
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-close-focus-successor.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 25,
+        "changes": 25
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-cursor-blink-suspension.test.ts",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 24,
+        "changes": 29
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-divider-capture-loss.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 154,
+        "changes": 154
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-divider-stray-touch.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 55,
+        "changes": 55
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-divider.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 237,
+        "changes": 238
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-dom-creation.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 106,
+        "changes": 106
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-dom-focus-class-sync-lifecycle.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 15,
+        "changes": 15
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-drag-reorder.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 109,
+        "changes": 109
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-drop-no-op.test.ts",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 54,
+        "changes": 57
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-fit-resize-observer.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 21,
+        "changes": 21
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-fit.test.ts",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 253,
+        "changes": 258
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-initial-fit-lifecycle.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 86,
+        "changes": 86
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-inline-image-recovery.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 16,
+        "changes": 16
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-key-resolution.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 34,
+        "changes": 34
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-layout-geometry-apply.test.ts",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 34,
+        "changes": 37
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-lifecycle.test.ts",
+        "status": "modified",
+        "additions": 9,
+        "deletions": 463,
+        "changes": 472
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-manager-registry.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 290,
+        "changes": 291
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-metric-options-deferral.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 103,
+        "changes": 103
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-overlay-focus.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 6,
+        "changes": 6
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-pty-resize-hold.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 102,
+        "changes": 102
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-reveal-fit.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 149,
+        "changes": 149
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-reveal-lifetime.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 53,
+        "changes": 53
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-reveal-repaint.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 296,
+        "changes": 296
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-scroll.test.ts",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 439,
+        "changes": 442
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-split-scroll.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 261,
+        "changes": 261
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-foreground-render-settle.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 13,
+        "changes": 13
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-mouse-wheel.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 636,
+        "changes": 637
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-queue-chunks.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 17,
+        "changes": 17
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-scheduler-ack-credit.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 90,
+        "changes": 90
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-scheduler-backlog-cap.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 49,
+        "changes": 49
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-scheduler-disposed-writes.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 13,
+        "changes": 13
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-scheduler-foreground-refresh.test.ts",
+        "status": "removed",
+        "additions": 0,
+        "deletions": 306,
+        "changes": 306
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-scheduler-synchronized-frames.test.ts",
+        "status": "modified",
+        "additions": 0,
+        "deletions": 324,
+        "changes": 324
+      },
+      {
+        "filename": "src/renderer/src/lib/pane-manager/pane-terminal-output-scheduler.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 361,
+        "changes": 362
+      }
+    ],
+    "risks": [
+      {
+        "id": "auth",
+        "label": "Autenticação e credenciais",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "schema",
+        "label": "Schemas e persistência",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "native",
+        "label": "Runtime nativo e plataformas",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "plugin-api",
+        "label": "APIs e contratos de plugins",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "dependencies",
+        "label": "Dependências e lockfiles",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "license",
+        "label": "Licenças e atribuições",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "ab-overlap",
+        "label": "Possível sobreposição com adaptações AB",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      }
+    ],
+    "limitations": [
+      "Triagem por metadados e caminhos; não avalia patches, compatibilidade funcional, conflitos reais nem segurança do código."
+    ],
+    "warnings": [],
+    "budget": {
+      "requests": 2,
+      "bytes": 391552,
+      "revalidated": 0
+    },
+    "error": null,
+    "compareUrl": "https://github.com/stablyai/orca/compare/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb...509461af4f25cd1b65d9c153b62ae299fb1bda65",
+    "durationMs": 888
+  },
+  "withoutProxyAttempt": {
+    "format": 1,
+    "repository": "stablyai/orca",
+    "baseSha": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+    "targetRef": "main",
+    "targetSha": null,
+    "checkedAt": "2026-11-02T17:46:20.794Z",
+    "status": "offline",
+    "scope": "metadata-only",
+    "commitsComplete": false,
+    "filesComplete": false,
+    "comparison": null,
+    "commits": [],
+    "files": [],
+    "risks": [
+      {
+        "id": "auth",
+        "label": "Autenticação e credenciais",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "schema",
+        "label": "Schemas e persistência",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "native",
+        "label": "Runtime nativo e plataformas",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "plugin-api",
+        "label": "APIs e contratos de plugins",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "dependencies",
+        "label": "Dependências e lockfiles",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "license",
+        "label": "Licenças e atribuições",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      },
+      {
+        "id": "ab-overlap",
+        "label": "Possível sobreposição com adaptações AB",
+        "count": 0,
+        "examples": [],
+        "examplesTruncated": false
+      }
+    ],
+    "limitations": [
+      "Triagem por metadados e caminhos; não avalia patches, compatibilidade funcional, conflitos reais nem segurança do código."
+    ],
+    "warnings": [],
+    "budget": {
+      "requests": 1,
+      "bytes": 0,
+      "revalidated": 0
+    },
+    "error": {
+      "code": "offline",
+      "message": "Não foi possível acessar o GitHub. Verifique a conexão e tente novamente."
+    },
+    "durationMs": 57
+  },
+  "validation": {
+    "node": "24.22.1",
+    "unitAndAdversarialTests": 12,
+    "actualOrcaSchemaTests": 1,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "zod": "4.6.7",
+    "engineRejects": "1.4.214",
+    "engineAccepts": "1.4.246",
+    "renderedInOrca": false,
+    "reason": "package declares 1.4.214; real compatible runtime not demonstrated",
+    "qualityGates": {
+      "checkedAt": "2026-11-02T17:59:48.237997+00:00",
+      "oxlint": "passed",
+      "oxfmtCheck": "passed",
+      "suiteAfterLintChanges": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "zodOrigin": "repository node_modules, installed by frozen lockfile",
+      "policyOverrides": false,
+      "controlCharacterRegressionCases": "C0 and DEL rejected in paths; C0, DEL and C1 replaced in subjects"
+    }
+  },
+  "gates": {
+    "compatibleOrcaExecutable": "open",
+    "renderedUIKeyboardScreenReader": "open",
+    "performanceBaseline": "open",
+    "inferenceBenchmark": "not-run",
+    "automaticUpdates": "not-implemented-by-design"
+  },
+  "claims": {
+    "apiMetadataEnumeration": "verified in recorded snapshot",
+    "upstreamMerged": false,
+    "pluginActivated": false,
+    "performanceSavingsProven": false,
+    "privateRatoeiraStackVerified": false,
+    "videoTranscribed": false
+  },
+  "globalScope": {
+    "asia": "DeepGEMM/DeepSeek; operator Hangzhou",
+    "russianOrigin": "ClickHouse/Yandex historical connection; current company independent with US/European locations",
+    "europe": "Qdrant/Berlin; Mistral/Paris with archived inference repository rejected",
+    "americas": "vLLM/UC Berkeley institutional origin",
+    "international": "SGLang/LMSYS and llama.cpp/ggml-org; no nationality inferred"
+  },
+  "sources": [
+    {
+      "id": "G1",
+      "url": "https://docs.github.com/en/rest/commits/commits#compare-two-commits",
+      "supports": "Compare API: pagination and 300-file cap",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "A1",
+      "url": "https://github.com/deepseek-ai/DeepGEMM",
+      "supports": "DeepGEMM kernels, MIT and GPU requirements",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "A2",
+      "url": "https://cdn.deepseek.com/policies/en-US/deepseek-open-platform-terms-of-service.html",
+      "supports": "DeepSeek operator identified in Hangzhou",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "R1",
+      "url": "https://yandex.com/company/news/2021-09-20",
+      "supports": "ClickHouse spin-off and origin at Yandex",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "R2",
+      "url": "https://clickhouse.com/company/our-story",
+      "supports": "ClickHouse incorporation and offices",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "R3",
+      "url": "https://github.com/ClickHouse/ClickHouse",
+      "supports": "ClickHouse source and Apache-2.0",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "E1",
+      "url": "https://qdrant.tech/legal/recruitment-privacy-policy/",
+      "supports": "Qdrant entity in Berlin",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "E2",
+      "url": "https://qdrant.tech/documentation/quantization/",
+      "supports": "Quantization, recall and memory tradeoffs",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "E3",
+      "url": "https://github.com/qdrant/qdrant",
+      "supports": "Qdrant source and Apache-2.0",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "E4",
+      "url": "https://mistral.ai/legal/",
+      "supports": "Mistral entity in Paris",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "E5",
+      "url": "https://github.com/mistralai/mistral-inference",
+      "supports": "Archived repository; dependency rejected",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "U1",
+      "url": "https://sky.cs.berkeley.edu/project/vllm/",
+      "supports": "vLLM Berkeley origin and PagedAttention",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "U2",
+      "url": "https://github.com/vllm-project/vllm",
+      "supports": "vLLM source and Apache-2.0",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "S1",
+      "url": "https://sgl-project.github.io/",
+      "supports": "SGLang hosted by LMSYS nonprofit",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "S2",
+      "url": "https://www.lmsys.org/blog/2024-01-17-sglang/",
+      "supports": "RadixAttention cache reuse",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "S3",
+      "url": "https://github.com/sgl-project/sglang",
+      "supports": "SGLang source and Apache-2.0",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "C1",
+      "url": "https://github.com/ggml-org/llama.cpp",
+      "supports": "llama.cpp and MIT",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    },
+    {
+      "id": "C2",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+      "supports": "llama.cpp API server",
+      "kind": "primary",
+      "accessedAt": "2026-11-02"
+    }
+  ],
+  "implementationSha256": {
+    "LICENSE": "ff1b611f80580d49f4b97e93a97b24eb050b0671b26b8afe16341fab699112f3",
+    "README.md": "a1d8fb5b8c0b42ba7b0bd8f6ae8bf56cdadf3628aa0f7278c39fe50b618cfa1b",
+    "cli.mjs": "5026796032cce0022ab20c5ede47677d332d62a5bce778cb44d4322daab2ecf8",
+    "github-contract.mjs": "072c00ef314b59689b73989de642a3b3185885663239ebad426d10806eea377c",
+    "orca-plugin.json": "d20d62997e5c4440a55ff3e0440031b7422d72e7e74479eb4de7be3f714f0d97",
+    "package.json": "c1a847a233cc42e23a1008818852f27022a349db2e18ef8ddaa279b5e6584c5e",
+    "panel.html": "5b37660f002e7f081106dd47241fa9a84eb7bfdf7151dd8ff1ade3f76bd122e3",
+    "panel.js": "35c5716610fb82c962477042c911c4dded0b2a24fcfbd407c95e6e7a19b03cc5",
+    "review.mjs": "aad935c642d8b1d5c7373b13ffb997455cc65a37a6997facf1b738b57de663ee",
+    "tests/orca-schema.integration.mjs": "c6ce60e80d26316885fcf830dc6c4e96688e19a5cc62e2cce9896f5dabcb5fd1",
+    "tests/review.test.mjs": "11c29de242f5cb54f12e1d6ddb39ad307cb842292d29fde3c1dbac270319a199",
+    "worker.mjs": "c60dd7a4373d89c5bc13109b03eed3ab4eb2f7d348765b2cb50ecfa0150193b4"
+  }
+}

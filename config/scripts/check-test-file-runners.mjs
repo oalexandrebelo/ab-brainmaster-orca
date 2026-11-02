@@ -107,6 +107,29 @@ const NON_UNIT_TEST_RUNNERS = [
     include: ['docs/site/tests/*.test.mjs'],
     sources: ['docs/site/package.json'],
     mirrors: ['node --test tests/*.test.mjs']
+  },
+  {
+    name: 'AB extension unit tests',
+    include: [
+      'packages/ab-bill-context/tests/*.test.mjs',
+      'packages/ab-upstream-review/tests/*.test.mjs'
+    ],
+    sources: ['.github/workflows/ab-extensions.yml'],
+    mirrors: [
+      'node --test --test-isolation=none',
+      'packages/ab-bill-context/tests/*.test.mjs',
+      'packages/ab-upstream-review/tests/*.test.mjs'
+    ]
+  },
+  {
+    name: 'AB extension integration tests (explicit local prerequisites)',
+    manual: true,
+    include: [
+      'packages/ab-bill-context/tests/*.integration.mjs',
+      'packages/ab-upstream-review/tests/*.integration.mjs'
+    ],
+    sources: ['packages/ab-bill-context/package.json', 'packages/ab-upstream-review/package.json'],
+    mirrors: ['"test:integration"', 'node --test --test-isolation=none tests/*.integration.mjs']
   }
 ]
 

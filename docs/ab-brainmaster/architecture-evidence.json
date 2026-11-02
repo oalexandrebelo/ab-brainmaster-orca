@@ -1,0 +1,1323 @@
+{
+  "schema_version": 1,
+  "audit_kind": "static-source-architecture-review",
+  "audited_at_utc": "2026-11-02T17:34:51.227691+00:00",
+  "upstream_repository": "https://github.com/stablyai/orca",
+  "checkout": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca",
+  "upstream_commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+  "package_version": "1.4.214",
+  "commit_date": "2026-11-02T09:09:11-08:00",
+  "scope": {
+    "upstream_code_executed": false,
+    "upstream_modified_by_this_audit": false,
+    "dependency_install_performed": false,
+    "tests_run": false,
+    "services_stopped": false,
+    "coverage": "Key architecture and trust-boundary source paths; not every file in the repository.",
+    "not_proven": [
+      "Build/packaging success",
+      "Actual platform compatibility",
+      "Network behavior",
+      "Exploitability or absence of vulnerabilities",
+      "Performance and memory characteristics",
+      "Connected external accounts",
+      "Production infrastructure deployability"
+    ]
+  },
+  "sources": [
+    {
+      "id": "E01",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "package.json",
+      "symbol": "package metadata and dependencies",
+      "start_line": 1,
+      "end_line": 390,
+      "sha256": "ac6fd934343be21fd06038416085b5e50ecb17371a252deceea33bade7d3c2df",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/package.json#L1-L390"
+    },
+    {
+      "id": "E02",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "electron.vite.config.ts",
+      "symbol": "build definitions, React and Tailwind plugins",
+      "start_line": 1,
+      "end_line": 320,
+      "sha256": "b656532abdef00191fd216a45bb9cdf58544c6ac9b9e49b63800c9fbc7d171e2",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/electron.vite.config.ts#L1-L320"
+    },
+    {
+      "id": "E03",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/index.ts",
+      "symbol": "Electron main bootstrap",
+      "start_line": 1,
+      "end_line": 180,
+      "sha256": "8269a7508eed84565d9b4bf72f6a571abe072db8642040684e04ed12a60979f2",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/index.ts#L1-L180"
+    },
+    {
+      "id": "E04",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/preload/index.ts",
+      "symbol": "contextBridge.exposeInMainWorld",
+      "start_line": 1,
+      "end_line": 215,
+      "sha256": "18a2fb3e294f7c293918dedc4e8c80fecf7c4a2e3c4139741ded5509dc663aef",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/preload/index.ts#L1-L215"
+    },
+    {
+      "id": "E05",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/main.tsx",
+      "symbol": "React renderer bootstrap",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "5bce2bbf940c8b335b6be94312b699b0b0c4d506e96764a3d0a574ccd1c5d56d",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/main.tsx#L1-L100"
+    },
+    {
+      "id": "E06",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "config/build-plugins/main-build-entry-points.ts",
+      "symbol": "MAIN_BUILD_ENTRY_POINTS",
+      "start_line": 1,
+      "end_line": 68,
+      "sha256": "aa9db7a8f92d76bca2a798e69520b24a12812bb964713855813ce294f2521ab2",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/config/build-plugins/main-build-entry-points.ts#L1-L68"
+    },
+    {
+      "id": "E07",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/window/createMainWindow.ts",
+      "symbol": "BrowserWindow webPreferences",
+      "start_line": 112,
+      "end_line": 171,
+      "sha256": "1fcf87af69362180ef2ec6c23ac167a40fd93f3409bdb3b01218a284cd31f7d0",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/window/createMainWindow.ts#L112-L171"
+    },
+    {
+      "id": "E08",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/window/main-window-webview-security.ts",
+      "symbol": "installMainWindowWebviewSecurity",
+      "start_line": 1,
+      "end_line": 200,
+      "sha256": "967b2bbf051b2e0af5ba023ff20e953e683c41181eb6957dafdec1c712e925ee",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/window/main-window-webview-security.ts#L1-L200"
+    },
+    {
+      "id": "E09",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/pty-subprocess/native-pty-spawn.ts",
+      "symbol": "spawnNativeDaemonPty",
+      "start_line": 1,
+      "end_line": 105,
+      "sha256": "a75a92af7773b2a08883536e589b1a5d4c74b0dcf852050c96bafb8c81948420",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/pty-subprocess/native-pty-spawn.ts#L1-L105"
+    },
+    {
+      "id": "E10",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/lib/pane-manager/terminal-webgl-addon-loader.ts",
+      "symbol": "primeTerminalWebglAddon",
+      "start_line": 1,
+      "end_line": 30,
+      "sha256": "d4c2d0255ed6b4bb9cb95a3619c9b2db0d4af8e6a5fa0cda03f2c641429ff5e8",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/lib/pane-manager/terminal-webgl-addon-loader.ts#L1-L30"
+    },
+    {
+      "id": "E11",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/lib/pane-manager/pane-webgl-renderer.ts",
+      "symbol": "WebGL addon creation and fallback",
+      "start_line": 1,
+      "end_line": 300,
+      "sha256": "098d993f61e23dcea65465628d3c2cfab5971c415f3ca7821513861bedb21dc0",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/lib/pane-manager/pane-webgl-renderer.ts#L1-L300"
+    },
+    {
+      "id": "E12",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/default-global-settings.ts",
+      "symbol": "buildDefaultSettings",
+      "start_line": 1,
+      "end_line": 185,
+      "sha256": "652eb0088c16e7a4f1ddd854752bade4e583bfe163a754f63c4e515cbbab84e6",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/default-global-settings.ts#L1-L185"
+    },
+    {
+      "id": "E13",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/ghostty/theme-resolution.ts",
+      "symbol": "getGhosttyThemeSearchDirs and resolveGhosttyThemeColors",
+      "start_line": 1,
+      "end_line": 144,
+      "sha256": "0671fd42ca3590754a01f232ba14431c06f15e88cd0be63619f0c0204287c67f",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/ghostty/theme-resolution.ts#L1-L144"
+    },
+    {
+      "id": "E14",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/git/command-runner/git-exec-file.ts",
+      "symbol": "gitExecFileAsync",
+      "start_line": 1,
+      "end_line": 293,
+      "sha256": "311ccf4c44adb6cf7a83361e5de5b4650a3c1479583c8704b40a4dcaf238d98d",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/git/command-runner/git-exec-file.ts#L1-L293"
+    },
+    {
+      "id": "E15",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/git/worktree-add.ts",
+      "symbol": "addWorktree and performAddWorktree",
+      "start_line": 191,
+      "end_line": 318,
+      "sha256": "7e32fdb909d8049b7fe1c10fdb1df7daa3031e4753e118703e495165659eee87",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/git/worktree-add.ts#L191-L318"
+    },
+    {
+      "id": "E16",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/components/editor/DiffViewer.tsx",
+      "symbol": "DiffViewer and DiffEditor",
+      "start_line": 1,
+      "end_line": 90,
+      "sha256": "ff25da7c175e566591febdaaefd4ae764a8c789f3ae73831d819041a7295ac21",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/components/editor/DiffViewer.tsx#L1-L90"
+    },
+    {
+      "id": "E17",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/lib/monaco-languages/textmate-token-provider.ts",
+      "symbol": "TextMate token provider",
+      "start_line": 1,
+      "end_line": 108,
+      "sha256": "b76d4922acf55dc86845abc65ebe1dada5e664d2346f5ab7b4dfbc8ac81dfca5",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/lib/monaco-languages/textmate-token-provider.ts#L1-L108"
+    },
+    {
+      "id": "E18",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/lib/monaco-languages/register-markdown.ts",
+      "symbol": "registerMarkdownLanguage",
+      "start_line": 1,
+      "end_line": 62,
+      "sha256": "b0a682bfccab8d00bf88f9326696bcac4c08cfc4cc3948cbf20743130b2ea18b",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/lib/monaco-languages/register-markdown.ts#L1-L62"
+    },
+    {
+      "id": "E19",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/browser/cdp-bridge.ts",
+      "symbol": "CdpBridge",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "a3b477745ed29388f2e7f5e162bcf0e657b432927f4a768405373e5a99a93698",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/browser/cdp-bridge.ts#L1-L100"
+    },
+    {
+      "id": "E20",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/browser/cdp-ws-proxy.ts",
+      "symbol": "CdpWsProxy",
+      "start_line": 1,
+      "end_line": 180,
+      "sha256": "2ef0e591abc6c9335235ebaf9c00218b0f550a83cd43cfa3843225c0e3d77b8c",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/browser/cdp-ws-proxy.ts#L1-L180"
+    },
+    {
+      "id": "E21",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/browser/cdp-loopback-request-guard.ts",
+      "symbol": "isTrustedCdpLoopbackRequest",
+      "start_line": 1,
+      "end_line": 10,
+      "sha256": "62c8907e6a91ee4f444835e31506c8dcf99c95d47b116b1d6a44da90365cf51c",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/browser/cdp-loopback-request-guard.ts#L1-L10"
+    },
+    {
+      "id": "E22",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/runtime-rpc.ts",
+      "symbol": "OrcaRuntimeRpcServer",
+      "start_line": 1,
+      "end_line": 9,
+      "sha256": "eff8e3b55c601a4aba28df27ff8d69d20307e9a0dca11123684a15201fc43658",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/runtime-rpc.ts#L1-L9"
+    },
+    {
+      "id": "E23",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/runtime-rpc/runtime-rpc-state.ts",
+      "symbol": "RuntimeRpcState.authToken",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "b482629d71df9f4373e1f323ae2668b6a4594716cefbfb36a9eed9c8a63ed062",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/runtime-rpc/runtime-rpc-state.ts#L1-L100"
+    },
+    {
+      "id": "E24",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/runtime-rpc/runtime-rpc-request-admission.ts",
+      "symbol": "RuntimeRpcRequestAdmission.parseAndAuth and writeMetadata",
+      "start_line": 129,
+      "end_line": 168,
+      "sha256": "98ab2610139f4da68297bdadc7ca6653a20c400ee11b70bae705c403aec804fb",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/runtime-rpc/runtime-rpc-request-admission.ts#L129-L168"
+    },
+    {
+      "id": "E25",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/rpc/unix-socket-transport.ts",
+      "symbol": "UnixSocketTransport",
+      "start_line": 1,
+      "end_line": 145,
+      "sha256": "f1579988dc77d712eb460387d657276ee596068ac1b3dd3f06136034ed25cb46",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/rpc/unix-socket-transport.ts#L1-L145"
+    },
+    {
+      "id": "E26",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/runtime-metadata.ts",
+      "symbol": "writeRuntimeMetadata",
+      "start_line": 1,
+      "end_line": 61,
+      "sha256": "a5e159763c4cac8df26381375dbbe6e82bc7f426db3e47fe97dcc2679d8de2f6",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/runtime-metadata.ts#L1-L61"
+    },
+    {
+      "id": "E27",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/daemon-client-connections.ts",
+      "symbol": "DaemonClientConnections.handleFirstMessage",
+      "start_line": 114,
+      "end_line": 198,
+      "sha256": "460b1e97a5c17a6f449a15d13d2401a86d6b7f2a50d8fb222111f877e321f698",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/daemon-client-connections.ts#L114-L198"
+    },
+    {
+      "id": "E28",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/daemon-endpoint-lifecycle.ts",
+      "symbol": "DaemonEndpointLifecycle",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "f9322939c1017c5367ab614426e78d8a4823f152413afa51107408e2e579e615",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/daemon-endpoint-lifecycle.ts#L1-L100"
+    },
+    {
+      "id": "E29",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/AGENTS.md",
+      "symbol": "terminal daemon endpoint invariants",
+      "start_line": 1,
+      "end_line": 50,
+      "sha256": "3da439c9b5bb7dc13f9d5e143a916ba05d84c788aff637ea33bdd6f5754b4346",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/AGENTS.md#L1-L50"
+    },
+    {
+      "id": "E30",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/github/issues.ts",
+      "symbol": "getIssue and listIssues",
+      "start_line": 1,
+      "end_line": 136,
+      "sha256": "3e45f6659c20f0c0b457843e7acfec5f8edb21f98f0850dd3d62fd32a562f71a",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/github/issues.ts#L1-L136"
+    },
+    {
+      "id": "E31",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/linear/linear-sdk.ts",
+      "symbol": "createLinearClient",
+      "start_line": 1,
+      "end_line": 47,
+      "sha256": "96096fba265df1b293f24b0cb3af72f63b62c5d52430cd76bc738ba9c6777e20",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/linear/linear-sdk.ts#L1-L47"
+    },
+    {
+      "id": "E32",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/linear/linear-token-store.ts",
+      "symbol": "saveWorkspaceToken",
+      "start_line": 1,
+      "end_line": 50,
+      "sha256": "e64babf8bd8ff61dc782d96da205dae905e6bbf28cb2a50c0cab08694b7b428c",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/linear/linear-token-store.ts#L1-L50"
+    },
+    {
+      "id": "E33",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/sqlite/sync-database.ts",
+      "symbol": "loadDatabaseSync and SyncDatabase",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "1d6fba5913cf495f977a9aa396d2695cc52c0111c040a78f2ca2087d7b69bcd3",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/sqlite/sync-database.ts#L1-L100"
+    },
+    {
+      "id": "E34",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/persistence/profile-state/profile-state-store-factory.ts",
+      "symbol": "ProfileStateStoreFactoryResult and prepareProfileStateStore",
+      "start_line": 1,
+      "end_line": 78,
+      "sha256": "64c2e21ce2d947979137de3c5740f9907725e720af90e1e6f2ff338f1c640086",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/persistence/profile-state/profile-state-store-factory.ts#L1-L78"
+    },
+    {
+      "id": "E35",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/profile-state-storage-paths.ts",
+      "symbol": "profileStateDatabaseFile and getOrcaProfileStateDatabaseFile",
+      "start_line": 1,
+      "end_line": 15,
+      "sha256": "51cc2cf1dc33161d527860a5da2b1af366a7e2b740d7ad094f0e651984d6b06d",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/profile-state-storage-paths.ts#L1-L15"
+    },
+    {
+      "id": "E36",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/persistence/profile-state/profile-state-database.ts",
+      "symbol": "openProfileStateDatabase",
+      "start_line": 1,
+      "end_line": 150,
+      "sha256": "987e185a10ae7f25aa578f80f26dfc4d3c981e1643c21e6e16fbfd5a043f8135",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/persistence/profile-state/profile-state-database.ts#L1-L150"
+    },
+    {
+      "id": "E37",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/history-manager.ts",
+      "symbol": "HistoryManager",
+      "start_line": 1,
+      "end_line": 120,
+      "sha256": "562401173c2e1c92ceff29e9b33b515d30215029d5b6b5d90ae15430ffabe9d5",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/history-manager.ts#L1-L120"
+    },
+    {
+      "id": "E38",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/terminal-history-log.ts",
+      "symbol": "encodeLogBatch and decodeTerminalHistoryLog",
+      "start_line": 1,
+      "end_line": 130,
+      "sha256": "d2c083ef5cca1d93df74c0468ecb95140b17b962ab5d456b52ce00b31b262648",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/terminal-history-log.ts#L1-L130"
+    },
+    {
+      "id": "E39",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/plugins/contributions/plugin-execution-profile.ts",
+      "symbol": "PLUGIN_EXECUTION_PROFILES",
+      "start_line": 1,
+      "end_line": 78,
+      "sha256": "13a19d6cae1704020638146dedfaef00a223eff25473358126a4ef9ee6250a49",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/plugins/contributions/plugin-execution-profile.ts#L1-L78"
+    },
+    {
+      "id": "E40",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/plugins/capabilities/plugin-capabilities.ts",
+      "symbol": "PLUGIN_CAPABILITY_KINDS",
+      "start_line": 1,
+      "end_line": 93,
+      "sha256": "2b799a3d3d5f33de6cd4c88172277ca3a484f1457d2f6f0c0b2fea08d175d765",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/plugins/capabilities/plugin-capabilities.ts#L1-L93"
+    },
+    {
+      "id": "E41",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/plugins/installation/plugin-install-staging.ts",
+      "symbol": "inspectPluginInstallTree and installStagedPluginTree",
+      "start_line": 1,
+      "end_line": 180,
+      "sha256": "32662ca0ab107a423e82ab2039dda980a2a0639626cef911267ca6ae6bac3041",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/plugins/installation/plugin-install-staging.ts#L1-L180"
+    },
+    {
+      "id": "E42",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/plugins/approval/plugin-consent-fingerprint.ts",
+      "symbol": "canonicalizePluginConsent and fingerprintPluginConsent",
+      "start_line": 1,
+      "end_line": 91,
+      "sha256": "55e42671c38b160fd235efefaef90416d3d78753102d379d78d1a1774b4c3867",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/plugins/approval/plugin-consent-fingerprint.ts#L1-L91"
+    },
+    {
+      "id": "E43",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/plugins/workers/plugin-host-process.ts",
+      "symbol": "startPluginWorker",
+      "start_line": 51,
+      "end_line": 90,
+      "sha256": "4bb7db4d8fbc84fa1a2eabe183f29fc9cfe739b9df1e7f2e11b136df2b9bdef1",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/plugins/workers/plugin-host-process.ts#L51-L90"
+    },
+    {
+      "id": "E44",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/plugins/workers/plugin-worker-env.ts",
+      "symbol": "buildPluginWorkerEnv",
+      "start_line": 1,
+      "end_line": 46,
+      "sha256": "14cf1a8def2a5db9330b13724fc6478b7a3f135ab5b03d3332bfbf46e091ce64",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/plugins/workers/plugin-worker-env.ts#L1-L46"
+    },
+    {
+      "id": "E45",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/plugins/workers/plugin-host-runtime.ts",
+      "symbol": "createPluginWorkerRuntime and handleInit",
+      "start_line": 87,
+      "end_line": 168,
+      "sha256": "d2f412cb82660a80f1ba650ff23c2a57779cc45fb90a486303f14657c188d441",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/plugins/workers/plugin-host-runtime.ts#L87-L168"
+    },
+    {
+      "id": "E46",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/plugins/panels/plugin-frame-session-policies.ts",
+      "symbol": "applyPluginFrameSessionPolicies",
+      "start_line": 1,
+      "end_line": 37,
+      "sha256": "32d76fea1ba935ad406ea1bcc452630cbe986056f0de491c8564a03840ac148c",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/plugins/panels/plugin-frame-session-policies.ts#L1-L37"
+    },
+    {
+      "id": "E47",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/plugins/frames/plugin-panel-shell.ts",
+      "symbol": "PLUGIN_PANEL_CSP and residual browser iframe risks",
+      "start_line": 1,
+      "end_line": 35,
+      "sha256": "316866562986ac0bdd2e005e0c6a9a33b295c48419c5a17be3a165c6aa210296",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/plugins/frames/plugin-panel-shell.ts#L1-L35"
+    },
+    {
+      "id": "E48",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/orca-runtime.ts",
+      "symbol": "OrcaRuntimeService",
+      "start_line": 1,
+      "end_line": 210,
+      "sha256": "7711639bd34b8a9ffa864aa18e08a2290f659078c90e2d74758562c8a8aca159",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/orca-runtime.ts#L1-L210"
+    },
+    {
+      "id": "E49",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/agent-launch/agent-launch-executor.ts",
+      "symbol": "executeAgentLaunch",
+      "start_line": 1,
+      "end_line": 195,
+      "sha256": "3dc696fee8ed2e44cc9d11899dbbf3e861488c4b23e85cc0e380d6c0d6d5d6be",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/agent-launch/agent-launch-executor.ts#L1-L195"
+    },
+    {
+      "id": "E50",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/agent-launch/startup-agent-worktree-create.ts",
+      "symbol": "createWorktreeWithStartupAgent",
+      "start_line": 1,
+      "end_line": 85,
+      "sha256": "ac1929e0157bde2b536924f979000144d4f6666c6e285474bbfc5cc1e3583f82",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/agent-launch/startup-agent-worktree-create.ts#L1-L85"
+    },
+    {
+      "id": "E51",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/structured-agent-runtime-metadata.ts",
+      "symbol": "STRUCTURED_AGENT_RUNTIME_CATALOG",
+      "start_line": 1,
+      "end_line": 168,
+      "sha256": "7444464b7d29f2a4888c54f6eb0d3ee522dbd30ed386e2883b74a27bdac38142",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/structured-agent-runtime-metadata.ts#L1-L168"
+    },
+    {
+      "id": "E52",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/orcad/orcad-entry.ts",
+      "symbol": "startOrcad",
+      "start_line": 1,
+      "end_line": 325,
+      "sha256": "c5aa07c77a93dc94b7d640e048128dba60a46978400453c936d6e57f02f85ab4",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/orcad/orcad-entry.ts#L1-L325"
+    },
+    {
+      "id": "E53",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/orcad/orcad-bind-address.ts",
+      "symbol": "resolveOrcadBindHost",
+      "start_line": 1,
+      "end_line": 50,
+      "sha256": "8b12f8e5caa94bd7363d5316667fc8f1029bb35b196ae34936c118e7d4e0badc",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/orcad/orcad-bind-address.ts#L1-L50"
+    },
+    {
+      "id": "E54",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/runtime-rpc/runtime-rpc-lifecycle.ts",
+      "symbol": "RuntimeRpcLifecycle.start",
+      "start_line": 1,
+      "end_line": 125,
+      "sha256": "fae44db7b823fb077121ba5004736c8d87c0d57847bedf70f71e79f031c89546",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/runtime-rpc/runtime-rpc-lifecycle.ts#L1-L125"
+    },
+    {
+      "id": "E55",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/rpc/mobile-e2ee-v2-desktop-session.ts",
+      "symbol": "DesktopMobileE2EEV2Session",
+      "start_line": 1,
+      "end_line": 130,
+      "sha256": "08400c7a5d24f7be7d5c2665789cf04b6db94550dd650d7f93464a28bf21e6d1",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/rpc/mobile-e2ee-v2-desktop-session.ts#L1-L130"
+    },
+    {
+      "id": "E56",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/mobile-e2ee-v2-framing.ts",
+      "symbol": "sealMobileE2EEV2Frame and openMobileE2EEV2Frame",
+      "start_line": 1,
+      "end_line": 105,
+      "sha256": "beb92fc095407db37399b9058833474687814a53e954f24e44a480d65df99913",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/mobile-e2ee-v2-framing.ts#L1-L105"
+    },
+    {
+      "id": "E57",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "mobile/package.json",
+      "symbol": "Expo and React Native dependencies",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "840309f602bfa8aef3b2ad7b6b8a72e4e8ab940d3268749ee5ea4f18d6ba8edf",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/mobile/package.json#L1-L100"
+    },
+    {
+      "id": "E58",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "cloud/README.md",
+      "symbol": "public relay and private infrastructure boundary",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "9e477eb9c16f3b1f230f0aac6e9311b6be7d5bf2fddedbe03739060035167e5a",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/cloud/README.md#L1-L100"
+    },
+    {
+      "id": "E59",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/telemetry/consent.ts",
+      "symbol": "resolveConsent and resolveEnvOverride",
+      "start_line": 1,
+      "end_line": 91,
+      "sha256": "0909b175689d4caafd5827e165ef0c46a7d4476667d8d459929b07d9c2fafa16",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/telemetry/consent.ts#L1-L91"
+    },
+    {
+      "id": "E60",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/telemetry/client.ts",
+      "symbol": "initTelemetry and banner acknowledgement",
+      "start_line": 1,
+      "end_line": 320,
+      "sha256": "e58e2864295a2f1c7f8d4417f7a0a55d83326017f6e0d035083e74917a73626d",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/telemetry/client.ts#L1-L320"
+    },
+    {
+      "id": "E61",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/telemetry/posthog-transport.ts",
+      "symbol": "createPostHogClient",
+      "start_line": 1,
+      "end_line": 98,
+      "sha256": "e35073f41190a1f5661a5afc35f48931ec1e7585a09903347c62ffc95b8c9e65",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/telemetry/posthog-transport.ts#L1-L98"
+    },
+    {
+      "id": "E62",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/integration-credential-file.ts",
+      "symbol": "writeEncryptedCredential",
+      "start_line": 1,
+      "end_line": 120,
+      "sha256": "62b6b9d5cafe0a8b6212c8701d42cb23388b003b074261c70d34027eb6b73cd9",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/integration-credential-file.ts#L1-L120"
+    },
+    {
+      "id": "E63",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/credentials/encrypted-api-key-file-store.ts",
+      "symbol": "createEncryptedApiKeyFileStore",
+      "start_line": 1,
+      "end_line": 145,
+      "sha256": "1aeff6d5b8d3dbfd7b820f50c11aac7363176d9549dd79a144b07725a0732546",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/credentials/encrypted-api-key-file-store.ts#L1-L145"
+    },
+    {
+      "id": "E64",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/orcad/orcad-secret-store.ts",
+      "symbol": "createOrcadSecretStore",
+      "start_line": 1,
+      "end_line": 52,
+      "sha256": "fe9de8c8ea4fdb012568bcbb6859c0f5fab305565e7ce2b9391fb3d88af9cb42",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/orcad/orcad-secret-store.ts#L1-L52"
+    },
+    {
+      "id": "E65",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/orcad/orcad-secret-key-resolution.ts",
+      "symbol": "newFileRecord and resolveState",
+      "start_line": 1,
+      "end_line": 208,
+      "sha256": "a70bad56b0c5f64226eb21263457ccbe71f383d907571a30e1feda3ed42c7af7",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/orcad/orcad-secret-key-resolution.ts#L1-L208"
+    },
+    {
+      "id": "E66",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/updater/updater-setup.ts",
+      "symbol": "UpdaterSetup.setupAutoUpdater",
+      "start_line": 115,
+      "end_line": 179,
+      "sha256": "2bacf93622cc0e9cd3e29355deac6bf624377126008a19ff44decaf82ade29b4",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/updater/updater-setup.ts#L115-L179"
+    },
+    {
+      "id": "E67",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "config/electron-builder.config.cjs",
+      "symbol": "appId, productName and signing configuration",
+      "start_line": 1,
+      "end_line": 245,
+      "sha256": "5345b085e290d81df0c1b692e4ac250559a08d9813b21332aff27129af7ce66f",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/config/electron-builder.config.cjs#L1-L245"
+    },
+    {
+      "id": "E68",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "LICENSE",
+      "symbol": "MIT license",
+      "start_line": 1,
+      "end_line": 21,
+      "sha256": "ff1b611f80580d49f4b97e93a97b24eb050b0671b26b8afe16341fab699112f3",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/LICENSE#L1-L21"
+    },
+    {
+      "id": "E69",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "AGENTS.md",
+      "symbol": "repository rules",
+      "start_line": 1,
+      "end_line": 66,
+      "sha256": "8f7fb18be9d92c336d6fb6138ab362c0727c92fb8788376044dd550eefb595c1",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/AGENTS.md#L1-L66"
+    },
+    {
+      "id": "E70",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/ssh/port-forwarding/ssh2-port-forward-provider.ts",
+      "symbol": "Ssh2PortForwardProvider",
+      "start_line": 1,
+      "end_line": 90,
+      "sha256": "1d7adb4a0bb001034ccf3bdaea8b8f7cbfda8b65215302e247a1e035cff33384",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/ssh/port-forwarding/ssh2-port-forward-provider.ts#L1-L90"
+    },
+    {
+      "id": "E71",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/ssh/remote-exec/remote-exec-command.ts",
+      "symbol": "remote command execution",
+      "start_line": 1,
+      "end_line": 195,
+      "sha256": "9410ebec74082a7b3d8f73b560e032458aa6161904ccaca6016d2063cb9bf1ac",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/ssh/remote-exec/remote-exec-command.ts#L1-L195"
+    },
+    {
+      "id": "E72",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/secure-file.ts",
+      "symbol": "private file publication",
+      "start_line": 1,
+      "end_line": 175,
+      "sha256": "6feed13932925742088fc9b1633c22320201a5b20ff8ba07e1e11eac1bbc9bf7",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/secure-file.ts#L1-L175"
+    },
+    {
+      "id": "E73",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "cloud/packages/cloud-database/src/cloud-database.ts",
+      "symbol": "SQLite/PostgreSQL adapters",
+      "start_line": 1,
+      "end_line": 220,
+      "sha256": "a0e87a6147a796c2353d3fd834313f8f19a7a51c11bfc4beb29cbb5d21b1a7dc",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/cloud/packages/cloud-database/src/cloud-database.ts#L1-L220"
+    },
+    {
+      "id": "E74",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/components/settings/CustomAgentCommandField.tsx",
+      "symbol": "CustomAgentCommandField",
+      "start_line": 1,
+      "end_line": 56,
+      "sha256": "7ee2dc76164923b13d02f9377af7fdacd56080d576f30c96645be434e39b6705",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/components/settings/CustomAgentCommandField.tsx#L1-L56"
+    },
+    {
+      "id": "E75",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/text-generation/source-control-local-process.ts",
+      "symbol": "runLocalSourceControlPlan",
+      "start_line": 1,
+      "end_line": 150,
+      "sha256": "1c17f1936fb4f296287ae2658f289f2416945db25cc453ea6a5f42a7905fc23a",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/text-generation/source-control-local-process.ts#L1-L150"
+    },
+    {
+      "id": "E76",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/pi/rpc-runtime-metadata.ts",
+      "symbol": "PI_RPC_RUNTIME_METADATA",
+      "start_line": 1,
+      "end_line": 44,
+      "sha256": "9428332f693483e21d5a79ff2e9e05bd60aef5d6c576e42d1aa43e5613741490",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/pi/rpc-runtime-metadata.ts#L1-L44"
+    },
+    {
+      "id": "E77",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/pi/rpc-options.ts",
+      "symbol": "readPiRpcModelOptions",
+      "start_line": 1,
+      "end_line": 100,
+      "sha256": "16f0e59f79cb8eca8aa60627b411c646a672d776956312f5fe65d6e417ce8545",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/pi/rpc-options.ts#L1-L100"
+    },
+    {
+      "id": "E78",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/rpc/ws-transport.ts",
+      "symbol": "WebSocketTransport",
+      "start_line": 1,
+      "end_line": 240,
+      "sha256": "4250922441e9255e5d0c90211e5debe761a9983d8edd3ac0ea83925fbc8984d6",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/rpc/ws-transport.ts#L1-L240"
+    },
+    {
+      "id": "E79",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/rpc/static-web-client-handler.ts",
+      "symbol": "createStaticWebClientHandler",
+      "start_line": 1,
+      "end_line": 115,
+      "sha256": "cf4a508fee1228449e54e264e41560bc9d8bb051b5c11446c7cd1366b2dc40a7",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/rpc/static-web-client-handler.ts#L1-L115"
+    },
+    {
+      "id": "E80",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/renderer/src/web/web-runtime-connection-socket.ts",
+      "symbol": "installWebRuntimeSocket",
+      "start_line": 1,
+      "end_line": 170,
+      "sha256": "00ea865ad4a6595530313e005db0d071285069b06cc720218a760cb868fa8392",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/renderer/src/web/web-runtime-connection-socket.ts#L1-L170"
+    },
+    {
+      "id": "E81",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/shared/web-origin-security.ts",
+      "symbol": "compatibility diagnostics and web marker",
+      "start_line": 1,
+      "end_line": 16,
+      "sha256": "b323f897d374884902ecd8c82fdd7219abf0120c086384c598a87980b0014e68",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/shared/web-origin-security.ts#L1-L16"
+    },
+    {
+      "id": "E82",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/runtime/rpc/mobile-e2ee-auth-validation.ts",
+      "symbol": "authenticateMobileE2EE",
+      "start_line": 1,
+      "end_line": 160,
+      "sha256": "5daf0364e51d5dc2bd8eb80c69d40776ab31520e11b9e29e9ba024f15213ea2a",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/runtime/rpc/mobile-e2ee-auth-validation.ts#L1-L160"
+    },
+    {
+      "id": "E83",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/acp/acp-launch-specs.ts",
+      "symbol": "AcpLaunchSpec and ACP_LAUNCH_SPECS",
+      "start_line": 1,
+      "end_line": 307,
+      "sha256": "f6c16e866a4e71f8fdd6b77f3fe1614de81c4d2d652a7b3413ed6e89972dfcb2",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/acp/acp-launch-specs.ts#L1-L307"
+    },
+    {
+      "id": "E84",
+      "repository": "stablyai/orca",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+      "path": "src/main/daemon/terminal-snapshot.ts",
+      "symbol": "TerminalSnapshot",
+      "start_line": 1,
+      "end_line": 25,
+      "sha256": "5da85e1d5a7fcd280e8e9cb26704a22aed1cf9081c346ba139987d8df926debd",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/src/main/daemon/terminal-snapshot.ts#L1-L25"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C01",
+      "topic": "stack",
+      "classification": "implemented",
+      "claim": "Desktop Electron, renderer React/TypeScript, build Vite/Tailwind CSS.",
+      "source_ids": ["E01", "E02", "E03", "E05"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C02",
+      "topic": "terminal",
+      "classification": "implemented",
+      "claim": "Backend PTY usa node-pty; front usa xterm/addon-webgl, com lifecycle separado do Electron.",
+      "source_ids": ["E01", "E09", "E10", "E11", "E06"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C03",
+      "topic": "terminal",
+      "classification": "default",
+      "claim": "terminalGpuAcceleration=auto; tema escuro padrão tem nome Ghostty Default Style Dark; isso não implica motor Ghostty.",
+      "source_ids": ["E12", "E13"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C04",
+      "topic": "git",
+      "classification": "implemented",
+      "claim": "Git é invocado como executável, inclusive git worktree add e argumentos -b/--no-track; não há evidência de libgit2 no escopo pesquisado.",
+      "source_ids": ["E14", "E15"],
+      "limits": "A ausência é limitada ao conjunto de caminhos e padrão de busca registrado em negative_searches."
+    },
+    {
+      "id": "C05",
+      "topic": "editor",
+      "classification": "implemented",
+      "claim": "DiffViewer usa @monaco-editor/react DiffEditor; linguagens combinam Monaco/Monarch e TextMate/Oniguruma.",
+      "source_ids": ["E01", "E16", "E17", "E18"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C06",
+      "topic": "cdp",
+      "classification": "implemented",
+      "claim": "CdpBridge e CdpWsProxy expõem navegação, captura e input via CDP para WebContents; proxy exige loopback Host e ausência de Origin.",
+      "source_ids": ["E19", "E20", "E21"],
+      "limits": "O guard não autentica processos locais por token. Não é evidência de isolamento de processos do mesmo usuário."
+    },
+    {
+      "id": "C07",
+      "topic": "ipc",
+      "classification": "implemented",
+      "claim": "Renderer recebe API explícita por contextBridge; CLI usa RPC local NDJSON com token e limites de transporte.",
+      "source_ids": ["E04", "E22", "E23", "E24", "E25", "E26"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C08",
+      "topic": "daemon",
+      "classification": "implemented",
+      "claim": "Daemon PTY tem handshake/token e canais control/stream próprios; não deve ser confundido com RPC do CLI.",
+      "source_ids": ["E27", "E28", "E29"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C09",
+      "topic": "integrations",
+      "classification": "capability",
+      "claim": "GitHub usa gh CLI para APIs e comandos; Linear usa @linear/sdk e armazenamento local de token.",
+      "source_ids": ["E30", "E31", "E32"],
+      "limits": "Exige credenciais e disponibilidade dos serviços; não prova contas conectadas."
+    },
+    {
+      "id": "C10",
+      "topic": "storage",
+      "classification": "default",
+      "claim": "Perfis graváveis atuais requerem SQLite e node:sqlite; profile-state.db fica sob userData/profiles/<id>; orca-data.json permanece como formato legado.",
+      "source_ids": ["E33", "E34", "E35", "E36"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C11",
+      "topic": "storage",
+      "classification": "implemented",
+      "claim": "Histórico de terminal tem writer, snapshots/log binário versionado e recuperação.",
+      "source_ids": ["E37", "E38"],
+      "limits": "Persistência de texto/estado não garante retomada de processos após reboot."
+    },
+    {
+      "id": "C12",
+      "topic": "plugins",
+      "classification": "implemented",
+      "claim": "Quatro perfis de execução: data, declarative, sandboxed-ui e trusted-worker; capabilities são validações da API do host.",
+      "source_ids": ["E39", "E40"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C13",
+      "topic": "plugins",
+      "classification": "implemented",
+      "claim": "Instalação verifica manifest/engine/artifacts/hash e consentimento vincula capacidades, execução e conteúdo.",
+      "source_ids": ["E41", "E42"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C14",
+      "topic": "plugins",
+      "classification": "implemented",
+      "claim": "Worker é child_process.fork Node com ambiente allowlist e execArgv vazio; importa código do plugin.",
+      "source_ids": ["E43", "E44", "E45"],
+      "limits": "Processo separado não constitui sandbox do SO; não demonstrado bloqueio de fs/network/child_process de Node."
+    },
+    {
+      "id": "C15",
+      "topic": "plugins",
+      "classification": "implemented",
+      "claim": "Frames desktop bloqueiam rede/permissões/downloads por Session; frame web srcdoc tem CSP e riscos residuais documentados de DNS/WebRTC.",
+      "source_ids": ["E46", "E47"],
+      "limits": "Riscos residuais constam em comentário do upstream. Nenhuma exploração ou verificação dinâmica realizada."
+    },
+    {
+      "id": "C16",
+      "topic": "agents",
+      "classification": "implemented",
+      "claim": "executeAgentLaunch coordena workspace, terminal ou sessão estruturada; recusa definitiva de structured pode rebaixar para terminal.",
+      "source_ids": ["E49", "E50", "E51"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C17",
+      "topic": "agents",
+      "classification": "default",
+      "claim": "agentDefaultSurface=terminal e nativeChatPermissionMode=full-access constam no default; modo efetivo depende do agente, conta e políticas de execução.",
+      "source_ids": ["E12", "E49", "E51"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C18",
+      "topic": "remote",
+      "classification": "capability",
+      "claim": "Orcad compõe o runtime em Node, separado do Electron; há RPC WebSocket, pairing, SSH e forwarding.",
+      "source_ids": ["E48", "E52", "E54", "E70", "E71"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C19",
+      "topic": "remote",
+      "classification": "default",
+      "claim": "Orcad resolve bind padrão para 127.0.0.1; exposição de rede requer --bind.",
+      "source_ids": ["E53"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C20",
+      "topic": "mobile",
+      "classification": "capability",
+      "claim": "Aplicativo móvel usa Expo/React Native; transporte implementa E2EE v2 com identidade de sessão, direção e contador.",
+      "source_ids": ["E55", "E56", "E57"],
+      "limits": "Não equivale a auditoria criptográfica independente; push e metadados de conexão são superfícies distintas."
+    },
+    {
+      "id": "C21",
+      "topic": "cloud",
+      "classification": "capability",
+      "claim": "Runtime relay/push/connector e contratos são públicos; configuração de produção/Terraform/operação fica em repositório privado separado.",
+      "source_ids": ["E58", "E73"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C22",
+      "topic": "telemetry",
+      "classification": "configuration",
+      "claim": "PostHog só inicializa com build identity e write key compilados, além do feature flag; contributor build sem valores falha fechado.",
+      "source_ids": ["E02", "E60"],
+      "limits": "O código lê valores de ambiente no build; o comentário descreve quem os fornece no CI, não uma prova de CI exclusivo."
+    },
+    {
+      "id": "C23",
+      "topic": "telemetry",
+      "classification": "default",
+      "claim": "Consentimento ausente fica pending_banner; acknowledge de banner grava optedIn=true. DO_NOT_TRACK e ORCA_TELEMETRY_DISABLED desabilitam transmissão.",
+      "source_ids": ["E59", "E60"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C24",
+      "topic": "telemetry",
+      "classification": "implemented",
+      "claim": "Transporte PostHog aponta us.i.posthog.com, disableGeoip=true e credentials=omit; validação/allowlist existem no fluxo.",
+      "source_ids": ["E60", "E61"],
+      "limits": "Não foi observada rede real; isso não garante ausência de tráfego de agentes, updater, integrações ou relay."
+    },
+    {
+      "id": "C25",
+      "topic": "credentials",
+      "classification": "implemented",
+      "claim": "Credenciais de integrações e API keys podem cair em plaintext se encryption unavailable; arquivos são publicados com proteções de modo/ACL.",
+      "source_ids": ["E62", "E63", "E72"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C26",
+      "topic": "credentials",
+      "classification": "implemented",
+      "claim": "Orcad possui SecretStore próprio, chave host-file, estados unavailable/plaintext e sealing; não se deve equiparar ao keychain desktop.",
+      "source_ids": ["E64", "E65"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C27",
+      "topic": "updater",
+      "classification": "default",
+      "claim": "Updater empacotado aponta releases stablyai/orca; autoDownload=false; appId e productName upstream ainda identificam Orca.",
+      "source_ids": ["E66", "E67"],
+      "limits": "Evidência estática; comportamento não executado nesta auditoria."
+    },
+    {
+      "id": "C28",
+      "topic": "license",
+      "classification": "implemented",
+      "claim": "LICENSE raiz é MIT, copyright Lovecast Inc. 2026; permite modificar/distribuir com preservação dos avisos.",
+      "source_ids": ["E68"],
+      "limits": "Interpretação do texto da licença. Dependências, marcas, credenciais e serviços externos exigem avaliação própria."
+    },
+    {
+      "id": "C29",
+      "topic": "fork",
+      "classification": "inference",
+      "claim": "Fork distribuível deve separar appId, perfis/dados, feeds e canais, assinatura, deep links e serviços antes de compartilhar binários.",
+      "source_ids": ["E35", "E60", "E66", "E67"],
+      "limits": "Recomendação de engenharia; não afirma que a implementação do fork está concluída."
+    },
+    {
+      "id": "C30",
+      "topic": "security",
+      "classification": "implemented",
+      "claim": "Janela principal usa sandbox:true e preload; webviews têm endurecimento de nodeIntegration/webSecurity/contextIsolation.",
+      "source_ids": ["E07", "E08"],
+      "limits": "Não é auditoria exaustiva de todos os IPC senders ou guest partitions."
+    },
+    {
+      "id": "C31",
+      "topic": "local_models",
+      "classification": "capability",
+      "claim": "Receitas de commit/PR/branch aceitam comando custom, com exemplo ollama run; native chat usa CLIs/protocolos Pi/Codex/Claude/ACP. Não foi encontrado provider HTTP Ollama/OpenAI-compatible diretamente implementado no chat Orca.",
+      "source_ids": ["E51", "E74", "E75", "E76", "E77", "E83"],
+      "limits": "Modelo local via harness externo é uma possibilidade dependente da configuração do harness, não inferência local do Orca validada."
+    },
+    {
+      "id": "C32",
+      "topic": "direct_lan",
+      "classification": "capability",
+      "claim": "Orcad fornece HTTP de assets web e WebSocket direto com pairing, tokens ou chave de dispositivo e E2EE; esse caminho não exige relay cloud.",
+      "source_ids": ["E52", "E53", "E54", "E78", "E79", "E80", "E82"],
+      "limits": "Não foi executado teste LAN; browser assets dependem do bundle incluído e da configuração de bind. E2EE não autentica por si só a entrega inicial de uma página HTTP."
+    },
+    {
+      "id": "C33",
+      "topic": "direct_lan",
+      "classification": "observed_absence",
+      "claim": "Texto UI sobre ORCA_ALLOW_INSECURE_WEB_PAIRING é diagnóstico de compatibilidade para versões antigas; não foi encontrada leitura atual dessa variável no servidor.",
+      "source_ids": ["E81"],
+      "limits": "Não usar uma string de erro da UI como evidência do comportamento server atual."
+    }
+  ],
+  "negative_searches": [
+    {
+      "command": [
+        "git",
+        "grep",
+        "-n",
+        "-I",
+        "-E",
+        "libgit2|nodegit|simple-git|tree-sitter|web-tree-sitter|ghostty-web|libghostty",
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+        "--",
+        "package.json",
+        "pnpm-lock.yaml",
+        "src",
+        "cloud",
+        "mobile",
+        "native"
+      ],
+      "exit_code": 1,
+      "matches": [],
+      "interpretation": "No matches in the recorded source/manifests/lockfiles scope; not a universal absence proof."
+    },
+    {
+      "command": [
+        "git",
+        "grep",
+        "-n",
+        "-I",
+        "-i",
+        "-E",
+        "ollama|openai.compatible|openai-compatible",
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+        "--",
+        "src/main",
+        "src/shared",
+        "package.json"
+      ],
+      "exit_code": 0,
+      "matches": [
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb:src/main/acp/fixtures/opencode-v1-model-listing.txt:10:    \"npm\": \"@ai-sdk/openai-compatible\"",
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb:src/main/runtime/__fixtures__/omp-18-composer-narrow.txt:19: \u001b[3m     \u001b[38;5;248mdrop-in proxy any OpenAI-compatible client can hit\u001b[39;23m\u001b[0m\u001b[K",
+        "",
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb:src/main/runtime/__fixtures__/omp-18-composer-narrow.txt:41: \u001b[3m     \u001b[38;5;248mdrop-in proxy any OpenAI-compatible client can hit\u001b[39;23m\u001b[0m\u001b[K",
+        "",
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb:src/main/runtime/__fixtures__/omp-18-composer-narrow.txt:63: \u001b[3m     \u001b[38;5;248mdrop-in proxy any OpenAI-compatible client can hit\u001b[39;23m\u001b[0m\u001b[K",
+        "",
+        "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb:src/main/runtime/__fixtures__/omp-user-bubble-osc133-zone.meta.json:7:  \"note\": \"OMP 18.10.3, fake OpenAI-compatible model, one prompt; the user bubble closes its own OSC 133 zone (B C D;0)\","
+      ],
+      "interpretation": "Ocorrências em fixtures não demonstram um provider de inferência HTTP; runtime structured foi lido separadamente."
+    }
+  ],
+  "ratoeira_comparison_sources": [
+    {
+      "repository": "ab-ratoeira local workspace",
+      "path": "package.json",
+      "sha256": "3697cf30dedc05d0043f2b77f5bdc4a2d3b97901cd42c13fbb95f379079b5cf6",
+      "url": null,
+      "source_kind": "workspace_file",
+      "commit": null
+    },
+    {
+      "repository": "ab-ratoeira local workspace",
+      "path": "README.md",
+      "sha256": "196f5fd92514b1709f015e2f8e93d9f32b8d745119db24525385624b47b67fe5",
+      "url": null,
+      "source_kind": "workspace_file",
+      "commit": null
+    },
+    {
+      "repository": "ab-ratoeira local workspace",
+      "path": "apps/api/server.mjs",
+      "sha256": "2f6cbcf91464f8bdb830bfdd1f4c9b69ef378db6df9db3127b6588bb627958da",
+      "url": null,
+      "source_kind": "workspace_file",
+      "commit": null
+    },
+    {
+      "repository": "ab-ratoeira local workspace",
+      "path": "apps/api/store.mjs",
+      "sha256": "30a56a2837ca1ec80d96848d86d806204ce42f520b7ff33c8429a1c2a74fa69c",
+      "url": null,
+      "source_kind": "workspace_file",
+      "commit": null
+    },
+    {
+      "repository": "ab-ratoeira local workspace",
+      "path": "apps/api/worker.mjs",
+      "sha256": "a51fcce175a885679dce75dd613259f8a522325c7e9c098c63a8ae5bfe03a88d",
+      "url": null,
+      "source_kind": "workspace_file",
+      "commit": null
+    },
+    {
+      "repository": "ab-ratoeira local workspace",
+      "path": "packages/mcp/server.mjs",
+      "sha256": "7959f1cf04f2d6c598c7a06a3740ea82417dfafc6b2b4b0aac191b9ff748ae74",
+      "url": null,
+      "source_kind": "workspace_file",
+      "commit": null
+    }
+  ],
+  "comparison_boundary": "AB Ratoeira local implementation only; not the private platform Ratoeira de IA.",
+  "external_primary_source_opened": "https://github.com/stablyai/orca",
+  "external_source_reference_for_parent": "turn14view0 (parent must open separately before citing in final chat)"
+}

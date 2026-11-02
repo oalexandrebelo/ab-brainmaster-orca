@@ -1,0 +1,13 @@
+{
+  "name": "@ab-brainmaster/bill-context",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "test:integration": "node --test --test-isolation=none tests/*.integration.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

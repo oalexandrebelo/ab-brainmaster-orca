@@ -1,0 +1,15 @@
+{
+  "name": "@ab-brainmaster/upstream-review",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "review": "node cli.mjs review",
+    "test:integration": "node --test --test-isolation=none tests/*.integration.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

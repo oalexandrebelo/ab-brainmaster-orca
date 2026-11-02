@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atualizações do Orca</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 12px;
+        font:
+          14px Geist,
+          sans-serif;
+        color: var(--orca-foreground);
+        background: var(--orca-background);
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0 0 8px;
+      }
+      p {
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      button {
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 12px;
+        border: 1px solid var(--orca-border);
+        border-radius: var(--orca-radius, 6px);
+        font: inherit;
+        cursor: pointer;
+        color: var(--orca-primary-foreground);
+        background: var(--orca-primary);
+      }
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--orca-ring);
+        outline-offset: 2px;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: wait;
+      }
+      #cancel {
+        margin-top: 8px;
+        color: var(--orca-foreground);
+        background: transparent;
+        border-color: transparent;
+      }
+      #status {
+        min-height: 3em;
+      }
+      .muted {
+        color: var(--orca-muted-foreground);
+        font-size: 12px;
+      }
+      details {
+        border-top: 1px solid var(--orca-border);
+        padding: 12px 0;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      ul {
+        padding-left: 20px;
+      }
+      li {
+        margin: 8px 0;
+        overflow-wrap: anywhere;
+      }
+      .literal {
+        font-family: var(--font-mono, monospace);
+        font-size: 12px;
+      }
+      #result {
+        overflow-wrap: anywhere;
+      }
+      [hidden] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Atualizações do Orca</h1>
+    <p>Revise os commits e arquivos que chegaram ao projeto original desde a base deste fork.</p>
+    <button id="review" type="button">Revisar atualizações do Orca</button>
+    <button id="cancel" type="button" hidden>Cancelar consulta</button>
+    <p id="status" role="status" aria-live="polite">
+      A consulta será feita quando você pressionar o botão.
+    </p>
+    <div id="result"></div>
+    <p class="muted">
+      Triagem de metadados públicos do GitHub. Incorporar uma atualização exige revisão de código e
+      validação separadas.
+    </p>
+    <script src="./panel.js"></script>
+  </body>
+</html>

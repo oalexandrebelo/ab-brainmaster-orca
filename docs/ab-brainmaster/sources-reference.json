@@ -1,0 +1,2457 @@
+{
+  "schema_version": 1,
+  "researched_at": "2026-11-02",
+  "language": "pt-BR",
+  "scope": "Frente 2 — referências, ecossistema de plugins/skills e heurísticas; somente leitura",
+  "facts": {
+    "upstream_commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb",
+    "package_version_observed": "1.4.214",
+    "plugin_compatibility_status": "unverified_runtime_version",
+    "catalog_counts": {
+      "execution": {
+        "data": 42,
+        "declarative": 4,
+        "sandboxed-ui": 10,
+        "trusted-worker": 1
+      },
+      "license": {
+        "MIT": 52,
+        "MIT AND Apache-2.0": 2,
+        "MIT AND BSD-2-Clause": 1,
+        "MIT AND ISC": 1,
+        "MIT AND BSD-3-Clause": 1
+      },
+      "total": 57
+    },
+    "important_constraints": [
+      "contributes.agentHarnesses, skills, mcpServers, taskSources, connections e sidebarCards reservados e vazios no manifest v2 observado",
+      "trusted-worker executa processo Node com permissões do usuário; capabilities não equivalem a sandbox do sistema operacional",
+      "plugin validate é estático; plugin check e plugin test executam código fora de sandbox conforme documentação",
+      "editor de arquivo recebe conteúdo e alterações via host; não recebe acesso irrestrito ao filesystem",
+      "hook padrão deixa operação continuar em erro; onError: deny requerido quando o comportamento desejado é bloquear",
+      "CLI version/package inconsistente com minimumOrca dos 57 plugins: medir versão runtime antes de declarar compatibilidade",
+      "página de publicação e docs versionados diferem sobre publisher; usar contrato versionado e schema do host alvo"
+    ],
+    "private_ratoeira_stack": {
+      "node": "unverified",
+      "go": "unverified",
+      "postgres": "unverified",
+      "redis": "unverified",
+      "notes": "Python/Node anunciados nas skills não demonstram stack do portal; Supabase anunciado como integração não comprova banco interno."
+    },
+    "video": {
+      "transcript_obtained": false,
+      "watched": false,
+      "audio_downloaded": false,
+      "reason": "watch throttled; official embed metadata-only; oEmbed unavailable"
+    },
+    "work_performed": {
+      "plugin_metadata_read": true,
+      "plugins_downloaded": false,
+      "plugins_executed": false,
+      "private_skills_downloaded": false,
+      "private_product_accessed": false,
+      "fork_modified": false,
+      "ux_runtime_tested": false
+    }
+  },
+  "sources": [
+    {
+      "id": "R1",
+      "title": "Ratoeira — página pública de produto",
+      "url": "https://ratosdeia.com.br/ratoeira/",
+      "retrieval_refs": ["turn12view0", "turn17view6", "turn19search0"],
+      "kind": "publisher_product_claim",
+      "status": "read",
+      "limits": "Produto privado não executado. Resultado de busca tinha conteúdo anterior ao open; a leitura atual do endereço é a referência."
+    },
+    {
+      "id": "R2",
+      "title": "Skills da Ratos — catálogo e FAQ",
+      "url": "https://ratosdeia.com.br/skills/",
+      "retrieval_refs": ["turn12view2", "turn17view7"],
+      "kind": "publisher_product_claim_and_usage_terms",
+      "status": "read",
+      "limits": "Termos públicos de uso, não cópia integral do instrumento contratual da compra; pacotes privados não acessados."
+    },
+    {
+      "id": "R3",
+      "title": "Vídeo solicitado",
+      "url": "https://www.youtube.com/watch?v=lC2hhdGcmaU",
+      "retrieval_refs": ["turn12view1", "turn21view0"],
+      "kind": "video",
+      "status": "unavailable",
+      "limits": "Watch page retornou throttling. Não assistido, áudio não baixado e transcrição não obtida."
+    },
+    {
+      "id": "R3E",
+      "title": "Embed oficial do vídeo vinculado pela Ratoeira",
+      "url": "https://www.youtube-nocookie.com/embed/lC2hhdGcmaU?autoplay=1&mute=1&playsinline=1&rel=0",
+      "retrieval_refs": ["turn20view8"],
+      "kind": "video_embed",
+      "status": "metadata_only",
+      "limits": "Retorno de três linhas sem conteúdo falado ou legendas."
+    },
+    {
+      "id": "R3O",
+      "title": "YouTube oEmbed oficial",
+      "url": "https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DlC2hhdGcmaU&format=json",
+      "retrieval_refs": ["turn21view1"],
+      "kind": "video_metadata",
+      "status": "unavailable",
+      "limits": "DisabledError; não sustenta conclusões sobre conteúdo."
+    },
+    {
+      "id": "R4",
+      "title": "CHIA / ratosOS — descrição pública da operação",
+      "url": "https://ratosdeia.com.br/assets/ratosos/",
+      "retrieval_refs": ["turn19search1", "turn24view5"],
+      "kind": "publisher_operating_model_claim",
+      "status": "read"
+    },
+    {
+      "id": "R5",
+      "title": "yt-transcript",
+      "url": "https://ratosdeia.com.br/skills/yt-transcript/",
+      "retrieval_refs": ["turn20view9", "turn21view2"],
+      "kind": "publisher_skill_claim",
+      "status": "read"
+    },
+    {
+      "id": "R6",
+      "title": "transcribe",
+      "url": "https://ratosdeia.com.br/skills/transcribe/",
+      "retrieval_refs": ["turn19search3"],
+      "kind": "publisher_skill_claim",
+      "status": "read_search_extract"
+    },
+    {
+      "id": "R7",
+      "title": "aprender-ratos",
+      "url": "https://ratosdeia.com.br/skills/aprender-ratos/",
+      "retrieval_refs": ["turn23view2", "turn24view0"],
+      "kind": "publisher_skill_claim",
+      "status": "read"
+    },
+    {
+      "id": "R8",
+      "title": "whatsapp-local-ratos",
+      "url": "https://ratosdeia.com.br/skills/whatsapp-local-ratos/",
+      "retrieval_refs": ["turn23view3", "turn24view1"],
+      "kind": "publisher_skill_claim",
+      "status": "read"
+    },
+    {
+      "id": "R9",
+      "title": "proposta-comercial-ratos",
+      "url": "https://ratosdeia.com.br/skills/proposta-comercial-ratos/",
+      "retrieval_refs": ["turn23view4"],
+      "kind": "publisher_skill_claim",
+      "status": "read"
+    },
+    {
+      "id": "R10",
+      "title": "meta-ads-ratos",
+      "url": "https://ratosdeia.com.br/skills/meta-ads-ratos/",
+      "retrieval_refs": ["turn23view5", "turn24view2"],
+      "kind": "publisher_skill_claim",
+      "status": "read"
+    },
+    {
+      "id": "R11",
+      "title": "publicar-social-ratos",
+      "url": "https://ratosdeia.com.br/skills/publicar-social-ratos/",
+      "retrieval_refs": ["turn23view6", "turn24view3"],
+      "kind": "publisher_skill_claim",
+      "status": "read"
+    },
+    {
+      "id": "R12",
+      "title": "gpt-image2-ratos",
+      "url": "https://ratosdeia.com.br/skills/gpt-image2-ratos/",
+      "retrieval_refs": ["turn23view7", "turn24view4"],
+      "kind": "publisher_skill_claim",
+      "status": "read",
+      "limits": "Anúncio do vendedor, não confirmação de suporte ou contrato do provedor de imagem."
+    },
+    {
+      "id": "O1",
+      "title": "Orca — página pública",
+      "url": "https://www.onorca.dev/",
+      "retrieval_refs": ["turn12view3", "turn17view8"],
+      "kind": "publisher_product_claim",
+      "status": "read"
+    },
+    {
+      "id": "O2",
+      "title": "Orca — diretório público de plugins",
+      "url": "https://www.onorca.dev/plugins",
+      "retrieval_refs": ["turn13view0", "turn15view0"],
+      "kind": "publisher_directory",
+      "status": "read",
+      "limits": "Contagens de instalações variaram entre páginas/cache e foram excluídas da priorização."
+    },
+    {
+      "id": "O3",
+      "title": "Orca — publicação de plugins",
+      "url": "https://www.onorca.dev/plugins/add",
+      "retrieval_refs": ["turn17view0", "turn18view0"],
+      "kind": "publisher_listing_policy",
+      "status": "read",
+      "limits": "Página solicita publisher explícito; documentação do commit já permite derivá-lo em >=1.4.246."
+    },
+    {
+      "id": "C1",
+      "title": "Catálogo oficial Orca, JSON",
+      "url": "https://raw.githubusercontent.com/stablyai/orca-plugins/30f40973b0d9d4b521f094a15173f932292c85f6/orca-catalog.json",
+      "retrieval_refs": [],
+      "retrieval_tool": "github_fetch",
+      "kind": "public_release_metadata",
+      "status": "read_pinned",
+      "commit": "30f40973b0d9d4b521f094a15173f932292c85f6",
+      "commit_date": "2026-11-02T09:13:39Z",
+      "byte_identical_to_branch_observation": true
+    },
+    {
+      "id": "C2",
+      "title": "Catálogo comunitário Orca, JSON",
+      "url": "https://raw.githubusercontent.com/stablyai/orca-community-plugins/1fc4435a109978c754045c4439d4678494eb78da/orca-catalog.json",
+      "retrieval_refs": [],
+      "retrieval_tool": "github_fetch",
+      "kind": "public_release_metadata",
+      "status": "read_pinned",
+      "commit": "1fc4435a109978c754045c4439d4678494eb78da",
+      "commit_date": "2026-11-02T06:31:42Z",
+      "byte_identical_to_branch_observation": true
+    },
+    {
+      "id": "N1",
+      "title": "10 Usability Heuristics for User Interface Design — Jakob Nielsen / NNGroup",
+      "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+      "retrieval_refs": ["turn13view1", "turn22view0"],
+      "kind": "primary_ux_framework",
+      "status": "read",
+      "last_reviewed": "2024-01-30",
+      "limits": "Nomes traduzidos e aplicação original ao AB. Metas numéricas do relatório são propostas do projeto, não recomendações quantitativas do NNGroup."
+    },
+    {
+      "id": "M1",
+      "title": "docs/reference/plugin-manifest.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/reference/plugin-manifest.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/reference/plugin-manifest.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M2",
+      "title": "docs/reference/plugin-catalog.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/reference/plugin-catalog.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/reference/plugin-catalog.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M3",
+      "title": "docs/reference/plugin-authoring.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/reference/plugin-authoring.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/reference/plugin-authoring.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M4",
+      "title": "docs/reference/plugin-host-api.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/reference/plugin-host-api.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/reference/plugin-host-api.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M5",
+      "title": "docs/STYLEGUIDE.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/STYLEGUIDE.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/STYLEGUIDE.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M6",
+      "title": "docs/styleguide/ux-review-rubric.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/styleguide/ux-review-rubric.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/styleguide/ux-review-rubric.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M7",
+      "title": "docs/site/content/docs/remote-servers.mdx",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/site/content/docs/remote-servers.mdx",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/site/content/docs/remote-servers.mdx",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M8",
+      "title": "docs/site/content/docs/mobile.mdx",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/site/content/docs/mobile.mdx",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/site/content/docs/mobile.mdx",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M9",
+      "title": "docs/site/content/docs/cli/automations.mdx",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/docs/site/content/docs/cli/automations.mdx",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/docs/site/content/docs/cli/automations.mdx",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M10",
+      "title": "LICENSE",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/LICENSE",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/LICENSE",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M11",
+      "title": "package.json",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/package.json",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/package.json",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M12",
+      "title": "skill-guides/orca-cli/references/plugins.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/skill-guides/orca-cli/references/plugins.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/skill-guides/orca-cli/references/plugins.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "M13",
+      "title": "skill-guides/orca-plugin-authoring.md",
+      "url": "https://github.com/stablyai/orca/blob/d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb/skill-guides/orca-plugin-authoring.md",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-brainmaster-orca/skill-guides/orca-plugin-authoring.md",
+      "retrieval_refs": [],
+      "retrieval_tool": "exec_command_read",
+      "kind": "primary_upstream_source",
+      "status": "read_at_checkout",
+      "commit": "d616c1b9eac49b4f4e1c73a1eb5e802c67c332bb"
+    },
+    {
+      "id": "P1",
+      "title": "stablyai/orca-plugins/orca-excalidraw",
+      "url": "https://www.onorca.dev/plugins/stablyai/orca-plugins/orca-excalidraw",
+      "retrieval_refs": ["turn17view1", "turn18view1"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P2",
+      "title": "stablyai/orca-plugins/orca-spreadsheet",
+      "url": "https://www.onorca.dev/plugins/stablyai/orca-plugins/orca-spreadsheet",
+      "retrieval_refs": ["turn17view2", "turn18view2"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P3",
+      "title": "stablyai/orca-plugins/orca-docx",
+      "url": "https://www.onorca.dev/plugins/stablyai/orca-plugins/orca-docx",
+      "retrieval_refs": ["turn17view3", "turn18view3"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P4",
+      "title": "stablyai/orca-plugins/orca-sqlite-browser",
+      "url": "https://www.onorca.dev/plugins/stablyai/orca-plugins/orca-sqlite-browser",
+      "retrieval_refs": ["turn17view4", "turn18view4"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P5",
+      "title": "stablyai/orca-plugins/orca-image-markup",
+      "url": "https://www.onorca.dev/plugins/stablyai/orca-plugins/orca-image-markup",
+      "retrieval_refs": ["turn20view1"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P6",
+      "title": "stablyai/orca-plugins/orca-multipass-recipes",
+      "url": "https://www.onorca.dev/plugins/stablyai/orca-plugins/orca-multipass-recipes",
+      "retrieval_refs": ["turn20view0"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P7",
+      "title": "thailoc-dev/orca-dev-toolbox",
+      "url": "https://www.onorca.dev/plugins/thailoc-dev/orca-dev-toolbox",
+      "retrieval_refs": ["turn17view5", "turn18view5"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P8",
+      "title": "kolebayev/orca-md-layout",
+      "url": "https://www.onorca.dev/plugins/kolebayev/orca-md-layout",
+      "retrieval_refs": ["turn20view2"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P9",
+      "title": "thailoc-dev/orca-pptx-viewer",
+      "url": "https://www.onorca.dev/plugins/thailoc-dev/orca-pptx-viewer",
+      "retrieval_refs": ["turn20view3"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P10",
+      "title": "cemalkilic/lima-orca-vm-recipes",
+      "url": "https://www.onorca.dev/plugins/cemalkilic/lima-orca-vm-recipes",
+      "retrieval_refs": ["turn20view4"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P11",
+      "title": "insforge/orca-instabox-plugin",
+      "url": "https://www.onorca.dev/plugins/insforge/orca-instabox-plugin",
+      "retrieval_refs": ["turn20view5"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P12",
+      "title": "upstash/box-orca-plugin",
+      "url": "https://www.onorca.dev/plugins/upstash/box-orca-plugin",
+      "retrieval_refs": ["turn20view7", "turn21view3"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "P13",
+      "title": "senadaruc/orca-grazr",
+      "url": "https://www.onorca.dev/plugins/senadaruc/orca-grazr",
+      "retrieval_refs": ["turn20view6", "turn21view4"],
+      "kind": "publisher_plugin_release_page",
+      "status": "read",
+      "limits": "Metadados e anúncio lidos; código do plugin não baixado nem executado."
+    },
+    {
+      "id": "L1",
+      "title": "AB-Ratoeira 0.1.0 legado independente",
+      "local_path": "/workspace/scratch/43e1295b55d4/ab-ratoeira/README.md",
+      "kind": "local_previous_project",
+      "status": "read",
+      "limits": "Não é código privado da Ratoeira nem base do fork Orca. Não usado para afirmar capacidades do fork."
+    }
+  ],
+  "plugin_catalogs": [
+    {
+      "catalog": "official",
+      "version": 2,
+      "entries": [
+        {
+          "id": "stablyai.orca-midnight-theme",
+          "name": "Orca Midnight",
+          "version": "2.1.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Orca Midnight"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/midnight-theme"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "03e4f745d2c68e81f341eb161b12f6fd4f7c7c7876f0106222f25a22c0a041e2",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-nord-theme",
+          "name": "Nord for Orca",
+          "version": "2.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Nord"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/nord-theme"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "d5e5a4c8b780381a810c9d739bb65f452bd435ad542fbca0511979643b73b669",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-oled-theme",
+          "name": "Orca OLED",
+          "version": "1.1.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Orca OLED"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Orca OLED"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/oled-theme"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "0031f20cb30b60b2368ce605c7bfbba6911642f6b323aa395793a66de5a47e44",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-minimal-icons",
+          "name": "Orca Minimal Icons",
+          "version": "2.0.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["icons", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "iconThemes",
+              "name": "Minimal"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/minimal-icons"
+          },
+          "repository": null,
+          "commit": "83daff3cf0621ef15062d7df35eef5ff275bffee",
+          "contentHash": "4b41d7700c6f80cee59667d4c0183640e359254604d93cd90a9d710f7bccab22",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-solarized-terminal",
+          "name": "Solarized Terminal",
+          "version": "2.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["terminal-themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "terminalThemes",
+              "name": "Solarized Dark"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/solarized-terminal"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "8c3a7bc5ec4ba51b9c9a04685e6ddf1c0f922de59e334080dea1d20df415b31c",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-multipass-recipes",
+          "name": "Multipass VM Recipes",
+          "version": "2.0.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "declarative",
+          "categories": ["vm-recipes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "vmRecipes",
+              "name": "recipes/ubuntu-lts.json"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/multipass-recipes"
+          },
+          "repository": null,
+          "commit": "a955773da8145cc085fe93ddd9cc5214f1a57e0b",
+          "contentHash": "e3b992a6c498c0b55e7c86f44bcca77eb5a9cc39b3d9d9c54a3fc169ec5e7685",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-excalidraw",
+          "name": "Excalidraw",
+          "version": "2.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.248",
+          "execution": "sandboxed-ui",
+          "categories": ["editors", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "Excalidraw",
+              "detail": ".excalidraw, .excalidraw.json"
+            },
+            {
+              "kind": "newFiles",
+              "name": "New Excalidraw drawing",
+              "detail": ".excalidraw"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/excalidraw"
+          },
+          "repository": null,
+          "commit": "15ef4f57a08a5a6bdd2d63e9e4f31b09a9b56232",
+          "contentHash": "b2f787723df8a27691e89cf10a7b06d54c7e9997e334b2e0adecaa98c218e8ff",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-spreadsheet",
+          "name": "Spreadsheet Viewer",
+          "version": "1.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": ["editors", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "Spreadsheet",
+              "detail": ".xlsx, .xlsm, .xlsb, .xls, .ods"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/spreadsheet"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "94a6a17137eb2587a3c40bdef62bdba9138aa9c87770b90a2c5aa47543587b30",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-gleam",
+          "name": "Gleam Language",
+          "version": "1.0.0",
+          "license": "MIT AND Apache-2.0",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Gleam",
+              "detail": ".gleam"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/gleam"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "af266ae7e1ba6c2ab1c027c2fd9476591ae79110da3e1a08519a7fd08afb5092",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-prisma",
+          "name": "Prisma Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Prisma",
+              "detail": ".prisma"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/prisma"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "7f209ad7efdd4af6d454c0aa731572af6dbb3b06e86fa66a706b5c74c9ff34fc",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-matlab",
+          "name": "MATLAB Syntax",
+          "version": "1.0.0",
+          "license": "MIT AND BSD-2-Clause",
+          "minimumOrca": "1.4.246",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "MATLAB",
+              "detail": ".m"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/matlab"
+          },
+          "repository": null,
+          "commit": "6640821a718a74c1db40da1232c06926180791cc",
+          "contentHash": "5435b5c5105d98bbb3ffa9e294881062dcff025394f75d830bba53afc1ab16f4",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-ocaml",
+          "name": "OCaml Syntax",
+          "version": "1.0.0",
+          "license": "MIT AND ISC",
+          "minimumOrca": "1.4.246",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "OCaml",
+              "detail": ".ml"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "OCaml Interface",
+              "detail": ".mli"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "MLX",
+              "detail": ".mlx"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "ocamldoc grammar dependency"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/ocaml"
+          },
+          "repository": null,
+          "commit": "a8369ce3fc117276cfbbe5aeaac19a1c9b3d2e09",
+          "contentHash": "92e3395aa7e3b1f37f46cda8d52c08cd662ccfaaf54c34ddd22971ec38a06361",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-julia",
+          "name": "Julia Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.246",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Julia",
+              "detail": ".jl"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/julia"
+          },
+          "repository": null,
+          "commit": "fa053c1f77e6c4ed639353e2a0996f34782d86ae",
+          "contentHash": "1c0af934c8bd2a272cbc973f214a6253eceb455e440197d9785de0cba143ea73",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-haskell",
+          "name": "Haskell Syntax",
+          "version": "1.0.0",
+          "license": "MIT AND BSD-3-Clause",
+          "minimumOrca": "1.4.246",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Haskell",
+              "detail": ".hs, .hsig, .hs-boot"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "Literate Haskell",
+              "detail": ".lhs"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "Cabal",
+              "detail": ".cabal"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "Cabal Project",
+              "detail": "cabal.project, cabal.project.local, cabal.project.freeze"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/haskell"
+          },
+          "repository": null,
+          "commit": "5449989479f8ee08df4881d2d9baac2e4b2ebc4c",
+          "contentHash": "3bf972a5c5498103d5a31a674e29f6aed3af6d086720940c2dd6b5bea9f8129f",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-erlang",
+          "name": "Erlang Syntax",
+          "version": "1.0.0",
+          "license": "MIT AND Apache-2.0",
+          "minimumOrca": "1.4.246",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Erlang",
+              "detail": ".erl, .hrl, .escript, .app.src, rebar.config"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/erlang"
+          },
+          "repository": null,
+          "commit": "4e7f8efa180aa25d0c9b669799aede903ae50a23",
+          "contentHash": "d17a2e13053744c91d8511551b7ad9cf2aa10231ecf1f0cb2bb66871b41ceddd",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-jsp",
+          "name": "JSP Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.246",
+          "execution": "data",
+          "categories": ["syntax", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "JSP",
+              "detail": ".jsp, .jspf, .tag"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "HTML grammar dependency"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "Java grammar dependency"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "CSS grammar dependency"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "JavaScript grammar dependency"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/jsp"
+          },
+          "repository": null,
+          "commit": "9f8178a8ee15e07956e368193e22541218020eeb",
+          "contentHash": "118fd65015ad022e6b8230ff1e4abcebf8937337909c048c7d907ceadeabb53b",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-dusk-ember",
+          "name": "Dusk & Ember Themes",
+          "version": "1.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Dusk"
+            },
+            {
+              "kind": "themes",
+              "name": "Ember"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Dusk"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ember"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/dusk-ember"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "685d75485ea3df4227dfea89b658c12be723792b298147da24981df8154c98ae",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-github-light-theme",
+          "name": "GitHub Light for Orca",
+          "version": "1.0.2",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "GitHub Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "GitHub Light"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/github-light-theme"
+          },
+          "repository": null,
+          "commit": "e78a6df982abdc6e6803878e16fb31ecc6dc58ac",
+          "contentHash": "47a866fc54e4d6dc330b25581bde5b96ed63e99da541beae747475ae1f8e7027",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-solarized-light-theme",
+          "name": "Solarized Light for Orca",
+          "version": "1.0.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Solarized Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Solarized Light"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/solarized-light-theme"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "30d189e002e03236cd0da15406e79b8089a6084d2bddba9f0a486623392c857c",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-dracula-theme",
+          "name": "Dracula for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Dracula"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Dracula"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/dracula-theme"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "b48dc1c0f7104efbfe2ca31fb6d5f4f902245891bded7102e13828db1afd6390",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-gruvbox-theme",
+          "name": "Gruvbox for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Gruvbox Dark"
+            },
+            {
+              "kind": "themes",
+              "name": "Gruvbox Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Gruvbox Dark"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Gruvbox Light"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/gruvbox-theme"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "0975f18c47569fec59365e28263462387a79b077a073f86a21a960550edc9250",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-nix",
+          "name": "Nix Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Nix",
+              "detail": ".nix"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/nix"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "71c16d87911ab56636140f5dfff4434c7397a08dbf4e870ab572b3ae93e8fbc9",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-godot",
+          "name": "Godot Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "GDScript",
+              "detail": ".gd"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "Godot Resource",
+              "detail": ".tscn, .tres, .escn, .godot, .import, .remap, .gdextension"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "Godot Shader",
+              "detail": ".gdshader, .gdshaderinc"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/godot"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "b44792200f0b2c99a3b57be7cffd4e732f41d5ae16968840b9e3254b0d4e2705",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-latex",
+          "name": "LaTeX Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "LaTeX",
+              "detail": ".tex, .ltx, .sty"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "TeX grammar dependency"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/latex"
+          },
+          "repository": null,
+          "commit": "07590d2c7bdc8c6c9299123106b9e0525656a411",
+          "contentHash": "864a1e097f5056ea75ff910a2e9d4887e103ab73ba6dfacd5fe17bb62013cae8",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-vhdl",
+          "name": "VHDL Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "VHDL",
+              "detail": ".vhd, .vhdl, .vho, .vht"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/vhdl"
+          },
+          "repository": null,
+          "commit": "e30cb09d2c3c5d67a252c4d8f3fae596c31b935a",
+          "contentHash": "efdbdde20ac75d264129c6ddb3f55bf11810951075846ebf1af5bc5fb8bfbe96",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-vcl",
+          "name": "VCL Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "VCL",
+              "detail": ".vcl"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/vcl"
+          },
+          "repository": null,
+          "commit": "9620dab52be630d65c32ea753b4f906e84f2cf97",
+          "contentHash": "5cc33563a993f60f33530fa37e04b389aeb4b1c33e656f742022a9c41fd2d03c",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-qml",
+          "name": "QML Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "QML",
+              "detail": ".qml"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "QML Module Definition",
+              "detail": "qmldir"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "JavaScript grammar dependency"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/qml"
+          },
+          "repository": null,
+          "commit": "a46f49c8ae0b6c12b52b336d2126c7539c5ec477",
+          "contentHash": "822eea60d2353f700229cd58d97a5e7d474bc673b8e30bb4251f75e1885b810b",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-taxi",
+          "name": "Taxi Timesheets Syntax",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "Taxi",
+              "detail": ".tks"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/taxi"
+          },
+          "repository": null,
+          "commit": "9c8378448c84c41094afdadd1e7c1c6f77227e41",
+          "contentHash": "f91cce41a48d5246544e40e4227b008e0836961b2be68c26ca033c63bd1abd41",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-http",
+          "name": "HTTP Request Files",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "HTTP",
+              "detail": ".http, .rest"
+            },
+            {
+              "kind": "syntaxes",
+              "name": "JSON body grammar dependency"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/http"
+          },
+          "repository": null,
+          "commit": "473ecbe6766c976102c7c670ac5e1ce4406ff5c9",
+          "contentHash": "45af3b0c32d42eb77a36d5ef960d1c56035cd4a9637871bc105664b2af5576d0",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-systemd",
+          "name": "systemd Unit Files",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["languages", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "syntaxes",
+              "name": "systemd unit",
+              "detail": ".service, .socket, .timer, .target, .path, .mount, .automount, .swap, .slice, .scope, .device, .snapshot, .link, .netdev, .network, .nspawn, .dnssd, .container, .volume, .kube"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/systemd"
+          },
+          "repository": null,
+          "commit": "6d9bdfa97689829ce205f5edee415c2406b3856e",
+          "contentHash": "72d4b3906ebbe190cecfe75e9a636376ab160886639545ee07c759927dffa766",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-docx",
+          "name": "Word Document Viewer",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": ["editors", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "Word Preview",
+              "detail": ".docx"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/docx"
+          },
+          "repository": null,
+          "commit": "819a8c4070bb86370d616a7ca976015146820c24",
+          "contentHash": "36e8b84bc0c32754f40f98b9f1260f9a21cbab03f46db1a0da44818de94e2fb3",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-image-markup",
+          "name": "Image Markup",
+          "version": "1.0.2",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": ["editors", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "Markup",
+              "detail": ".png, .jpg, .jpeg, .webp, .gif, .bmp, .avif"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/image-markup"
+          },
+          "repository": null,
+          "commit": "1fe9ab8f3133f3712766c974aded306d648f483f",
+          "contentHash": "ae9b3d57fc686470a7a4186b11695e36ce7c44dab5be3d4615a67573cc86a60e",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-runner",
+          "name": "Orca Run",
+          "version": "1.2.3",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": ["games", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "panels",
+              "name": "Orca Run"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/orca-runner"
+          },
+          "repository": null,
+          "commit": "b9ab2b3916901be2fb1dcccb2392b2cdb231077d",
+          "contentHash": "965bb5692c7b7e5bd78124bcc13fa331f0af4d7df1b1c0536526e4285aa31318",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-catppuccin-theme",
+          "name": "Catppuccin for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Catppuccin Mocha"
+            },
+            {
+              "kind": "themes",
+              "name": "Catppuccin Latte"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/catppuccin-theme"
+          },
+          "repository": null,
+          "commit": "7e14bf48e4474151532eca535352225cbc08345d",
+          "contentHash": "c9e450a6628b40e963402cad3c3caa88b4bc3e75fa0723173cdf28aeb0d4b987",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-material-icons",
+          "name": "Material Icon Theme for Orca",
+          "version": "1.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["icons", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "iconThemes",
+              "name": "Material Icons"
+            },
+            {
+              "kind": "iconThemes",
+              "name": "Material Icons (Light)"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/material-icons"
+          },
+          "repository": null,
+          "commit": "a501d84f15f796248f12678fd92e1f22e50bead4",
+          "contentHash": "21f2dcecf215f92cb122732143a7d511433c7eb729deb8e588ba5a27a48b1aec",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-sqlite-browser",
+          "name": "SQLite Browser",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": ["editors", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "SQLite",
+              "detail": ".db, .sqlite, .sqlite3, .db3"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/sqlite-browser"
+          },
+          "repository": null,
+          "commit": "af1b8721272ecc107361aac95c92f66b2a633a9d",
+          "contentHash": "15716790a1964aed3c6dc7e4e23b7489810f1627676f88144b8273d4075f64d4",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-tokyo-night-theme",
+          "name": "Tokyo Night for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Tokyo Night"
+            },
+            {
+              "kind": "themes",
+              "name": "Tokyo Night Storm"
+            },
+            {
+              "kind": "themes",
+              "name": "Tokyo Night Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night Storm"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night Light"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/tokyo-night-theme"
+          },
+          "repository": null,
+          "commit": "3ad7e2c36acf9fabb4148b99359dca95d345ba4c",
+          "contentHash": "8beb4aca05752043699aadaee9b332280c0cb06f75371711ab2edc134b6e81f7",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-one-dark-pro-theme",
+          "name": "One Dark Pro for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "One Dark Pro"
+            },
+            {
+              "kind": "themes",
+              "name": "One Dark Pro Flat"
+            },
+            {
+              "kind": "themes",
+              "name": "One Dark Pro Darker"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "One Dark Pro"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "One Dark Pro Flat"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "One Dark Pro Darker"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/one-dark-pro-theme"
+          },
+          "repository": null,
+          "commit": "3ad7e2c36acf9fabb4148b99359dca95d345ba4c",
+          "contentHash": "4dcabfaea6b2e3051a8b16510a48f18ce560e4027034f00180e6adc98800b54f",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-rose-pine-theme",
+          "name": "Rosé Pine for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Rosé Pine"
+            },
+            {
+              "kind": "themes",
+              "name": "Rosé Pine Moon"
+            },
+            {
+              "kind": "themes",
+              "name": "Rosé Pine Dawn"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Rosé Pine"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Rosé Pine Moon"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Rosé Pine Dawn"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/rose-pine-theme"
+          },
+          "repository": null,
+          "commit": "3ad7e2c36acf9fabb4148b99359dca95d345ba4c",
+          "contentHash": "4d1695e39f6af26ea34f6746142321263e907dc1d673019ead68f1a436386c62",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-github-vscode-theme",
+          "name": "GitHub Themes for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "GitHub Light Default"
+            },
+            {
+              "kind": "themes",
+              "name": "GitHub Light High Contrast"
+            },
+            {
+              "kind": "themes",
+              "name": "GitHub Dark Default"
+            },
+            {
+              "kind": "themes",
+              "name": "GitHub Dark High Contrast"
+            },
+            {
+              "kind": "themes",
+              "name": "GitHub Dark Dimmed"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "GitHub Light Default"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "GitHub Light High Contrast"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "GitHub Dark Default"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "GitHub Dark High Contrast"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "GitHub Dark Dimmed"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/github-vscode-theme"
+          },
+          "repository": null,
+          "commit": "3ad7e2c36acf9fabb4148b99359dca95d345ba4c",
+          "contentHash": "7e17af8557dd0163ee0bc74aca3a6eb227f00bdd4b2ca04a68d78d891a24afb3",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-ayu-theme",
+          "name": "Ayu for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Ayu Light"
+            },
+            {
+              "kind": "themes",
+              "name": "Ayu Mirage"
+            },
+            {
+              "kind": "themes",
+              "name": "Ayu Dark"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ayu Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ayu Mirage"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ayu Dark"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/ayu-theme"
+          },
+          "repository": null,
+          "commit": "3ad7e2c36acf9fabb4148b99359dca95d345ba4c",
+          "contentHash": "d6905874d692a152d91b9adcb507bcf6f82bf9b941e3e70ab7fca7a009099dc7",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-night-owl-theme",
+          "name": "Night Owl for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Night Owl"
+            },
+            {
+              "kind": "themes",
+              "name": "Night Owl Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Night Owl"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Night Owl Light"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/night-owl-theme"
+          },
+          "repository": null,
+          "commit": "3ad7e2c36acf9fabb4148b99359dca95d345ba4c",
+          "contentHash": "a6527b65a853f5a16625e0c1b1dbcdad2421e06b10f63bd0cabee4e9699c3d12",
+          "updatedAt": null
+        },
+        {
+          "id": "stablyai.orca-vscode-default-themes",
+          "name": "VS Code Default Themes for Orca",
+          "version": "1.0.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "official"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "VS Code Dark+"
+            },
+            {
+              "kind": "themes",
+              "name": "VS Code Dark Modern"
+            },
+            {
+              "kind": "themes",
+              "name": "VS Code Light+"
+            },
+            {
+              "kind": "themes",
+              "name": "VS Code Light Modern"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-plugins.git",
+            "ref": "main",
+            "path": "plugins/vscode-default-themes"
+          },
+          "repository": null,
+          "commit": "2c75903f33203dede2d40db5fcc314aed19d3934",
+          "contentHash": "c2ac5f8980d80a4c99d51a41033e71bfbc48d854c05c598853a09ab5aecd8966",
+          "updatedAt": null
+        }
+      ],
+      "source_id": "C1",
+      "catalog_commit": "30f40973b0d9d4b521f094a15173f932292c85f6",
+      "source_url": "https://raw.githubusercontent.com/stablyai/orca-plugins/30f40973b0d9d4b521f094a15173f932292c85f6/orca-catalog.json",
+      "metadata_only": true
+    },
+    {
+      "catalog": "community",
+      "version": 2,
+      "entries": [
+        {
+          "id": "cemalkilic.lima-recipes",
+          "name": "Lima VM Recipes",
+          "version": "1.0.2",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "declarative",
+          "categories": ["vm-recipes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "vmRecipes",
+              "name": "recipes/ubuntu-lts.json"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/cemalkilic/lima-orca-vm-recipes/1.0.2"
+          },
+          "repository": "https://github.com/cemalkilic/lima-orca-vm-recipes",
+          "commit": "c67e4ba724a492210c93e49e69b63605519673ef",
+          "contentHash": "a9c7b490b6a60b8243fe70e9f1ef517f376354e49cb5aadb0bd940ab16efcfce",
+          "updatedAt": "2026-11-01T22:51:59+01:00"
+        },
+        {
+          "id": "dawidwetzler.cobalt2-theme",
+          "name": "Cobalt2 for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Cobalt2"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Cobalt2"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/dawidwetzler/orca-cobalt2-theme/1.0.0"
+          },
+          "repository": "https://github.com/DawidWetzler/orca-cobalt2-theme",
+          "commit": "455897028f3ea666e05e78288704af32869c0f86",
+          "contentHash": "2c14bfae3c7fa37142cc9fb1400005536ffdb9615b9b9ec0e0eef1e65b02c756",
+          "updatedAt": "2026-10-30T17:31:27+01:00"
+        },
+        {
+          "id": "insforge.instabox",
+          "name": "Instabox",
+          "version": "0.1.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "declarative",
+          "categories": ["vm-recipes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "vmRecipes",
+              "name": "recipes/instabox.json"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/insforge/orca-instabox-plugin/0.1.1"
+          },
+          "repository": "https://github.com/InsForge/orca-instabox-plugin",
+          "commit": "b5426a50ac153b74e07973761b618e87f35bb47f",
+          "contentHash": "fad685fe7f00a23b9d9ef50e1af8002bc69271e5fd529e55ef7325eaa4c6ccf3",
+          "updatedAt": "2026-11-01T21:36:27-08:00"
+        },
+        {
+          "id": "kolebayev.narrow-markdown",
+          "name": "Narrow Markdown",
+          "version": "0.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": [],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "Narrow",
+              "detail": ".md, .markdown"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/kolebayev/orca-md-layout/0.1.0"
+          },
+          "repository": "https://github.com/kolebayev/orca-md-layout",
+          "commit": "6060a677674a2491d818961745447073411607d8",
+          "contentHash": "42176307b209ff525018068803bc6a55f2c71b8792ceb0b20cd770deb396b7fe",
+          "updatedAt": "2026-10-31T00:42:52+01:00"
+        },
+        {
+          "id": "lkgilgamesh.ayu",
+          "name": "Ayu for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Ayu Dark"
+            },
+            {
+              "kind": "themes",
+              "name": "Ayu Mirage"
+            },
+            {
+              "kind": "themes",
+              "name": "Ayu Light"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ayu Dark Terminal"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ayu Mirage Terminal"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Ayu Light Terminal"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/lkgilgamesh/orca-ayu/1.0.0"
+          },
+          "repository": "https://github.com/LKGilgamesh/orca-ayu",
+          "commit": "037c09a609184a4b3bae876abf2ce7556e833768",
+          "contentHash": "4c53bf83bac9aaa95adef82ff5204ad6d7105c4d21f5af40c993db48751e993a",
+          "updatedAt": "2026-10-31T10:26:13-04:00"
+        },
+        {
+          "id": "mbirepinte.asciidoc-viewer",
+          "name": "AsciiDoc Viewer",
+          "version": "0.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": [],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "AsciiDoc Preview",
+              "detail": ".adoc"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/mbirepinte/orca-asciidoc-viewer/0.1.0"
+          },
+          "repository": "https://github.com/Mbirepinte/Orca-asciidoc-viewer",
+          "commit": "00681a638bb154b9c818a348b1f57b687055b286",
+          "contentHash": "45327fbd23c2ac4e1058ca474da188ca4109e3eecd92cb2a2edebdd879222ef5",
+          "updatedAt": "2026-10-30T16:47:59+01:00"
+        },
+        {
+          "id": "piter75.gruvbox-material-theme",
+          "name": "Gruvbox Material for Orca",
+          "version": "1.0.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Gruvbox Material Dark Medium"
+            },
+            {
+              "kind": "themes",
+              "name": "Gruvbox Material Light Medium"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Gruvbox Material Dark Medium"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Gruvbox Material Light Medium"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/piter75/orca-gruvbox-material-theme/1.0.1"
+          },
+          "repository": "https://github.com/piter75/orca-gruvbox-material-theme",
+          "commit": "dc147f226fc2d039b71a3a3fa4baa730dd1204ed",
+          "contentHash": "c83d8f1faa7b61695593b239542468bfafb26348f6204df8fec4760077c4edce",
+          "updatedAt": "2026-10-31T23:32:47+01:00"
+        },
+        {
+          "id": "senadaruc.grazr",
+          "name": "Grazr",
+          "version": "0.6.3",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "trusted-worker",
+          "categories": ["panels", "commands", "integrations"],
+          "capabilities": [
+            "notifications:show",
+            "settings:own",
+            "storage:own",
+            "workspace:read",
+            "agent:read",
+            "terminal:send"
+          ],
+          "contributes": [
+            {
+              "kind": "panels",
+              "name": "Claude Accounts"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Target → next host"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Status (all hosts)"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Swap now (target)"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Refresh parked accounts (target)"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Toggle rotation (target)"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Install engine on target"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Uninstall from target"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Drain notices now"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Type enrol command into terminal"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Type status command into terminal"
+            },
+            {
+              "kind": "commands",
+              "name": "Grazr: Refresh panel"
+            },
+            {
+              "kind": "events",
+              "name": "agent.status.changed"
+            },
+            {
+              "kind": "events",
+              "name": "workspace.created"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/senadaruc/orca-grazr/0.6.3"
+          },
+          "repository": "https://github.com/senadaruc/orca-grazr",
+          "commit": "c3e76fd9ff37fc41a532bca9907732a78096aeee",
+          "contentHash": "1ed9a24b2810abf329ecd6022ee86364517a3a37c5a4bcc2f6137ed5a6deacc8",
+          "updatedAt": "2026-10-31T09:15:58+01:00"
+        },
+        {
+          "id": "thailoc-dev.dev-toolbox",
+          "name": "Dev Toolbox",
+          "version": "0.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": ["panels"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "panels",
+              "name": "Dev Toolbox"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/thailoc-dev/orca-dev-toolbox.git",
+            "ref": "v0.1.0"
+          },
+          "repository": "https://github.com/thailoc-dev/orca-dev-toolbox",
+          "commit": "a890386f8215ae75445651a7075bcf0dd946c7ad",
+          "contentHash": "d75bc9bf6aa33b340381da97a1eb860aaeb5c58b08a3ab7bd9546ce16c023c65",
+          "updatedAt": "2026-10-31T17:32:45+07:00"
+        },
+        {
+          "id": "thailoc-dev.pptx-viewer",
+          "name": "Presentation Viewer",
+          "version": "0.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "sandboxed-ui",
+          "categories": [],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "customEditors",
+              "name": "Presentation Preview",
+              "detail": ".pptx, .ppsx, .potx, .pptm, .ppsm, .potm"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/thailoc-dev/orca-pptx-viewer/0.1.0"
+          },
+          "repository": "https://github.com/thailoc-dev/orca-pptx-viewer",
+          "commit": "ea7c5291e10fbe715edfe188995b012638c386dc",
+          "contentHash": "5e7db382012eed258c0f65a20b704190b09b66fd7da5e4c6ebadad90282c371e",
+          "updatedAt": "2026-10-31T11:46:20+07:00"
+        },
+        {
+          "id": "thailoc-dev.rose-pine",
+          "name": "Rosé Pine for Orca",
+          "version": "0.1.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Rosé Pine"
+            },
+            {
+              "kind": "themes",
+              "name": "Rosé Pine Moon"
+            },
+            {
+              "kind": "themes",
+              "name": "Rosé Pine Dawn"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Rosé Pine"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Rosé Pine Moon"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Rosé Pine Dawn"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/thailoc-dev/orca-rose-pine/0.1.0"
+          },
+          "repository": "https://github.com/thailoc-dev/orca-rose-pine",
+          "commit": "31ed15a0901402f78ba969db36937f0af56e1862",
+          "contentHash": "212f2a7ce6e90b512a9cafe508933ee5b5f5ded0c8f72d8b236b39931fb6704e",
+          "updatedAt": "2026-10-31T16:59:22+07:00"
+        },
+        {
+          "id": "upstash.upstash-box",
+          "name": "Upstash Box",
+          "version": "0.1.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "declarative",
+          "categories": ["vm-recipes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "vmRecipes",
+              "name": "vm-recipe.json"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/upstash/box-orca-plugin/0.1.1"
+          },
+          "repository": "https://github.com/upstash/box-orca-plugin",
+          "commit": "89a2545e1324c0e0f6c8edf540ba7d84e340b915",
+          "contentHash": "9653fe4f1b0d1361c7f43fbe1cc1fc3fe774fceb7b9f333739df8d3c44e14c4c",
+          "updatedAt": "2026-10-30T15:49:09+03:00"
+        },
+        {
+          "id": "vale-c.catppuccin",
+          "name": "Catppuccin for Orca",
+          "version": "1.0.1",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Catppuccin Latte"
+            },
+            {
+              "kind": "themes",
+              "name": "Catppuccin Frappé"
+            },
+            {
+              "kind": "themes",
+              "name": "Catppuccin Macchiato"
+            },
+            {
+              "kind": "themes",
+              "name": "Catppuccin Mocha"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Catppuccin Latte"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Catppuccin Frappé"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Catppuccin Macchiato"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Catppuccin Mocha"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/vale-c/orca-catppuccin/1.0.1"
+          },
+          "repository": "https://github.com/vale-c/orca-catppuccin",
+          "commit": "6851c969d75ce032fa6d5c8b09239824a17aebe1",
+          "contentHash": "6f831d82ae81c6bce0f6d4ff85882134c4a1d1087f3e896957e0b4a471c567e2",
+          "updatedAt": "2026-10-30T11:48:15+01:00"
+        },
+        {
+          "id": "vale-c.tokyonight",
+          "name": "Tokyo Night for Orca",
+          "version": "1.0.0",
+          "license": "MIT",
+          "minimumOrca": "1.4.245",
+          "execution": "data",
+          "categories": ["themes", "terminal-themes"],
+          "capabilities": [],
+          "contributes": [
+            {
+              "kind": "themes",
+              "name": "Tokyo Night"
+            },
+            {
+              "kind": "themes",
+              "name": "Tokyo Night Storm"
+            },
+            {
+              "kind": "themes",
+              "name": "Tokyo Night Moon"
+            },
+            {
+              "kind": "themes",
+              "name": "Tokyo Night Day"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night Storm"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night Moon"
+            },
+            {
+              "kind": "terminalThemes",
+              "name": "Tokyo Night Day"
+            }
+          ],
+          "source": {
+            "kind": "git",
+            "url": "https://github.com/stablyai/orca-community-mirror.git",
+            "ref": "refs/tags/vale-c/orca-tokyonight/1.0.0"
+          },
+          "repository": "https://github.com/vale-c/orca-tokyonight",
+          "commit": "3ccaf7f552a25f99250df4d0092744645982a7d4",
+          "contentHash": "c9f63fde0b0d0326cb25d84401da6922e69ce7ee750c6a1eb26905d20c8177e4",
+          "updatedAt": "2026-10-30T21:17:55+01:00"
+        }
+      ],
+      "source_id": "C2",
+      "catalog_commit": "1fc4435a109978c754045c4439d4678494eb78da",
+      "source_url": "https://raw.githubusercontent.com/stablyai/orca-community-plugins/1fc4435a109978c754045c4439d4678494eb78da/orca-catalog.json",
+      "metadata_only": true
+    }
+  ]
+}

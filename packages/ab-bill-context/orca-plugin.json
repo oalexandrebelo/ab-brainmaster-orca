@@ -1,0 +1,30 @@
+{
+  "manifestVersion": 2,
+  "execution": "trusted-worker",
+  "id": "ab-bill-context",
+  "name": "AB-BRAINMASTER Contexto",
+  "version": "0.1.0",
+  "description": "Compressão opcional com billion-context em novos terminais Claude de workspaces locais de pasta. Requer configuração e verificação explícitas.",
+  "engines": { "orca": ">=1.4.248" },
+  "pluginApi": 1,
+  "main": "worker.mjs",
+  "contributes": {
+    "panels": [{ "id": "context", "title": "Contexto", "icon": "layers", "entry": "panel.html" }],
+    "commands": [{ "id": "context-disable", "title": "Contexto: desligar para novos terminais" }],
+    "hooks": [{ "event": "agent.launch.before", "onError": "deny" }],
+    "settings": [
+      {
+        "key": "enabled",
+        "title": "Compressão em novos terminais Claude",
+        "type": "boolean",
+        "default": false,
+        "description": "Só afeta o workspace preparado. Desligar mantém as sessões já abertas e seus arquivos."
+      }
+    ]
+  },
+  "capabilities": [
+    { "kind": "workspace:read" },
+    { "kind": "storage:own" },
+    { "kind": "settings:own" }
+  ]
+}

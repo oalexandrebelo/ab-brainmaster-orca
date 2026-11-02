@@ -1,0 +1,37 @@
+name: AB extension contracts
+
+on:
+  push:
+    branches: ['ab-brainmaster/**']
+    paths:
+      - 'packages/ab-bill-context/**'
+      - 'packages/ab-upstream-review/**'
+      - '.github/workflows/ab-extensions.yml'
+  pull_request:
+    paths:
+      - 'packages/ab-bill-context/**'
+      - 'packages/ab-upstream-review/**'
+      - '.github/workflows/ab-extensions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  node-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      ORCA_BACKGROUND_LAUNCH: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.22.1'
+      - name: Run dependency-free contracts
+        run: >-
+          node --test --test-isolation=none
+          packages/ab-bill-context/tests/*.test.mjs
+          packages/ab-upstream-review/tests/*.test.mjs
