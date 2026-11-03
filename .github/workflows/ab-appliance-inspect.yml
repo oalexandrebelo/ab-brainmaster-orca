@@ -1,0 +1,159 @@
+name: AB appliance inspection of run 41562585736
+
+on:
+  push:
+    branches: ['ab-brainmaster/**']
+    paths:
+      - '.github/workflows/ab-appliance-inspect.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  inspect_failed_appliance:
+    if: github.repository == 'oalexandrebelo/ab-brainmaster-orca'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Read the fixed source artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p recovered/evidence recovered/production recovered/ci
+          gh api repos/oalexandrebelo/ab-brainmaster-orca/actions/artifacts/13198289102 > recovered/evidence/source-artifact.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          artifact = json.loads(Path('recovered/evidence/source-artifact.json').read_text())
+          expected = {
+              'id': 13198289102,
+              'name': 'ab-appliance-boot-evidence',
+              'size_in_bytes': 782766229,
+              'digest': 'sha256:9f27740632f26dfd842fd4225a37118291aa96f2f1fadd003e08e7cbb8433206',
+              'expired': False,
+          }
+          for key, value in expected.items():
+              if artifact.get(key) != value:
+                  raise SystemExit(f'Source artifact metadata mismatch: {key}')
+          run = artifact.get('workflow_run', {})
+          if run.get('id') != 41562585736 or run.get('head_sha') != 'afb874d0cce22634772ad8fe4cb342d64f30ddd1':
+              raise SystemExit('Source workflow run or commit mismatch')
+          PY
+      - name: Download and verify the original ZIP before bounded extraction
+        id: recover
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/oalexandrebelo/ab-brainmaster-orca/actions/artifacts/13198289102/zip > recovered/source.zip
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import shutil
+          import stat
+          import zipfile
+          from pathlib import Path
+          root = Path('recovered')
+          archive = root / 'source.zip'
+          digest = hashlib.file_digest(archive.open('rb'), 'sha256').hexdigest()
+          if archive.stat().st_size != 782766229 or digest != '9f27740632f26dfd842fd4225a37118291aa96f2f1fadd003e08e7cbb8433206':
+              raise SystemExit('Original ZIP size or SHA-256 mismatch')
+          destinations = {
+              'ab-brainmaster-amd64.iso': 'production',
+              'ab-brainmaster-amd64.iso.sha256': 'production',
+              'ab-brainmaster-ci-amd64.iso': 'ci',
+              'ab-brainmaster-ci-amd64.iso.sha256': 'ci',
+              'qemu-production.log': 'evidence',
+              'qemu-first.log': 'evidence',
+              'qemu-second.log': 'evidence',
+              'appliance-receipt.json': 'evidence',
+          }
+          required = {name for name in destinations if name.endswith(('.iso', '.sha256'))} | {'qemu-production.log'}
+          files = []
+          seen = set()
+          with zipfile.ZipFile(archive) as bundle:
+              for entry in bundle.infolist():
+                  name = entry.filename
+                  mode = entry.external_attr >> 16
+                  limit = 512 * 1024 * 1024 if name.endswith('.iso') else 8 * 1024 * 1024
+                  if name not in destinations or name in seen or entry.is_dir() or stat.S_IFMT(mode) not in (0, stat.S_IFREG) or entry.file_size > limit:
+                      raise SystemExit(f'Unexpected or oversized archive entry: {name!r}')
+                  seen.add(name)
+                  destination = root / destinations[name] / name
+                  with bundle.open(entry) as source, destination.open('xb') as target:
+                      shutil.copyfileobj(source, target)
+                  files.append({'path': name, 'bytes': destination.stat().st_size, 'sha256': hashlib.file_digest(destination.open('rb'), 'sha256').hexdigest()})
+          if not required.issubset(seen):
+              raise SystemExit('Source artifact is missing required evidence')
+          for directory, name in [('production', 'ab-brainmaster-amd64.iso'), ('ci', 'ab-brainmaster-ci-amd64.iso')]:
+              checksum = (root / directory / f'{name}.sha256').read_text().split()
+              actual = next(item['sha256'] for item in files if item['path'] == name)
+              if checksum != [actual, name]:
+                  raise SystemExit(f'ISO checksum mismatch: {name}')
+          receipt = {
+              'format': 1,
+              'repository': 'oalexandrebelo/ab-brainmaster-orca',
+              'sourceRunId': 41562585736,
+              'sourceArtifactId': 13198289102,
+              'sourceCommit': 'afb874d0cce22634772ad8fe4cb342d64f30ddd1',
+              'sourceZipSha256': digest,
+              'sourceBootStatus': 'FAILURE',
+              'sourceFailure': 'production: expected serial marker absent after 600 seconds',
+              'performedBoots': [],
+              'purpose': 'Read-only recovery; no recovered content was executed and no boot acceptance is claimed',
+              'files': files,
+          }
+          for directory in ['evidence', 'production', 'ci']:
+              (root / directory / 'origin-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PY
+          echo 'verified=true' >> "$GITHUB_OUTPUT"
+      - name: Read bootloader configuration from each verified ISO
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xorriso
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          from pathlib import Path
+          root = Path('recovered')
+          report = []
+          required = {'/isolinux/isolinux.cfg', '/isolinux/live.cfg'}
+          for directory, name in [('production', 'ab-brainmaster-amd64.iso'), ('ci', 'ab-brainmaster-ci-amd64.iso')]:
+              for source in [*sorted(required), '/isolinux/menu.cfg', '/isolinux/stdmenu.cfg', '/boot/grub/grub.cfg']:
+                  destination = root / 'evidence' / 'boot-config' / directory / source.lstrip('/')
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  result = subprocess.run(['xorriso', '-osirrox', 'on', '-indev', str(root / directory / name), '-extract', source, str(destination)], capture_output=True, text=True)
+                  destination.with_suffix('.extract.log').write_text(result.stdout + result.stderr)
+                  item = {'iso': name, 'source': source, 'returncode': result.returncode}
+                  if result.returncode == 0:
+                      item['sha256'] = hashlib.file_digest(destination.open('rb'), 'sha256').hexdigest()
+                  report.append(item)
+          (root / 'evidence' / 'boot-config-receipt.json').write_text(json.dumps(report, indent=2) + '\n')
+          if any(item['returncode'] != 0 and item['source'] in required for item in report):
+              raise SystemExit('A required boot configuration could not be recovered; inspect extraction logs')
+          PY
+      - name: Preserve recovered serial logs and boot configuration
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ab-appliance-inspection-run-41562585736
+          path: recovered/evidence/
+          if-no-files-found: error
+      - name: Preserve the original production ISO without claiming boot acceptance
+        if: always() && steps.recover.outputs.verified == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ab-appliance-production-iso-run-41562585736
+          path: recovered/production/
+          if-no-files-found: error
+      - name: Preserve the original CI ISO without claiming boot acceptance
+        if: always() && steps.recover.outputs.verified == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ab-appliance-ci-iso-run-41562585736
+          path: recovered/ci/
+          if-no-files-found: error

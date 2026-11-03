@@ -142,15 +142,30 @@ jobs:
           sudo apt-get install -y --no-install-recommends qemu-system-x86 e2fsprogs
           bash deploy/ab-brainmaster/appliance/make-state.sh artifact/state.img --acceptance
           python3 deploy/ab-brainmaster/appliance/qemu-acceptance.py artifact/ab-brainmaster-amd64.iso artifact/ab-brainmaster-ci-amd64.iso artifact/state.img artifact
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - name: Preserve appliance boot logs and receipt
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: ab-appliance-boot-evidence
           path: |
-            artifact/ab-brainmaster-amd64.iso
-            artifact/ab-brainmaster-amd64.iso.sha256
-            artifact/ab-brainmaster-ci-amd64.iso
-            artifact/ab-brainmaster-ci-amd64.iso.sha256
             artifact/qemu-*.log
             artifact/appliance-receipt.json
+          if-no-files-found: error
+      - name: Preserve production ISO separately
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: ab-appliance-production-iso
+          path: |
+            artifact/ab-brainmaster-amd64.iso
+            artifact/ab-brainmaster-amd64.iso.sha256
+          if-no-files-found: error
+      - name: Preserve acceptance ISO separately
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        if: always()
+        with:
+          name: ab-appliance-ci-iso
+          path: |
+            artifact/ab-brainmaster-ci-amd64.iso
+            artifact/ab-brainmaster-ci-amd64.iso.sha256
           if-no-files-found: error
