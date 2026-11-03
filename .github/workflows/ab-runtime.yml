@@ -76,7 +76,9 @@ jobs:
         run: |
           set -euo pipefail
           docker create --name ab-harness-export ab-brainmaster-acceptance:ci
-          docker cp ab-harness-export:/build/src/packages/process-host artifact/process-host
+          mkdir -p artifact/process-host
+          docker cp ab-harness-export:/build/src/packages/process-host/package.json artifact/process-host/package.json
+          docker cp ab-harness-export:/build/src/packages/process-host/dist artifact/process-host/dist
           docker rm ab-harness-export
           mkdir -p node_modules/@orca
           ln -s ../../artifact/process-host node_modules/@orca/process-host

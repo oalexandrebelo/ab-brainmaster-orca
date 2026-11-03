@@ -12,6 +12,7 @@ module.exports = {
   protocols: [],
   publish: null,
   extraMetadata: { name: identity.id },
+  files: [...base.files, '!out/reports{,/**/*}', '!out/ab-sherpa{,/**/*}'],
   directories: { ...base.directories, output: 'dist/ab-brainmaster' },
   linux: {
     ...base.linux,
@@ -21,7 +22,7 @@ module.exports = {
     target: ['dir'],
     desktop: { entry: { StartupWMClass: identity.id } }
   },
-  beforePack: (context) => {
+  beforePack: async (context) => {
     if (
       context.electronPlatformName !== 'linux' ||
       context.targets.some((target) => target.name !== 'dir')
@@ -34,6 +35,17 @@ module.exports = {
     if (JSON.stringify(marker) !== JSON.stringify(identity)) {
       throw new Error('Build the AB host before packaging; the compiled identity does not match.')
     }
-    return base.beforePack(context)
+    await base.beforePack(context)
+    const { verifyDesktopBuildMetadata } = await import('./scripts/ab-desktop-notices.mjs')
+    await verifyDesktopBuildMetadata()
+    const { verifyBuiltAbSherpaAddon } = await import('./scripts/ab-sherpa-addon.mjs')
+    await verifyBuiltAbSherpaAddon({ 1: 'x64', 3: 'arm64' }[context.arch])
+  },
+  afterPack: async (context) => {
+    const { installBuiltAbSherpaAddon } = await import('./scripts/ab-sherpa-addon.mjs')
+    await installBuiltAbSherpaAddon(context)
+    await base.afterPack(context)
+    const { stageDesktopNotices } = await import('./scripts/ab-desktop-notices.mjs')
+    await stageDesktopNotices(context, base.linux.extraResources)
   }
 }

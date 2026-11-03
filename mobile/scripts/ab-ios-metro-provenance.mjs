@@ -14,19 +14,22 @@ function inside(root, absolute) {
   return relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)
 }
 
-function sourceFile(source, sourceRoot, content, projectRoot) {
-  const repository = fs.realpathSync(path.resolve(projectRoot, '..'))
+function sourceFile(source, sourceRoot, content, projectRoot, repository) {
   const value = source.startsWith('file:') ? fileURLToPath(source) : source
+  const absoluteSource =
+    path.isAbsolute(value) && fs.existsSync(value) ? fs.realpathSync(value) : null
   const explicit =
-    source.startsWith('file:') || (path.isAbsolute(value) && inside(repository, value))
+    source.startsWith('file:') ||
+    (path.isAbsolute(value) &&
+      (inside(repository, value) || (absoluteSource && inside(repository, absoluteSource))))
   const projected = explicit
-    ? [value]
+    ? [absoluteSource ?? value]
     : [projectRoot, repository].map((root) =>
         path.resolve(root, sourceRoot ?? '.', value.replace(/^\//, ''))
       )
   const candidates = new Map()
   for (const projectedPath of projected) {
-    if (!inside(repository, projectedPath) || !fs.existsSync(projectedPath)) {
+    if (!fs.existsSync(projectedPath)) {
       continue
     }
     const absolute = fs.realpathSync(projectedPath)
@@ -60,6 +63,11 @@ function sourceFile(source, sourceRoot, content, projectRoot) {
 }
 
 export function metroNoticeProvenance(sourceMap, projectRoot) {
+  const repository = fs.realpathSync(path.resolve(projectRoot, '..'))
+  const canonicalProjectRoot = fs.realpathSync(projectRoot)
+  if (!inside(repository, canonicalProjectRoot)) {
+    throw new Error('The Metro project root is outside the repository.')
+  }
   const inputs = {}
   const sources = new Map()
   const virtual = []
@@ -112,11 +120,11 @@ export function metroNoticeProvenance(sourceMap, projectRoot) {
         })
         continue
       }
-      const file = sourceFile(source, map.sourceRoot, content, projectRoot)
+      const file = sourceFile(source, map.sourceRoot, content, canonicalProjectRoot, repository)
       const { absolute } = file
       inputs[absolute] = { mappingReferences: (inputs[absolute]?.mappingReferences ?? 0) + count }
       sources.set(absolute, {
-        path: path.relative(path.resolve(projectRoot, '..'), absolute).split(path.sep).join('/'),
+        path: path.relative(repository, absolute).split(path.sep).join('/'),
         sha256: file.sha256,
         sourceContentSha256: file.sourceContentSha256,
         contentVerification: file.contentVerification,

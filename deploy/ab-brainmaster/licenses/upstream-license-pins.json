@@ -314,6 +314,66 @@
       "source": "https://raw.githubusercontent.com/react/metro/2ede29bc40f46dc27ac6ca4bac7a3da0d5c152b8/LICENSE",
       "file": "sha256-da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt",
       "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "package": "lazy-val",
+      "version": "1.0.5",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/spdx/license-list-data/31846481de7ea17d92f2f46fad76abe58b2e9bb0/text/MIT.txt",
+      "member": "STANDARD-MIT.txt",
+      "file": "sha256-b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5.txt",
+      "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+      "provenance": "Version-specific documented exception: lazy-val1.0.5 declares MIT and author Vladimir Krivosheev in its original package.json but publishes no complete LICENSE. This is the unmodified SPDX standard MIT text, including its literal placeholders; it is not a publisher-supplied LICENSE and does not invent a copyright year or notice. The original publisher declaration is included separately.",
+      "declaration": {
+        "packagedFile": "package.json",
+        "sha256": "a5096f95098452cf6fe5c8ac9be8f13f59ab7c9f605ba5ef92c91b2c505744f0",
+        "source": "https://registry.npmjs.org/lazy-val/-/lazy-val-1.0.5.tgz#package/package.json"
+      }
+    },
+    {
+      "package": "sherpa-onnx-darwin-arm64",
+      "version": "2.0.1",
+      "declaredLicense": "Apache-2.0",
+      "source": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/af2d8d81dbfa61c4cea4c568da78f3982edca005/LICENSE",
+      "file": "sha256-cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "provenance": "License from the exact npm gitHead; the Linux Node-API addon is rebuilt from the same source revision, with unchanged npm SDK shared libraries and a separate rebuild receipt."
+    },
+    {
+      "package": "sherpa-onnx-darwin-x64",
+      "version": "2.0.1",
+      "declaredLicense": "Apache-2.0",
+      "source": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/af2d8d81dbfa61c4cea4c568da78f3982edca005/LICENSE",
+      "file": "sha256-cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "provenance": "License from the exact npm gitHead; the Linux Node-API addon is rebuilt from the same source revision, with unchanged npm SDK shared libraries and a separate rebuild receipt."
+    },
+    {
+      "package": "sherpa-onnx-linux-arm64",
+      "version": "2.0.1",
+      "declaredLicense": "Apache-2.0",
+      "source": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/af2d8d81dbfa61c4cea4c568da78f3982edca005/LICENSE",
+      "file": "sha256-cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "provenance": "License from the exact npm gitHead; the Linux Node-API addon is rebuilt from the same source revision, with unchanged npm SDK shared libraries and a separate rebuild receipt."
+    },
+    {
+      "package": "sherpa-onnx-linux-x64",
+      "version": "2.0.1",
+      "declaredLicense": "Apache-2.0",
+      "source": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/af2d8d81dbfa61c4cea4c568da78f3982edca005/LICENSE",
+      "file": "sha256-cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "provenance": "License from the exact npm gitHead; the Linux Node-API addon is rebuilt from the same source revision, with unchanged npm SDK shared libraries and a separate rebuild receipt."
+    },
+    {
+      "package": "sherpa-onnx-win-x64",
+      "version": "2.0.1",
+      "declaredLicense": "Apache-2.0",
+      "source": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/af2d8d81dbfa61c4cea4c568da78f3982edca005/LICENSE",
+      "file": "sha256-cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "provenance": "License from the exact npm gitHead; the Linux Node-API addon is rebuilt from the same source revision, with unchanged npm SDK shared libraries and a separate rebuild receipt."
     }
   ]
 }

@@ -38,7 +38,10 @@ async function licenseFiles(directory) {
         await walk(path)
       } else if (
         stat.isFile() &&
-        /^(?:licen[cs]e|copying|notice|copyright)(?:[._-].*)?$/i.test(name)
+        !/\.(?:[cm]?[jt]sx?|map)$/i.test(name) &&
+        /^(?:licen[cs]e|copying|notice|copyright|third[._-]?party[._-]?notices?)(?:[._-].*)?$/i.test(
+          name
+        )
       ) {
         files.push(path)
       }
@@ -215,6 +218,7 @@ export async function stageDependencyNotices(
   const index = new Map()
   const missing = []
   for (const { directory, metadata, usedBy } of packages.values()) {
+    let declaration
     let licenses = (await licenseFiles(directory)).map((path) => ({
       path,
       member: relative(directory, path).split(sep).join('/')
@@ -241,12 +245,21 @@ export async function stageDependencyNotices(
         licenses = [
           {
             path,
-            member: pin.packagedFile ?? 'UPSTREAM-LICENSE.txt',
+            member: pin.member ?? pin.packagedFile ?? 'UPSTREAM-LICENSE.txt',
             source: pin.source,
             provenance: pin.provenance,
             evidence: pin.evidence
           }
         ]
+        if (pin.declaration) {
+          const path = join(directory, pin.declaration.packagedFile)
+          if (digest(await readFile(path)) !== pin.declaration.sha256) {
+            throw new Error(
+              `Pinned publisher declaration changed for ${metadata.name}@${metadata.version}`
+            )
+          }
+          declaration = { ...pin.declaration, sourcePath: path }
+        }
       }
     }
     if (!licenses.length) {
@@ -262,6 +275,15 @@ export async function stageDependencyNotices(
       files: []
     }
     record.usedBy = [...new Set([...record.usedBy, ...usedBy])].sort()
+    if (declaration) {
+      const path = `npm/${identifier}/PACKAGE-DECLARATION.json`
+      const bytes = await readFile(declaration.sourcePath)
+      await mkdir(dirname(join(notices, path)), { recursive: true })
+      await cp(declaration.sourcePath, join(notices, path))
+      record.declarations = [
+        { path, sha256: declaration.sha256, bytes: bytes.length, source: declaration.source }
+      ]
+    }
     for (const license of licenses) {
       const bytes = await readFile(license.path)
       const path = `npm/${identifier}/${license.member}`

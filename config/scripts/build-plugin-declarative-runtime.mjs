@@ -53,6 +53,7 @@ const BUNDLES = [
 
 async function bundle({ file, entry, source, platform, plugins = [] }) {
   const result = await build({
+    absWorkingDir: ROOT,
     entryPoints: [entry],
     bundle: true,
     format: 'esm',
@@ -69,9 +70,14 @@ async function bundle({ file, entry, source, platform, plugins = [] }) {
         `// ${source}. Do not edit.`
     },
     write: false,
+    metafile: true,
     logLevel: 'silent'
   })
-  return { output: path.join(OUTPUT_DIR, file), text: result.outputFiles[0].text }
+  return {
+    output: path.join(OUTPUT_DIR, file),
+    text: result.outputFiles[0].text,
+    metafile: result.metafile
+  }
 }
 
 /** Every shipped bundle, as `{ output, text }`. */

@@ -65,6 +65,7 @@ jobs:
         run: |
           set -euo pipefail
           node config/scripts/run-typecheck-projects-in-parallel.mjs --project=config/tsconfig.node.json --compiler=tsrs 2>&1 | tee notes/ab-desktop-ci/p1/typecheck.log
+          node node_modules/vitest/vitest.mjs run --config config/vitest.config.ts config/scripts/ab-desktop-build-provenance.test.ts config/scripts/ab-desktop-notices.test.mjs config/scripts/build-plugin-declarative-runtime.test.mjs --maxWorkers=2 2>&1 | tee notes/ab-desktop-ci/p1/notices-tests.log
           node node_modules/vitest/vitest.mjs run --config config/vitest.config.ts config/scripts/distribution-identity.test.mjs src/main/plugins/ab-plugin-runtime.integration.test.ts src/main/updater.ab-distribution.test.ts src/main/cli/cli-installer-ab-distribution.test.ts src/main/telemetry/client-ab-distribution.test.ts src/main/app-icon.test.ts src/main/ipc/feedback-ab-distribution.test.ts src/main/ipc/feedback.test.ts src/main/ipc/feedback-request-ownership.test.ts src/renderer/src/components/sidebar/SidebarFeedbackDialog.test.tsx src/renderer/src/components/crash-report/CrashReportDialogSurface-ab-distribution.test.tsx --maxWorkers=2 2>&1 | tee notes/ab-desktop-ci/p1/contracts.log
           AB_ORCA_TEST_SOURCE="$PWD" AB_ORCA_TEST_ZOD="$PWD/node_modules/zod/index.js" node --test --test-isolation=none packages/ab-bill-context/tests/orca-schema.integration.mjs packages/ab-upstream-review/tests/orca-schema.integration.mjs packages/ab-bill-context/tests/cleanup.test.mjs 2>&1 | tee notes/ab-desktop-ci/p1/plugin-schema-cleanup.log
       - name: Build the AB host and real web resources
@@ -80,6 +81,16 @@ jobs:
         run: |
           set -euo pipefail
           node config/scripts/build-wayland-clipboard.mjs --arch x64 2>&1 | tee notes/ab-desktop-ci/p1/wayland.log
+      - name: Rebuild only the Sherpa Node-API addon on the pinned glibc floor
+        run: |
+          set -euo pipefail
+          node config/scripts/ab-sherpa-addon.mjs x64 2>&1 | tee notes/ab-desktop-ci/p1/sherpa-rebuild.log
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 node config/scripts/verify-ab-sherpa-asr.mjs x64 2>&1 | tee notes/ab-desktop-ci/p1/sherpa-asr-node.log
+          electron_path=$(node -p "require('electron')")
+          ELECTRON_RUN_AS_NODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "$electron_path" config/scripts/verify-ab-sherpa-asr.mjs x64 2>&1 | tee notes/ab-desktop-ci/p1/sherpa-asr-electron.log
+          cp out/ab-sherpa/linux-x64/rebuild.json notes/ab-desktop-ci/p1/sherpa-rebuild.json
+          cp out/ab-sherpa/linux-x64/asr-node.json notes/ab-desktop-ci/p1/sherpa-asr-node.json
+          cp out/ab-sherpa/linux-x64/asr-electron.json notes/ab-desktop-ci/p1/sherpa-asr-electron.json
       - name: Package the Linux development directory with all upstream gates
         run: |
           set -euo pipefail
@@ -95,6 +106,13 @@ jobs:
           const version = JSON.parse(fs.readFileSync('package.json')).version
           if (metadata.name !== 'ab-brainmaster' || metadata.version !== version || identity.id !== 'ab-brainmaster' || identity.automaticUpdates || identity.upstreamTelemetry || identity.upstreamSupport) throw new Error('Packaged AB identity mismatch')
           if (fs.existsSync(`${resources}/app-update.yml`)) throw new Error('Unexpected updater feed in AB package')
+          const notices = JSON.parse(fs.readFileSync(`${resources}/notices/ab-desktop/dependencies.json`))
+          const native = JSON.parse(fs.readFileSync(`${resources}/notices/ab-desktop/native/provenance.json`))
+          for (const name of ['mermaid', '@xterm/xterm', '@xterm/addon-fit', '@xterm/addon-search', '@xterm/addon-serialize', '@xterm/addon-image', '@xterm/addon-webgl', '@xterm/addon-ligatures', '@xterm/addon-unicode11', '@xterm/addon-web-links']) {
+            if (!notices.packages.some(entry => entry.name === name && entry.files.length > 0)) throw new Error(`Missing emitted desktop dependency notice: ${name}`)
+          }
+          if (native.version !== '2.0.1' || native.source.commit !== 'af2d8d81dbfa61c4cea4c568da78f3982edca005') throw new Error('Packaged native speech provenance mismatch')
+          fs.cpSync(`${resources}/notices/ab-desktop`, 'notes/ab-desktop-ci/p1/notices', { recursive: true })
           fs.writeFileSync('notes/ab-desktop-ci/p1/package-receipt.json', JSON.stringify({ revision: process.env.GITHUB_SHA, version, identity, target: 'linux-x64-dir', development: true, signedInstaller: false, orcadTemplateIncluded: fs.existsSync(`${resources}/orcad-template`), gates: 'electron-builder beforePack and afterPack completed' }, null, 2) + '\n')
           NODE
           tar -czf notes/ab-desktop-ci/AB-BRAINMASTER-LINUX-X64-DEVELOPMENT.tar.gz -C dist/ab-brainmaster linux-unpacked

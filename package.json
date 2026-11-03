@@ -398,11 +398,11 @@
     "@orca/windows-registry": "workspace:*",
     "@orca/windows-security": "workspace:*",
     "@vscode/windows-process-tree": "0.8.0",
-    "sherpa-onnx-darwin-arm64": "1.12.37",
-    "sherpa-onnx-darwin-x64": "1.12.37",
-    "sherpa-onnx-linux-arm64": "1.12.37",
-    "sherpa-onnx-linux-x64": "1.12.37",
-    "sherpa-onnx-win-x64": "1.12.37"
+    "sherpa-onnx-darwin-arm64": "2.0.1",
+    "sherpa-onnx-darwin-x64": "2.0.1",
+    "sherpa-onnx-linux-arm64": "2.0.1",
+    "sherpa-onnx-linux-x64": "2.0.1",
+    "sherpa-onnx-win-x64": "2.0.1"
   },
   "lint-staged": {
     "{*.{ts,tsx,js,jsx,mjs,mts,cts},!(cloud)/**/*.{ts,tsx,js,jsx,mjs,mts,cts}}": [

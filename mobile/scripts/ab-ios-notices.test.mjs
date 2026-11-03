@@ -116,6 +116,90 @@ test('contentless PNG references require one full-path candidate and explicitly 
   }
 })
 
+test('checkout directory aliases preserve canonical source paths and all provenance guards', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'ab-ios-checkout-alias-test-'))
+  const repository = path.join(directory, 'checkout')
+  const alias = path.join(directory, 'checkout-alias')
+  const project = path.join(alias, 'mobile')
+  const mobileFile = path.join(repository, 'mobile/src/mobile-only.ts')
+  const sharedFile = path.join(repository, 'src/shared/root-only.ts')
+  const content = 'export const canonicalSource = true\n'
+  const map = (source) => ({
+    version: 3,
+    sources: [source],
+    sourcesContent: [content],
+    mappings: 'AAAA'
+  })
+  try {
+    for (const file of [mobileFile, sharedFile]) {
+      fs.mkdirSync(path.dirname(file), { recursive: true })
+      fs.writeFileSync(file, content)
+    }
+    fs.symlinkSync(repository, alias, 'dir')
+    for (const [source, relative, file] of [
+      ['/src/mobile-only.ts', 'mobile/src/mobile-only.ts', mobileFile],
+      ['/src/shared/root-only.ts', 'src/shared/root-only.ts', sharedFile],
+      [path.join(project, 'src/mobile-only.ts'), 'mobile/src/mobile-only.ts', mobileFile]
+    ]) {
+      const graph = metroNoticeProvenance(map(source), project)
+      assert.equal(graph.sources[0].path, relative)
+      assert.equal(graph.sources[0].contentVerification, 'sha256-match')
+      assert.deepEqual(Object.keys(graph.metafile.outputs['main.jsbundle'].inputs), [
+        fs.realpathSync(file)
+      ])
+    }
+    fs.writeFileSync(mobileFile, 'modified after bundling\n')
+    assert.throws(
+      () => metroNoticeProvenance(map('/src/mobile-only.ts'), project),
+      /changed since Metro/
+    )
+    fs.writeFileSync(mobileFile, content)
+    fs.writeFileSync(path.join(repository, 'src/mobile-only.ts'), content)
+    assert.throws(
+      () => metroNoticeProvenance(map('/src/mobile-only.ts'), project),
+      /ambiguous checkout paths/
+    )
+    const outside = path.join(directory, 'outside.ts')
+    fs.writeFileSync(outside, content)
+    fs.symlinkSync(outside, path.join(repository, 'mobile/src/escape.ts'))
+    assert.throws(
+      () => metroNoticeProvenance(map('/src/escape.ts'), project),
+      /outside the repository/
+    )
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('a mobile directory symlink cannot change the trusted checkout boundary', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'ab-ios-project-escape-test-'))
+  const repository = path.join(directory, 'trusted-checkout')
+  const externalProject = path.join(directory, 'other-checkout/mobile')
+  const project = path.join(repository, 'mobile')
+  const content = 'export const externalSource = true\n'
+  try {
+    fs.mkdirSync(repository)
+    fs.mkdirSync(path.join(externalProject, 'src'), { recursive: true })
+    fs.writeFileSync(path.join(externalProject, 'src/external.ts'), content)
+    fs.symlinkSync(externalProject, project, 'dir')
+    assert.throws(
+      () =>
+        metroNoticeProvenance(
+          {
+            version: 3,
+            sources: ['/src/external.ts'],
+            sourcesContent: [content],
+            mappings: 'AAAA'
+          },
+          project
+        ),
+      /project root is outside the repository/
+    )
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
+})
+
 test('notice phase follows bundling and resource copies exactly once', () => {
   const project = {
     hash: {

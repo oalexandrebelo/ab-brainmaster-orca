@@ -20,6 +20,7 @@ import {
   createDistributionTitlePlugin
 } from './config/build-plugins/distribution-identity-marker'
 import { resolveBuildSourceCommit } from './config/scripts/build-source-commit.mjs'
+import { createAbDesktopBuildProvenancePlugins } from './config/build-plugins/ab-desktop-build-provenance'
 
 const BUNDLED_MAIN_DEPENDENCIES = new Set([
   'stream-json',
@@ -45,6 +46,9 @@ const {
   distributionBuildDefines: (identity: { upstreamTelemetry: boolean }) => Record<string, string>
 } = createRequire(import.meta.url)('./config/distribution-identity.cjs')
 const distributionIdentity = resolveDistributionIdentity()
+const desktopProvenance = createAbDesktopBuildProvenancePlugins(
+  distributionIdentity.id === 'ab-brainmaster'
+)
 const orcaBuildIdentity = distributionIdentity.upstreamTelemetry
   ? process.env.ORCA_BUILD_IDENTITY
   : null
@@ -200,7 +204,7 @@ const MAIN_MINIFY: 'oxc' | false = process.env.ORCA_UNMINIFIED_MAIN === '1' ? fa
 export const electronViteConfig: UserConfig = {
   main: {
     // A Vite `pre` plugin: Rollup-level plugins only see ids Vite's resolver leaves unresolved.
-    plugins: [createSucraseUnusedTransformersPlugin()],
+    plugins: [createSucraseUnusedTransformersPlugin(), ...desktopProvenance.main],
     build: {
       // Use Rolldown’s in-process oxc minifier; esbuild mode depends on an undeclared hoisted package.
       minify: MAIN_MINIFY,
@@ -256,6 +260,7 @@ export const electronViteConfig: UserConfig = {
     }
   },
   preload: {
+    plugins: desktopProvenance.preload,
     build: {
       externalizeDeps: {
         exclude: ['zod']
@@ -286,10 +291,12 @@ export const electronViteConfig: UserConfig = {
       tailwindcss(),
       createPdfjsViewerAssetsPlugin(),
       createDistributionTitlePlugin(distributionIdentity),
-      createViteCacheRetentionPlugin()
+      createViteCacheRetentionPlugin(),
+      ...desktopProvenance.renderer
     ],
     worker: {
       format: 'es',
+      plugins: desktopProvenance.workers,
       rollupOptions: {
         output: { charset: 'ascii' }
       }

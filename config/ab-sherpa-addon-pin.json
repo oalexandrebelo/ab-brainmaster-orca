@@ -1,0 +1,120 @@
+{
+  "format": 1,
+  "version": "2.0.1",
+  "source": {
+    "commit": "af2d8d81dbfa61c4cea4c568da78f3982edca005",
+    "url": "https://codeload.github.com/k2-fsa/sherpa-onnx/tar.gz/af2d8d81dbfa61c4cea4c568da78f3982edca005",
+    "sha256": "afcafe3c34bc2f15a363ad791fa1644a69bf0977a58c1b4f617468976c2faeb5"
+  },
+  "nodeAddonApi": {
+    "version": "8.3.0",
+    "url": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-8.3.0.tgz",
+    "sha256": "a0ce67653a251f56ea40d2eab08797934b6cfc9db4d48766795d97bb9b4d960d"
+  },
+  "toolchain": {
+    "gcc": "10.5.0",
+    "glibc": "2.31",
+    "cmake": "3.31.10"
+  },
+  "targets": {
+    "x64": {
+      "platform": "linux/amd64",
+      "image": "gcc:10.5.0-bullseye@sha256:e0caeccd4a3616c88b7d526a2ab5d70cee28f825e598e2fc912995ba36cc2b42",
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v3.31.10/cmake-3.31.10-linux-x86_64.tar.gz",
+        "sha256": "3cb3dd247b6a1de2d0f4b20c6fd4326c9024e894cebc9dc8699758887e566ca7"
+      },
+      "npm": {
+        "name": "sherpa-onnx-linux-x64",
+        "url": "https://registry.npmjs.org/sherpa-onnx-linux-x64/-/sherpa-onnx-linux-x64-2.0.1.tgz",
+        "sha256": "08c6fe2b65838febbd0c260aaa9991990d2d592e503e758bfd2f5db6cbc79338",
+        "integrity": "sha512-w5mRRrIvPvcNWac7rQ8AN/t/cwElPGoRpH+ceCRBV7XfjCIQ9Rcr3Ig/kXcJLNOxgK4bGmef+Y47lIWiesDODw==",
+        "files": {
+          "README.md": "7404cc01ddc4bd97dd9722686b44944a5ca88c619cc263988da273e7e67e16d2",
+          "index.js": "3f0b863d77823f79278c60fae2473c62f7009b2f73ad4541ead097b1c2ade995",
+          "libonnxruntime.so": "4b3607aebd1784b26b6f9b20e4bd974c7ab8287043e4d095cb7d2cb40b5e566e",
+          "libsherpa-onnx-c-api.so": "71320384d6a4ec225e6d984a06877845be94956c617630eb97e87594d8c505be",
+          "libsherpa-onnx-cxx-api.so": "ad5910fdf165edca842fa42d6af985d94ed1f3753e2b0d84f47e4029bb43f4ac",
+          "package.json": "2d892a51ba70e1bf451c786d151b00edf0cadd9bb23c8da6e8e4c0ca1b609973",
+          "sherpa-onnx.node": "20dd5ef7b416606080d7b76c61ae2016d54b22b2dbea3b5a815581d2a9fa7f6f"
+        }
+      },
+      "onnxruntime": {
+        "version": "1.28.2",
+        "archive": {
+          "url": "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.28.2/onnxruntime-linux-x64-glibc2_17-Release-1.28.2.zip",
+          "sha256": "c4f8994d56191d9d2c92a961b39fe790459f2c5d155f912b239506ea31359534"
+        },
+        "librarySha256": "4b3607aebd1784b26b6f9b20e4bd974c7ab8287043e4d095cb7d2cb40b5e566e",
+        "files": [
+          {
+            "path": "deploy/ab-brainmaster/licenses/native/onnxruntime-1.28.2-2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c-LICENSE",
+            "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+            "member": "onnxruntime-linux-x64-glibc2_17-Release-1.28.2/LICENSE",
+            "bytes": 1073
+          },
+          {
+            "path": "deploy/ab-brainmaster/licenses/native/onnxruntime-1.28.2-0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2-ThirdPartyNotices.txt",
+            "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+            "member": "onnxruntime-linux-x64-glibc2_17-Release-1.28.2/ThirdPartyNotices.txt",
+            "bytes": 325054
+          }
+        ]
+      }
+    },
+    "arm64": {
+      "platform": "linux/arm64",
+      "image": "gcc:10.5.0-bullseye@sha256:ed1e8b43b3c7e974bc515a29dd046606daf0c35785ae08007bef4fe14df6a219",
+      "cmake": {
+        "url": "https://github.com/Kitware/CMake/releases/download/v3.31.10/cmake-3.31.10-linux-aarch64.tar.gz",
+        "sha256": "a343c6294f770742904e6a6792e0956b5ff8212abfb63cac99237de2e210fa0f"
+      },
+      "npm": {
+        "name": "sherpa-onnx-linux-arm64",
+        "url": "https://registry.npmjs.org/sherpa-onnx-linux-arm64/-/sherpa-onnx-linux-arm64-2.0.1.tgz",
+        "sha256": "b8f18ee34c8e14bbafb7f51332361a6ab91f4ddbb4a4eac58f74ec0dafb39e87",
+        "integrity": "sha512-5CJvLjFYIg23oELCsT7l07fMLT3PdquZ3tqh7KZK3Pzi+c2YiPKRe1DDUxoNdtCaw3ZiS4aQSQPBblB9JStuDA==",
+        "files": {
+          "README.md": "7404cc01ddc4bd97dd9722686b44944a5ca88c619cc263988da273e7e67e16d2",
+          "index.js": "3f0b863d77823f79278c60fae2473c62f7009b2f73ad4541ead097b1c2ade995",
+          "libonnxruntime.so": "cfc800d4438f15e8d9017521326776ca7117d8783cb847ccccc2fc61ac4d540f",
+          "libsherpa-onnx-c-api.so": "c5c9dcc499bb2c8b19c1803f3d99e7b43eec17616724939fcb3a4890bc15a4fa",
+          "libsherpa-onnx-cxx-api.so": "817ab3f982ce4277e941368a23aebd62a46b9a5f1e41418c23343fa703307419",
+          "package.json": "2ac69d821ff3adf3bb2be40233bbec8001cd922444a6ebe471b540e3c06b882e",
+          "sherpa-onnx.node": "df8b4e2912c7aae3c1f24a6349e3eed76b52f3f18de57707980105293eebe3d0"
+        }
+      },
+      "onnxruntime": {
+        "version": "1.28.2",
+        "archive": {
+          "url": "https://github.com/csukuangfj/onnxruntime-libs/releases/download/v1.28.2/onnxruntime-linux-aarch64-glibc2_17-Release-1.28.2.zip",
+          "sha256": "28083273643f40fa6477ef9d53986fe216304710c4b1c743b217a4effd016339"
+        },
+        "librarySha256": "cfc800d4438f15e8d9017521326776ca7117d8783cb847ccccc2fc61ac4d540f",
+        "files": [
+          {
+            "path": "deploy/ab-brainmaster/licenses/native/onnxruntime-1.28.2-2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c-LICENSE",
+            "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+            "member": "onnxruntime-linux-aarch64-glibc2_17-Release-1.28.2/LICENSE",
+            "bytes": 1073
+          },
+          {
+            "path": "deploy/ab-brainmaster/licenses/native/onnxruntime-1.28.2-0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2-ThirdPartyNotices.txt",
+            "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+            "member": "onnxruntime-linux-aarch64-glibc2_17-Release-1.28.2/ThirdPartyNotices.txt",
+            "bytes": 325054
+          }
+        ]
+      }
+    }
+  },
+  "recognition": {
+    "model": "zipformer-streaming-en-20m",
+    "audio": {
+      "url": "https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-en-20M-2023-02-17/resolve/d42f2d9f7ca24806fb667456a18a9f1b60f70d16/test_wavs/0.wav",
+      "sha256": "6bc58a4efdf20daac252b6b1502632601a71efe0308f6757dc1eda34891a7e4f"
+    },
+    "expectedTranscript": "THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BRAFFLEL",
+    "expectedTranscriptBasis": "Exact transcript produced by the existing Orca worker with pinned Sherpa1.12.37 on this official sample; a regression comparison, not a general recognition accuracy score"
+  }
+}
