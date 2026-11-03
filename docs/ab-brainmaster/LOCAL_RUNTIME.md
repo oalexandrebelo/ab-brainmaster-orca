@@ -4,6 +4,18 @@ O pacote `packages/ab-local-runtime` executa uma tarefa textual em um Ollama con
 
 A aceitação usa o PTY e o pareamento reais do `orcad`, BBrainX oficial 2.4.0 por MCP stdio e Qwen3 1.7B em CPU no perfil final, com baseline 0.6B preservado. O harness reinicia o `orcad`, consulta a tarefa por um novo processo da CLI e repete a chave idempotente. Não certifica todas as funções do desktop IDE, outros modelos, macOS ou Windows.
 
+## Jornada offline verificada
+
+O [run 41582866804](https://github.com/oalexandrebelo/ab-brainmaster-orca/actions/runs/41582866804), commit `13013d24dea66c1b9c6345b3cd6f72b7ac1d691c`, concluiu a jornada `orcad → pareamento → PTY → CLI → MCP BBrainX → Ollama/Qwen → journal`. O ZIP de 25.088 bytes, SHA-256 `346d07fc8dcf49816955cc59e2204f201beab6aca91ef99b1f2fa266fb20d6f3`, contém dez membros verificados. Os sete arquivos de contexto coincidem com os objetos Git desse commit; resultado inicial, recuperado e idempotente são idênticos byte a byte. O CI registra pareamento, PTY e preservação da instalação, com mudança do identificador de runtime após o reinício.
+
+O contêiner tinha somente loopback, `NetworkMode=none` e tentativa TCP externa recusada com `ENETUNREACH`. Ollama 0.40.13 e Qwen3:1.7B, digest `8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7`, foram provisionados antes do isolamento. Os três critérios factuais passaram. O tempo do provedor nesta pergunta foi **15,239 segundos**, com 1.179 tokens de entrada avaliados e 42 gerados.
+
+O perfil usou UID/GID 1001, 2 CPUs, 4 GiB de memória, `MemorySwap` de 8 GiB, remoção de todas as capabilities e `no-new-privileges`; a raiz desse contêiner era gravável. O contêiner de produção com raiz somente leitura tem uma prova separada. Não se declara p95, pico de memória, qualidade geral do modelo, funcionamento integral do IDE ou ensaio físico do iPhone.
+
+As execuções anteriores `5ae456b9…` (run `41561063152`) e `8d1a8105…` (run `41575659816`) registraram 17,619 e 27,305 segundos de provedor, respectivamente. Os hashes do prompt, da resposta e dos sete arquivos de contexto permanecem iguais na execução atual. São observações individuais de CI; as diferenças de duração não demonstram ganho causado pela correção, benchmark ou regressão. Cada recibo mantém sua referência de fonte.
+
+Recibos e limites: [CI_EVIDENCE_20261103.md](CI_EVIDENCE_20261103.md).
+
 ## Contrato de execução
 
 `node packages/ab-local-runtime/build.mjs` gera `dist/cli.mjs` e `dist/runtime.mjs`, autocontidos para Node 24.22.1. O build usa `esbuild` do lockfile principal e as dependências instaladas da ponte P2; não precisa de dependências próprias de runtime além dos módulos nativos do Node. A distribuição pode copiar esses dois arquivos. Ollama e pesos são provisionados separadamente: incluir a CLI na ISO não inclui os bytes do servidor/modelo.

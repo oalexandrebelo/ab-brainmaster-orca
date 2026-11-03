@@ -6,19 +6,21 @@ Este documento acompanha o código AB posterior à entrega P0. A base do fork e 
 
 Código presente, compilação concluída, ensaio funcional e homologação no ambiente de destino são fatos diferentes. Cada distribuição precisa de um recibo que identifique commit, comando, resultado e limites. Um workflow adicionado ao repositório não prova execução. Um arquivo Xcode sem assinatura não é um IPA instalável. Um endpoint loopback não prova ausência de acesso à internet.
 
-| Frente              | Implementação e evidência local                                                                                                                                                   | Gate adicional                                                                                                             |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| P1 — host AB        | Identidade, perfil e canal de atualização próprios; build real; instalação consentida dos dois plugins; workers reais; ciclo do toggle na interface via CDP.                      | Empacotamento nativo em ambiente com as dependências oficiais; o resultado de CI deve ser registrado pelo commit ensaiado. |
-| P2 — contexto       | Bridge SDK/CLI com binding explícito e proveniência; integração real com BBrainX 2.4.0 no commit `7943b40167ea58fa64e208281eb6b95a26da6663`; recusas de escopo e índice obsoleto. | Instalação e homologação do adaptador AB-S00S na infraestrutura autorizada.                                                |
-| P3 — persistência   | `orcad` real; pareamento, PTY, reconexão, revogação, limites de concorrência e superfícies HTTP/SDK/CLI/MCP ensaiados.                                                            | Repetir no contêiner e no ambiente de implantação; distinguir clientes conectados de colaboração simultânea em edição.     |
-| P4 — execução local | Runtime SQLite durável, política explícita de modelo, contexto BBrainX e inferência Ollama real. Recuperação de processo testada.                                                 | Jornada completa em processo isolado com saída de rede bloqueada; avaliação factual da resposta registrada separadamente.  |
-| P5 — distribuição   | Receita Docker, release por manifesto, slots e rollback testados com processos reais; fluxo iOS de preflight, archive, exportação, verificação e instalação.                      | Construir/bootar a ISO, finalizar os artefatos e homologar assinatura/instalação no dispositivo físico.                    |
+| Frente              | Evidência concluída                                                                                                                                                           | Gate restante                                                                                                           |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| P1 — host AB        | Build e workers reais, instalação dos dois plugins, toggle via CDP; pacote Linux x64 `13013d24…` com CI nativo e inspeção independente de bytes aprovados.                    | Homologação macOS/Windows; criação remota via template não incluída no diretório desktop de desenvolvimento.            |
+| P2 — contexto       | BBrainX 2.4.0 real; vínculo explícito de projeto/host/raiz, proveniência, recusas de escopo e índice obsoleto.                                                                | Instalação e homologação AB-S00S no projeto autorizado.                                                                 |
+| P3 — persistência   | `orcad`, PTY, pareamento, reconexão e revogação reais; contêiner `13013d24…` aprovado sem rede, usuário não root, raiz somente leitura e reinício persistente.                | Implantação na infraestrutura de Alexandre; não se declara edição CRDT ou isolamento multi-tenant.                      |
+| P4 — execução local | Jornada `orcad → PTY → CLI → BBrainX → Ollama/Qwen → SQLite` aprovada com rede bloqueada em `13013d24…`, recuperação e chave idempotente.                                     | Outros modelos/plataformas e a totalidade das funções do IDE não receberam essa homologação.                            |
+| P5 — distribuição   | Diretório desktop, export Docker, ISO normal e variante de aceitação com três boots aprovados e archive iOS unsigned disponíveis; slots/rollback testados sobre o mesmo core. | IPA assinado e instalação/ensaio no iPhone; migrações futuras de dados e reconstrução binária idêntica não homologadas. |
 
-Os resultados de CI e suas URLs são acrescentados à evidência da entrega após as execuções. Nenhum gate externo é convertido em sucesso por ausência de acesso ao ambiente.
+Os commits, runs, artefatos, hashes e ressalvas estão em [CI_EVIDENCE_20261103.md](CI_EVIDENCE_20261103.md). Docker e ISO são jobs distintos; aprovação de um não aprova o outro. A integração remota Oficina depende de confirmação explícita do plano de implantação.
 
-### Primeira evidência nativa iOS
+### Archive iOS atual e histórico
 
-O candidato iOS `3424197f79b49dc2e0f2e018ea33144987178116` passou no [run 41537718266](https://github.com/oalexandrebelo/ab-brainmaster-orca/actions/runs/41537718266): guards de assinatura, 25 testes de push/protocolo e archive Release arm64 com JavaScript embarcado. O artefato ZIP tem SHA-256 `2717258d8f957378e4ae4a655eb89ec39aa23dd764a7ac1f2252a5321536402e`. Ele contém um `.xcarchive` sem assinatura, não um IPA instalável. As alterações posteriores nos diagnósticos exigem nova compilação do commit integrado; esse primeiro run não é usado como prova dos bytes posteriores.
+O archive atual de `1e66053e1fbb5c82fcae6d06283d4fb4cf38c418` passou no [run 41565349527](https://github.com/oalexandrebelo/ab-brainmaster-orca/actions/runs/41565349527). A inspeção confirmou arm64, JavaScript Release e os avisos incorporados. O ZIP tem SHA-256 `8a277e55ba92efffed6100a8a720bc64f98deb6af7591498859a83d6278cab37`. Permanece sem assinatura e não é um IPA instalável.
+
+O candidato `3424197f…` do run `41537718266` e o archive da integração `a4300ad0…` do run `41548928170` são históricos. Não são usados como prova dos bytes atuais nem como distribuição final dos avisos de dependências.
 
 ## Topologia implementada
 
@@ -82,6 +84,14 @@ Detalhes, configuração e prova com bloqueio de rede: [LOCAL_RUNTIME.md](LOCAL_
 
 ## Instalação a partir das fontes
 
+A branch de entrega é `ab-brainmaster/main`; a branch padrão `main` conserva o upstream. Para obter a implementação AB, selecione a branch explicitamente:
+
+```bash
+git clone --branch ab-brainmaster/main --single-branch https://github.com/oalexandrebelo/ab-brainmaster-orca.git
+```
+
+Para reproduzir uma distribuição auditada, use seu commit de origem indicado em [CI_EVIDENCE_20261103.md](CI_EVIDENCE_20261103.md); um commit posterior de documentação não muda os bytes do artefato já produzido.
+
 Use Node 24.22.1 e pnpm 12.14.0 para reproduzir os comandos desta entrega. As dependências dos pacotes AB separados têm shrinkwrap próprio; instalar o workspace raiz não substitui essa etapa.
 
 ```bash
@@ -106,6 +116,10 @@ A revisão do upstream e a ativação de um release são operações distintas. 
 O teste local usou dois identificadores de release sobre o mesmo build do core e comprovou staging, ativação, reinício, persistência, rollback e recusa de conteúdo adulterado. Isso não prova reversibilidade de migrações entre duas versões futuras distintas do banco. Antes de uma atualização que altere o formato persistido, backup e restauração devem ser validados para esse par de versões.
 
 A exclusão mútua de staging/ativação usa uma transação SQLite dedicada, sem tabelas de domínio. O ensaio inclui morte por SIGKILL durante staging e operações concorrentes após a liberação do lock pelo sistema operacional. Isso elimina o lock de arquivo irrecuperável encontrado na revisão.
+
+O reparo `8d1a8105…` sincroniza a árvore do release, os diretórios de publicação, as credenciais e a lease antes de confirmar sucesso. Reutilização e ativação cobrem a interrupção entre rename e sincronização; um JSON inválido continua sendo recusado. Os oito testes reais passaram com processos, filesystem e runtime efetivos. A prova de boot da imagem pertence ao seu recibo específico, e a sincronização de diretório continua omitida no Windows.
+
+A revisão `13013d24…` acrescenta identidade de máquina persistente por disco, publicação durável da chave de autoridade, distinção conservadora entre leases do mesmo boot e de boot anterior e barreira `syncfs` antes da prontidão da appliance. O CI executou os três boots com duas vCPUs, 4 GiB, nenhuma NIC e 600 segundos por boot; todos passaram. Os tempos foram 161,09 s, 139,05 s e 133,04 s. O ensaio não substitui homologação em hardware físico ou perda física de energia.
 
 Fixar a base de imagem por digest e verificar payloads reduz variabilidade dos insumos. Uma receita repetível não implica igualdade bit a bit de todos os artefatos, sobretudo quando pacotes do sistema operacional ainda são resolvidos em um repositório móvel.
 

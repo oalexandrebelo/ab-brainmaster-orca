@@ -2,6 +2,20 @@
 
 O perfil `config/electron-builder.ab.config.cjs` gera um diretório Linux de desenvolvimento. A workflow `.github/workflows/ab-desktop-native.yml` executa esse perfil para x64, preserva os gates de empacotamento upstream e arquiva os recibos junto do pacote. Esse alvo não é um instalador assinado.
 
+## Pacote nativo verificado
+
+O [run 41582866783](https://github.com/oalexandrebelo/ab-brainmaster-orca/actions/runs/41582866783), commit `13013d24dea66c1b9c6345b3cd6f72b7ac1d691c`, concluiu build, rebuild Sherpa, ASR real em Node/Electron, gate ELF e empacotamento. O tar `AB-BRAINMASTER-LINUX-X64-DEVELOPMENT.tar.gz` tem **261.285.782 bytes** e SHA-256 `27f30642861715c7f2a7d8dc6e5a8edcd04bcf88283af170b272c7885b4aee7c`. A correção da chave de autoridade está no ASAR final; o testemunho estático resolve também os imports dos helpers de publicação e fsync.
+
+A inspeção conferiu 7.614 arquivos regulares e vinculou 2.054 registros aos bytes do pacote: 507 pacotes, 523 textos dessas dependências, 547 arquivos de notices ao todo e 76 fontes em cinco grupos. O ASAR tem 16.826.371 bytes e SHA-256 `7f017fe9eec91470ee270211030523c14c39e1197c2f8074d2e4f58ad491559b`. Os 39 arquivos de contexto foram ligados aos blobs do commit; o coordenador repetiu o rehash dos 81 arquivos de evidência e a leitura de três módulos e quatro fragmentos compilados do ASAR.
+
+A varredura por magic em todos os arquivos regulares encontrou 21 imagens ELF executáveis/dinâmicas e um objeto relocável `node-pty/.../pty.o`, de 122.080 bytes. As 21 imagens correspondem exatamente ao collector de runtime publicado, com zero violações e zero exceções utilizadas. Os máximos são GLIBC 2.28, GLIBCXX 3.4.26 e CXXABI 1.3.11. O primeiro verificador privado tentou aplicar `objdump -T` ao objeto relocável e falhou; esse resultado foi preservado, e a classificação passou a usar o tipo ELF. Payload e gate publicado permaneceram intactos.
+
+O novo CI executou 10 testes do signer em três arquivos, 89 testes de contratos em 11 arquivos e sete testes de notices em três arquivos. São grupos identificados pelos logs, sem soma para alegar cobertura integral do upstream. A regressão ASR em Node e Electron usou a mesma amostra de 6,625 segundos e produziu a transcrição esperada. Os tempos são observações de compatibilidade desse run, sem alegação de benchmark comparativo. O testemunho compilado e o inventário são inspeções estáticas, sem execução da GUI, instalador ou modelo pelo revisor. Não se declara completude jurídica dos avisos.
+
+O diretório não inclui `orcad-template`. O desktop local e o fallback Electron de `orca serve` permanecem disponíveis; criação/conversão/atualização de servidor remoto gerenciado que exija esse template não está distribuída neste alvo. Use o release de servidor ou Docker documentados em [SERVER_DISTRIBUTION.md](SERVER_DISTRIBUTION.md). A consulta upstream executada pelo CLI teve sucesso. O painel da UI apresentou erro de rede no ambiente com proxy: o worker filtra variáveis de proxy. Não se declara sucesso online da UI nesse ambiente.
+
+Recibos e limites da verificação: [CI_EVIDENCE_20261103.md](CI_EVIDENCE_20261103.md).
+
 ## Evidência do conteúdo distribuído
 
 O plugin `config/build-plugins/ab-desktop-build-provenance.ts` registra os módulos que Rolldown informa com `renderedLength > 0`. Esse valor mede caracteres renderizados, sem ser apresentado como bytes de esbuild. Workers entram na proveniência quando o nome e o SHA256 do código capturado correspondem ao asset final emitido.
