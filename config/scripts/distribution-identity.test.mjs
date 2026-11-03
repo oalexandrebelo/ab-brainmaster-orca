@@ -65,7 +65,7 @@ describe('distribution identity', () => {
     })
   })
 
-  it('separates AB packaging and refuses unqualified installer targets', () => {
+  it('separates AB packaging and refuses unqualified installer targets', async () => {
     const config = require('../electron-builder.ab.config.cjs')
     expect(config).toMatchObject({
       appId: 'io.github.oalexandrebelo.abbrainmaster',
@@ -75,14 +75,14 @@ describe('distribution identity', () => {
       extraMetadata: { name: 'ab-brainmaster' },
       linux: { executableName: 'ab-brainmaster', target: ['dir'] }
     })
-    expect(() => config.beforePack({ electronPlatformName: 'darwin' })).toThrow(
+    await expect(config.beforePack({ electronPlatformName: 'darwin' })).rejects.toThrow(
       'Linux directory builds only'
     )
-    expect(() => config.beforePack({ electronPlatformName: 'win32' })).toThrow(
+    await expect(config.beforePack({ electronPlatformName: 'win32' })).rejects.toThrow(
       'Linux directory builds only'
     )
-    expect(() =>
+    await expect(
       config.beforePack({ electronPlatformName: 'linux', targets: [{ name: 'deb' }] })
-    ).toThrow('Linux directory builds only')
+    ).rejects.toThrow('Linux directory builds only')
   })
 })
