@@ -8,6 +8,7 @@ import { collectPreflight, mobileRoot } from './ab-ios-preflight.mjs'
 import { exportOptionsPlist } from './ab-ios-signing.mjs'
 import { inspectApp, verifyIpa } from './ab-ios-verify.mjs'
 import { resolveAbIosIdentity } from '../config/ab-ios-identity.cjs'
+import { installIosNoticePhase } from './ab-ios-notice-phase.mjs'
 
 const HELP = `AB BRAINMASTER ORCA iOS
   node scripts/ab-ios.mjs config
@@ -94,6 +95,8 @@ async function build(values) {
     cwd: native,
     logPath: path.join(output, 'pods.log')
   })
+  json(path.join(output, 'notice-phase.json'), installIosNoticePhase(mobileRoot))
+  const noticeReceiptPath = path.join(output, 'ios-notice-receipt.json')
   const workspaces = fs.readdirSync(native).filter((entry) => entry.endsWith('.xcworkspace'))
   if (workspaces.length !== 1) {
     throw new Error('Expected a single generated iOS workspace.')
@@ -151,6 +154,7 @@ async function build(values) {
       archive,
       '-derivedDataPath',
       path.join(output, 'DerivedData'),
+      `AB_IOS_NOTICE_RECEIPT=${noticeReceiptPath}`,
       ...signingArgs,
       'archive'
     ],
@@ -161,7 +165,13 @@ async function build(values) {
   if (appNames.length !== 1) {
     throw new Error('The archive must contain one application.')
   }
-  const built = inspectApp(path.join(apps, appNames[0]), report.identity)
+  const noticeReceipt = JSON.parse(fs.readFileSync(noticeReceiptPath, 'utf8'))
+  if (!/^[a-f0-9]{64}$/.test(noticeReceipt.manifestSha256 ?? '')) {
+    throw new Error('The iOS notice build phase did not produce a valid manifest receipt.')
+  }
+  const built = inspectApp(path.join(apps, appNames[0]), report.identity, {
+    expectedNoticeManifestSha256: noticeReceipt.manifestSha256
+  })
   if (values.unsigned) {
     const evidence = {
       ...built,
@@ -203,7 +213,8 @@ async function build(values) {
     identity: report.identity,
     method: values.method,
     deviceUdid: process.env.AB_IOS_DEVICE_UDID,
-    teamId: signing.teamId
+    teamId: signing.teamId,
+    expectedNoticeManifestSha256: noticeReceipt.manifestSha256
   })
   json(path.join(output, 'build-evidence.json'), { ...evidence, ipa })
   console.log(JSON.stringify({ ...evidence, ipa }, null, 2))

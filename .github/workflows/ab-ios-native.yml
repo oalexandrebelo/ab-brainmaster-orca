@@ -48,7 +48,7 @@ jobs:
           working-directory: mobile
       - name: Validate signing guards and configuration
         run: |
-          node --test scripts/ab-ios-signing.test.mjs
+          node --test scripts/ab-ios-signing.test.mjs scripts/ab-ios-notices.test.mjs
           node scripts/ab-ios.mjs preflight --unsigned
       - name: Verify native push, protocol and local diagnostics
         run: pnpm exec vitest run src/notifications/push-token.test.ts src/components/ProtocolBlockScreen.test.ts src/diagnostics/connection-diagnostics-submission.test.ts src/diagnostics/native-diagnostics-operations.test.ts --maxWorkers=2
@@ -67,6 +67,8 @@ jobs:
           path: |
             mobile/build/AB-BRAINMASTER-ORCA-UNSIGNED.xcarchive.tar.gz
             mobile/build/ab-ios-ci/build-evidence.json
+            mobile/build/ab-ios-ci/notice-phase.json
+            mobile/build/ab-ios-ci/ios-notice-receipt.json
             mobile/build/ab-ios-ci/preflight.json
             mobile/build/ab-ios-ci/*.log
           if-no-files-found: warn

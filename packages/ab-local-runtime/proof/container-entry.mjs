@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { createWriteStream } from 'node:fs'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, stat, writeFile } from 'node:fs/promises'
 import { once } from 'node:events'
+import { homedir, userInfo } from 'node:os'
 import path from 'node:path'
 import { runProcess, spawnProcess } from '@orca/process-host'
 import { verifyBlockedEgress } from './blocked-egress.mjs'
@@ -10,7 +11,19 @@ await verifyBlockedEgress()
 const directory = process.env.AB_PROOF_DIRECTORY
 assert.ok(directory && path.isAbsolute(directory))
 await mkdir(directory, { recursive: true })
-const log = createWriteStream(path.join(directory, 'ollama.log'))
+const identity = userInfo()
+assert.ok(identity.uid > 0, 'The isolated proof must run as a nonroot user.')
+assert.equal(identity.uid, Number(process.env.AB_PROOF_EXPECTED_UID))
+assert.equal(identity.gid, Number(process.env.AB_PROOF_EXPECTED_GID))
+assert.equal(homedir(), identity.homedir, 'The process home must match its container account.')
+assert.equal((await stat(directory)).uid, identity.uid, 'Evidence directory ownership mismatch.')
+await writeFile(
+  path.join(directory, 'process-identity.json'),
+  `${JSON.stringify({ uid: identity.uid, gid: identity.gid, username: identity.username, home: identity.homedir, evidenceOwnerMatches: true }, null, 2)}\n`,
+  { mode: 0o600 }
+)
+const log = createWriteStream(path.join(directory, 'ollama.log'), { mode: 0o600 })
+await once(log, 'open')
 const server = spawnProcess({
   program: '/proof/ollama/bin/ollama',
   args: ['serve'],

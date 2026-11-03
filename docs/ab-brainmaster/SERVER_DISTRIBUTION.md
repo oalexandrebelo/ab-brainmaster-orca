@@ -22,6 +22,8 @@ Tarefas autorizadas usam o terminal oficial ou o CLI/SDK de `ab-local-runtime`. 
 
 O [compose](../../deploy/ab-brainmaster/compose.yaml) usa bridge dedicada, usuário sem root, filesystem raiz somente leitura, nenhuma capability, `no-new-privileges`, limite de quatro CPUs, 4 GiB e 256 processos. Perfil, workspaces e home ficam em volumes dedicados. Não monta Docker socket nem a rede do host. O runtime e a API escutam em todas as interfaces somente dentro do contêiner; suas publicações no host usam `127.0.0.1`.
 
+O build local usa BuildKit e um checkout Git independente, com diretório `.git` dentro do contexto. Essa metadata é montada somente para leitura durante a compilação, para que o guard oficial resolva o commit real; não há SHA substituto nem cópia de `.git` para o payload. O estágio final verifica sua ausência nos diretórios da aplicação. Um arquivo de fontes sem `.git`, ou um linked worktree cujo arquivo `.git` aponta para fora do contexto, não atende esse caminho: use um checkout independente. O checkout de CI usa `persist-credentials: false`; ao enviar o contexto a um builder, use também um checkout sem credenciais persistidas.
+
 Defina as portas fornecidas pela administração da máquina. O arquivo recusa subir sem valores explícitos:
 
 ```sh

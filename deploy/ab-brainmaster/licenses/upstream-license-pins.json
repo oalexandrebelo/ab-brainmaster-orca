@@ -1,7 +1,15 @@
 {
   "format": 1,
-  "basis": "npm version gitHead and repository metadata, upstream license at that immutable commit",
+  "basis": "Hash-pinned complete license texts from the exact npm package, immutable upstream revisions, or the author license endpoint referenced by the published package; exceptions carry explicit provenance.",
   "packages": [
+    {
+      "package": "fastdom",
+      "version": "1.0.12",
+      "declaredLicense": "MIT",
+      "source": "https://registry.npmjs.org/fastdom/-/fastdom-1.0.12.tgz#package/README.md",
+      "packagedFile": "README.md",
+      "sha256": "cc5669ab6f7741bb061c8a7244addc8e3af1f84ec7d2445744b59d0169a87d11"
+    },
     {
       "package": "@radix-ui/react-compose-refs",
       "version": "1.1.2",
@@ -97,6 +105,215 @@
       "source": "https://raw.githubusercontent.com/expo/expo/30a1c5b4871a5a3f0f6545be0c2d1f67521a5e6f/LICENSE",
       "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
       "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "format",
+      "version": "0.2.2",
+      "declaredLicenses": [
+        {
+          "type": "MIT",
+          "url": "http://sjs.mit-license.org"
+        }
+      ],
+      "source": "https://sjs.mit-license.org/2010-2014/license.txt",
+      "provenance": "The published README at npm gitHead 4f898096759776b7c84fa7a25b13c923dadfe46e links the author license endpoint and declares copyright 2010 - 2014. This file is the complete endpoint response with that interval; SHA256 pins the retrieved bytes.",
+      "evidence": "https://raw.githubusercontent.com/samsonjs/format/4f898096759776b7c84fa7a25b13c923dadfe46e/Readme.md",
+      "file": "sha256-8a306264c88c7dde84771edb42779a9e68bf4ffd1d3ef01ef8195bc207e3b953.txt",
+      "sha256": "8a306264c88c7dde84771edb42779a9e68bf4ffd1d3ef01ef8195bc207e3b953"
+    },
+    {
+      "package": "react-remove-scroll-bar",
+      "version": "2.3.8",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/theKashey/react-remove-scroll-bar/8ca9ba5ea52de03308fe8ced94f7b159a44d28ff/LICENSE",
+      "provenance": "The exact npm package declares MIT. Its gitHead b3b1287aad81def2e2ae707274b74531b61ddbaf is unavailable from upstream. This complete author license was added later by upstream commit 8ca9ba5ea52de03308fe8ced94f7b159a44d28ff; it is not represented as the missing npm gitHead.",
+      "evidence": "https://registry.npmjs.org/react-remove-scroll-bar/2.3.8",
+      "file": "sha256-a79aae0c0f21990d9d963bb3c5a79cdcea9a46f8523ba55c58d7fe776b6ebc84.txt",
+      "sha256": "a79aae0c0f21990d9d963bb3c5a79cdcea9a46f8523ba55c58d7fe776b6ebc84"
+    },
+    {
+      "package": "rehype-katex",
+      "version": "7.0.1",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/remarkjs/remark-math/88a9497e1ede93b958237c85edbf5651faeca7af/license",
+      "file": "sha256-cb992262f361a5359e6771c28740d33c7041e15332ae8537fae40538992591a9.txt",
+      "sha256": "cb992262f361a5359e6771c28740d33c7041e15332ae8537fae40538992591a9"
+    },
+    {
+      "package": "remark-math",
+      "version": "6.0.0",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/remarkjs/remark-math/d5d0660b150810a535bbb07eac6cc96a4510aa24/license",
+      "file": "sha256-cb992262f361a5359e6771c28740d33c7041e15332ae8537fae40538992591a9.txt",
+      "sha256": "cb992262f361a5359e6771c28740d33c7041e15332ae8537fae40538992591a9"
+    },
+    {
+      "package": "@expo/cli",
+      "version": "55.0.36",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "@expo/metro-runtime",
+      "version": "55.0.12",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/c8f16914a2713c37fe446c46d613004626b3e6b3/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "@react-native/js-polyfills",
+      "version": "0.83.10",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/react/react-native/ff4f96a23b85b30d8de9331dfac2895f385f67b0/LICENSE",
+      "file": "sha256-da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "package": "@react-native/normalize-colors",
+      "version": "0.83.10",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/react/react-native/ff4f96a23b85b30d8de9331dfac2895f385f67b0/LICENSE",
+      "file": "sha256-da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "package": "@react-native/virtualized-lists",
+      "version": "0.83.10",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/react/react-native/ff4f96a23b85b30d8de9331dfac2895f385f67b0/LICENSE",
+      "file": "sha256-da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "package": "expo-application",
+      "version": "55.0.19",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-asset",
+      "version": "55.0.20",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-camera",
+      "version": "55.0.23",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-clipboard",
+      "version": "55.0.17",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-document-picker",
+      "version": "55.0.17",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-file-system",
+      "version": "55.0.26",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-haptics",
+      "version": "55.0.18",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-image-picker",
+      "version": "55.0.24",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-keep-awake",
+      "version": "55.0.8",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/7c081282cf88968f81732feb67a71840e769a40f/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-network",
+      "version": "55.0.18",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-notifications",
+      "version": "55.0.27",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-secure-store",
+      "version": "55.0.18",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-splash-screen",
+      "version": "55.0.25",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-status-bar",
+      "version": "55.0.6",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/7c081282cf88968f81732feb67a71840e769a40f/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "expo-task-manager",
+      "version": "55.0.20",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/expo/expo/856b99321eeb04bd528b33f90c0e7fa2859a1fcb/LICENSE",
+      "file": "sha256-fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4.txt",
+      "sha256": "fb3ca4a837f5779e83cef89b78253a8949cfb9429c340309f62d0465ec6610b4"
+    },
+    {
+      "package": "metro-runtime",
+      "version": "0.83.8",
+      "declaredLicense": "MIT",
+      "source": "https://raw.githubusercontent.com/react/metro/2ede29bc40f46dc27ac6ca4bac7a3da0d5c152b8/LICENSE",
+      "file": "sha256-da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
     }
   ]
 }

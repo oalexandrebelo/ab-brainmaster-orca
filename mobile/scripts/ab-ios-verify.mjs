@@ -8,8 +8,9 @@ import {
   readProvisioningProfile,
   validateProvisioningProfile
 } from './ab-ios-signing.mjs'
+import { verifyIosNotices } from './ab-ios-notices.mjs'
 
-export function inspectApp(appPath, identity) {
+export function inspectApp(appPath, identity, { expectedNoticeManifestSha256 } = {}) {
   const info = readPlist(fs.readFileSync(path.join(appPath, 'Info.plist')))
   if (info.CFBundleIdentifier !== identity.bundleIdentifier) {
     throw new Error('The built app bundle identifier does not match AB_IOS_BUNDLE_ID.')
@@ -42,11 +43,15 @@ export function inspectApp(appPath, identity) {
     buildNumber: info.CFBundleVersion,
     minimumIos: info.MinimumOSVersion,
     architecture: arch.stdout.trim(),
-    standaloneJavaScriptBundle: true
+    standaloneJavaScriptBundle: true,
+    notices: verifyIosNotices(appPath, expectedNoticeManifestSha256)
   }
 }
 
-export function verifyIpa(ipaPath, { identity, method, deviceUdid, teamId }) {
+export function verifyIpa(
+  ipaPath,
+  { identity, method, deviceUdid, teamId, expectedNoticeManifestSha256 }
+) {
   if (process.platform !== 'darwin') {
     throw new Error('IPA signature verification requires macOS Apple codesign tooling.')
   }
@@ -64,7 +69,7 @@ export function verifyIpa(ipaPath, { identity, method, deviceUdid, teamId }) {
       throw new Error('Expected exactly one application in the IPA Payload.')
     }
     const appPath = path.join(payload, apps[0])
-    const inspected = inspectApp(appPath, identity)
+    const inspected = inspectApp(appPath, identity, { expectedNoticeManifestSha256 })
     const checked = spawnSync('codesign', ['--verify', '--deep', '--strict', appPath], {
       encoding: 'utf8'
     })

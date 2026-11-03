@@ -19,7 +19,7 @@ RUN cd mobile && pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm --dir mobile run postinstall
 RUN npm ci --prefix packages/ab-control --ignore-scripts --no-audit --no-fund
 RUN npm ci --prefix packages/ab-context-bridge --ignore-scripts --no-audit --no-fund
-RUN pnpm run build:mobile-web && pnpm run build:orcad && node packages/ab-control/build.mjs && node packages/ab-local-runtime/build.mjs
+RUN --mount=type=bind,source=.git,target=/build/.git,readonly pnpm run build:mobile-web && pnpm run build:orcad && node packages/ab-control/build.mjs && node packages/ab-local-runtime/build.mjs
 RUN node config/scripts/ab-release-package.mjs /opt/ab-release 0.1.0 > /tmp/release.json && node -e "const fs=require('node:fs');fs.writeFileSync('/opt/ab-release.sha256',JSON.parse(fs.readFileSync('/tmp/release.json')).digest+'\n')"
 
 FROM builder AS acceptance
@@ -32,6 +32,7 @@ COPY --from=builder /opt/ab-release /opt/ab-release
 COPY --from=builder /opt/ab-release.sha256 /opt/ab-release.sha256
 COPY config/scripts/ab-release-manifest.mjs config/scripts/ab-release-store.mjs config/scripts/ab-release-cli.mjs /opt/ab-deploy/
 COPY packages/ab-control/credentials.mjs packages/ab-control/contract.mjs deploy/ab-brainmaster/entrypoint.mjs /opt/ab-deploy/
+RUN test ! -e /build/.git && find /opt/ab-release /opt/ab-deploy -name .git -print > /tmp/ab-git-metadata && test ! -s /tmp/ab-git-metadata && rm /tmp/ab-git-metadata
 RUN mkdir -p /var/lib/ab-brainmaster /workspaces /home/node/orca && ln -s /workspaces /home/node/orca/workspaces && chown -R node:node /var/lib/ab-brainmaster /workspaces /home/node
 ENV ORCA_BACKGROUND_LAUNCH=1 AB_CONTROL_CONTAINER=1 AB_CONTROL_PORT=8080 AB_RUNTIME_PORT=8081
 USER node

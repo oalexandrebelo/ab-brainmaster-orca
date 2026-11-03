@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import * as esbuild from 'esbuild'
+import { writeReleaseGeneratedMetadata } from '../../config/scripts/ab-release-build-metadata.mjs'
 import {
   terminalNerdFontCss,
   terminalSymbolsFontCss
@@ -86,10 +87,11 @@ async function buildEngineJs() {
     target,
     legalComments: 'none',
     write: false,
+    metafile: true,
     logLevel: 'silent'
   })
 
-  return result.outputFiles[0].text
+  return { text: result.outputFiles[0].text, metafile: result.metafile }
 }
 
 async function main() {
@@ -121,7 +123,7 @@ async function main() {
       outputPath,
       [
         ...header,
-        `export const XTERM_ENGINE_JS = ${JSON.stringify(htmlText(engineJs, 'script'))}`,
+        `export const XTERM_ENGINE_JS = ${JSON.stringify(htmlText(engineJs.text, 'script'))}`,
         ''
       ].join('\n')
     ),
@@ -136,6 +138,27 @@ async function main() {
       ].join('\n')
     )
   ])
+  await writeReleaseGeneratedMetadata(
+    'mobile-terminal-webview',
+    [
+      { path: outputPath, metafile: engineJs.metafile },
+      {
+        path: cssOutputPath,
+        copiedInputs: [
+          { path: require.resolve('@xterm/xterm/css/xterm.css') },
+          {
+            path: path.join(mobileRoot, 'assets/fonts/SymbolsNerdFontMono-Regular.woff2'),
+            licensePath: path.join(mobileRoot, 'assets/fonts/SymbolsNerdFontMono-OFL.txt')
+          },
+          {
+            path: path.join(mobileRoot, 'assets/fonts/NotoSansSymbols2-TerminalSubset.woff2'),
+            licensePath: path.join(mobileRoot, 'assets/fonts/NotoSansSymbols2-OFL.txt')
+          }
+        ]
+      }
+    ],
+    process.cwd()
+  )
 }
 
 await main()

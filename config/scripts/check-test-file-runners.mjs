@@ -140,9 +140,9 @@ const NON_UNIT_TEST_RUNNERS = [
   },
   {
     name: 'AB iOS signing contracts',
-    include: ['mobile/scripts/ab-ios-signing.test.mjs'],
+    include: ['mobile/scripts/ab-ios-signing.test.mjs', 'mobile/scripts/ab-ios-notices.test.mjs'],
     sources: ['.github/workflows/ab-ios-native.yml'],
-    mirrors: ['node --test scripts/ab-ios-signing.test.mjs']
+    mirrors: ['node --test scripts/ab-ios-signing.test.mjs scripts/ab-ios-notices.test.mjs']
   },
   {
     name: 'AB control contracts and real runtime integration',

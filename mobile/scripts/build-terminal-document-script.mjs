@@ -1,6 +1,7 @@
 import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import esbuild from 'esbuild'
+import { writeReleaseGeneratedMetadata } from '../../config/scripts/ab-release-build-metadata.mjs'
 
 // Bundle createTerminalDocument() without host into an IIFE string for native WebView; page imports ordinary TS instead.
 // IIFE isolates declarations. Keep source readable for crash reports/console; size is small relative to xterm engine.
@@ -48,7 +49,11 @@ export async function terminalDocumentBundle() {
   if (!output) {
     throw new Error('[build-terminal-document-script] esbuild emitted no document bundle')
   }
-  return { script: output.text.trimEnd(), inputs: Object.keys(result.metafile.inputs) }
+  return {
+    script: output.text.trimEnd(),
+    inputs: Object.keys(result.metafile.inputs),
+    metafile: result.metafile
+  }
 }
 
 export async function buildTerminalDocumentScript() {
@@ -56,10 +61,15 @@ export async function buildTerminalDocumentScript() {
 }
 
 async function main() {
-  const script = await buildTerminalDocumentScript()
+  const { script, metafile } = await terminalDocumentBundle()
   await writeFile(
     TERMINAL_DOCUMENT_SCRIPT_PATH,
     `${GENERATED_HEADER}\nexport const TERMINAL_DOCUMENT_SCRIPT = ${JSON.stringify(script)}\n`
+  )
+  await writeReleaseGeneratedMetadata(
+    'mobile-terminal-document',
+    [{ path: TERMINAL_DOCUMENT_SCRIPT_PATH, metafile }],
+    mobileRoot
   )
 }
 

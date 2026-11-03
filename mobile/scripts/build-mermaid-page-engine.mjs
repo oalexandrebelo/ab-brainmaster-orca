@@ -2,6 +2,7 @@ import { writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import * as esbuild from 'esbuild'
+import { writeReleaseGeneratedMetadata } from '../../config/scripts/ab-release-build-metadata.mjs'
 
 const require = createRequire(import.meta.url)
 const mobileRoot = path.resolve(import.meta.dirname, '..')
@@ -17,7 +18,7 @@ const outputPath = path.join(
 // Unlike WebView engine’s string artifact, page evaluates this source module typed by mermaid-page-engine.ts.
 async function main() {
   const { version } = require(require.resolve('mermaid/package.json'))
-  const { outputFiles } = await esbuild.build({
+  const { outputFiles, metafile } = await esbuild.build({
     absWorkingDir: mobileRoot,
     stdin: {
       contents: "export { default } from 'mermaid'\n",
@@ -35,6 +36,7 @@ async function main() {
     // The floor the shell's WebViews hold, the same pair the terminal engine is built for.
     target: ['chrome74', 'safari15'],
     write: false,
+    metafile: true,
     charset: 'utf8',
     legalComments: 'none',
     logLevel: 'silent',
@@ -51,6 +53,11 @@ async function main() {
     ''
   ].join('\n')
   await writeFile(outputPath, source)
+  await writeReleaseGeneratedMetadata(
+    'mobile-mermaid-page',
+    [{ path: outputPath, metafile }],
+    mobileRoot
+  )
 }
 
 await main()

@@ -4,6 +4,8 @@ import { dirname, join, relative, resolve, sep } from 'node:path'
 
 const root = resolve(import.meta.dirname, '../..')
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex')
+const contributes = (usage) =>
+  (usage.bytesInOutput ?? usage.renderedLength ?? usage.mappingReferences) > 0
 
 async function packageForInput(input, base = root) {
   let directory = dirname(await realpath(resolve(base, input)))
@@ -61,26 +63,42 @@ async function report(name) {
   return value.metafiles
 }
 
-export async function stageDependencyNotices(notices) {
+export async function stageDependencyNotices(
+  notices,
+  {
+    sources: requestedSources,
+    generatedNames = ['mobile-mermaid-page', 'mobile-terminal-webview', 'mobile-terminal-document'],
+    copiedInputs = [],
+    basis = 'bundler outputs with positive contribution, expanded through hash-bound generated artifacts, plus copied runtime packages'
+  } = {}
+) {
   const pinnedDirectory = join(root, 'deploy/ab-brainmaster/licenses')
   const pins = JSON.parse(
     await readFile(join(pinnedDirectory, 'upstream-license-pins.json'), 'utf8')
   ).packages
-  const local = JSON.parse(
-    await readFile(join(root, 'packages/ab-local-runtime/dist/metafile.json'), 'utf8')
-  )
-  const sources = [
-    ['ab-control', await report('control')],
-    ['ab-local-runtime', [local]],
-    ['orcad', await report('orcad')],
-    ['mobile-web', await report('mobile-web')]
-  ]
-  const packages = new Map()
-  async function include(input, component) {
-    const selected = await packageForInput(
-      input,
-      component === 'mobile-web' ? join(root, 'mobile') : root
+  let sources
+  if (requestedSources) {
+    sources = await Promise.all(
+      requestedSources.map(async (source) => [
+        source.component,
+        source.metafiles ?? (await report(source.report)),
+        source.workingDirectory ?? root
+      ])
     )
+  } else {
+    const local = JSON.parse(
+      await readFile(join(root, 'packages/ab-local-runtime/dist/metafile.json'), 'utf8')
+    )
+    sources = [
+      ['ab-control', await report('control'), root],
+      ['ab-local-runtime', [local], root],
+      ['orcad', await report('orcad'), root],
+      ['mobile-web', await report('mobile-web'), join(root, 'mobile')]
+    ]
+  }
+  const packages = new Map()
+  async function include(input, component, base = root) {
+    const selected = await packageForInput(input, base)
     let entry = packages.get(selected.directory)
     if (!entry) {
       entry = { ...selected, usedBy: new Set() }
@@ -88,35 +106,110 @@ export async function stageDependencyNotices(notices) {
     }
     entry.usedBy.add(component)
   }
-  for (const [component, metafiles] of sources) {
+  const includedFiles = new Set()
+  for (const [component, metafiles, base] of sources) {
     const inputs = new Set()
     for (const metafile of metafiles) {
       for (const output of Object.values(metafile.outputs)) {
         for (const [input, usage] of Object.entries(output.inputs)) {
-          if (usage.bytesInOutput > 0 && input.split(/[\\/]/).includes('node_modules')) {
-            inputs.add(input)
+          if (contributes(usage)) {
+            includedFiles.add(resolve(base, input))
+            if (input.split(/[\\/]/).includes('node_modules')) {
+              inputs.add(input)
+            }
           }
         }
       }
     }
     for (const input of inputs) {
-      await include(input, component)
+      await include(input, component, base)
     }
   }
-  for (const name of [
-    'node-pty',
-    '@parcel/watcher',
-    '@vscode/ripgrep-universal',
-    'emojibase-data'
-  ]) {
-    await include(join(root, 'node_modules', name, 'package.json'), 'orcad-copied-artifact')
+  const generated = []
+  const assets = new Map()
+  for (const name of generatedNames) {
+    const evidence = JSON.parse(
+      await readFile(join(root, `out/reports/ab-release-generated-${name}.json`), 'utf8')
+    )
+    if (evidence.format !== 1 || !Array.isArray(evidence.artifacts) || !evidence.artifacts.length) {
+      throw new Error(`Missing generated build evidence for ${name}`)
+    }
+    for (const artifact of evidence.artifacts) {
+      const path = resolve(root, artifact.path)
+      if (digest(await readFile(path)) !== artifact.sha256) {
+        throw new Error(`Stale generated metadata for ${artifact.path}; rebuild before packaging`)
+      }
+      const included = includedFiles.has(path)
+      generated.push({
+        path: artifact.path.split(sep).join('/'),
+        sha256: artifact.sha256,
+        included
+      })
+      if (!included) {
+        continue
+      }
+      const component = `generated:${artifact.path.split(sep).join('/')}`
+      const base = resolve(root, artifact.workingDirectory)
+      const inputs = new Set()
+      for (const metafile of artifact.metafiles) {
+        for (const output of Object.values(metafile.outputs)) {
+          for (const [input, usage] of Object.entries(output.inputs)) {
+            if (contributes(usage) && input.split(/[\\/]/).includes('node_modules')) {
+              inputs.add(input)
+            }
+          }
+        }
+      }
+      for (const input of inputs) {
+        await include(input, component, base)
+      }
+      for (const input of artifact.copiedInputs) {
+        const inputPath = resolve(root, input.path)
+        if (digest(await readFile(inputPath)) !== input.sha256) {
+          throw new Error(`Stale copied input for ${artifact.path}; rebuild before packaging`)
+        }
+        if (input.path.split(/[\\/]/).includes('node_modules')) {
+          await include(inputPath, component)
+        } else {
+          if (!input.license) {
+            throw new Error(`A generated asset has no license evidence: ${input.path}`)
+          }
+          const licensePath = resolve(root, input.license.path)
+          if (digest(await readFile(licensePath)) !== input.license.sha256) {
+            throw new Error(`Generated asset license changed: ${input.license.path}`)
+          }
+          const target = `assets/${input.license.path.split(sep).join('/')}`
+          await mkdir(dirname(join(notices, target)), { recursive: true })
+          await cp(licensePath, join(notices, target))
+          assets.set(input.path, {
+            path: input.path.split(sep).join('/'),
+            sha256: input.sha256,
+            license: { path: target, sha256: input.license.sha256 },
+            usedBy: component
+          })
+        }
+      }
+    }
   }
-  try {
-    await lstat(join(root, 'out/orcad', `agent-browser-${process.platform}-${process.arch}`))
-    await include(join(root, 'node_modules/agent-browser/package.json'), 'orcad-copied-artifact')
-  } catch (error) {
-    if (error.code !== 'ENOENT') {
-      throw error
+  for (const input of copiedInputs) {
+    await include(input.path, input.component)
+  }
+  if (!requestedSources) {
+    for (const name of [
+      'node-pty',
+      '@parcel/watcher',
+      '@vscode/ripgrep-universal',
+      'emojibase-data'
+    ]) {
+      await include(join(root, 'node_modules', name, 'package.json'), 'orcad-copied-artifact')
+    }
+    try {
+      await lstat(join(root, 'out/orcad', `agent-browser-${process.platform}-${process.arch}`))
+      await include(join(root, 'node_modules/agent-browser/package.json'), 'orcad-copied-artifact')
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
     }
   }
   const index = new Map()
@@ -131,16 +224,29 @@ export async function stageDependencyNotices(notices) {
         (value) =>
           value.package === metadata.name &&
           value.version === metadata.version &&
-          value.declaredLicense === metadata.license
+          (metadata.license !== undefined
+            ? value.declaredLicense === metadata.license
+            : metadata.licenses !== undefined &&
+              JSON.stringify(value.declaredLicenses) === JSON.stringify(metadata.licenses))
       )
       if (pin) {
-        const path = join(pinnedDirectory, pin.file)
+        const path = pin.packagedFile
+          ? join(directory, pin.packagedFile)
+          : join(pinnedDirectory, pin.file)
         if (digest(await readFile(path)) !== pin.sha256) {
           throw new Error(
             `Pinned upstream license changed for ${metadata.name}@${metadata.version}`
           )
         }
-        licenses = [{ path, member: 'UPSTREAM-LICENSE.txt', source: pin.source }]
+        licenses = [
+          {
+            path,
+            member: pin.packagedFile ?? 'UPSTREAM-LICENSE.txt',
+            source: pin.source,
+            provenance: pin.provenance,
+            evidence: pin.evidence
+          }
+        ]
       }
     }
     if (!licenses.length) {
@@ -173,7 +279,9 @@ export async function stageDependencyNotices(notices) {
         path,
         sha256: checksum,
         bytes: bytes.length,
-        ...(license.source ? { source: license.source } : {})
+        ...(license.source ? { source: license.source } : {}),
+        ...(license.provenance ? { provenance: license.provenance } : {}),
+        ...(license.evidence ? { evidence: license.evidence } : {})
       })
     }
     record.files.sort((a, b) => a.path.localeCompare(b.path, 'en'))
@@ -187,7 +295,7 @@ export async function stageDependencyNotices(notices) {
   )
   await writeFile(
     join(notices, 'dependencies.json'),
-    `${JSON.stringify({ format: 1, basis: 'esbuild output inputs with positive byte contribution, plus copied runtime packages', packages: result }, null, 2)}\n`
+    `${JSON.stringify({ format: 1, basis, sources: sources.map(([component, metafiles]) => ({ component, provenance: metafiles.map((metafile) => metafile.x_provenance ?? { bundler: 'esbuild', selection: 'outputs.inputs.bytesInOutput > 0', lengthUnit: 'bytes' }) })), generated, assets: [...assets.values()], packages: result }, null, 2)}\n`
   )
   return result
 }

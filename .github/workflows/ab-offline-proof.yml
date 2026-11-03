@@ -83,7 +83,7 @@ jobs:
         run: |
           node packages/ab-local-runtime/proof/stage-image.mjs
           docker pull "$AB_PROOF_BASE_IMAGE"
-          docker build --tag ab-offline-proof:local "$AB_PROOF_ASSETS/stage"
+          docker build --build-arg "AB_PROOF_UID=$(id -u)" --build-arg "AB_PROOF_GID=$(id -g)" --tag ab-offline-proof:local "$AB_PROOF_ASSETS/stage"
           mkdir -p "$RUNNER_TEMP/ab-offline-evidence"
           docker image inspect "$AB_PROOF_BASE_IMAGE" --format '{{json .RepoDigests}}' > "$RUNNER_TEMP/ab-offline-evidence/base-image-digests.json"
           docker image inspect ab-offline-proof:local --format '{{json .Id}}' > "$RUNNER_TEMP/ab-offline-evidence/proof-image-id.json"
@@ -117,6 +117,7 @@ jobs:
             ${{ runner.temp }}/ab-offline-evidence/container-host-config.json
             ${{ runner.temp }}/ab-offline-evidence/base-image-digests.json
             ${{ runner.temp }}/ab-offline-evidence/proof-image-id.json
+            ${{ runner.temp }}/ab-offline-evidence/process-identity.json
             ${{ runner.temp }}/ab-offline-evidence/ollama.log
           if-no-files-found: warn
           retention-days: 14
