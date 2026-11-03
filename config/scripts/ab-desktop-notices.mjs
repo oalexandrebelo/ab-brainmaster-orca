@@ -211,6 +211,20 @@ export async function collectCopiedDesktopDependencies(resourcesDirectory, mappi
   return { inputs, records, firstParty }
 }
 
+export async function stageDesktopRuntimeLicenses(appOutDir, notices) {
+  const licenses = []
+  await mkdir(notices, { recursive: true })
+  for (const [source, path] of [
+    ['LICENSE.electron.txt', 'Electron-LICENSE.txt'],
+    ['LICENSES.chromium.html', 'LICENSES.chromium.html']
+  ]) {
+    const bytes = await readFile(join(appOutDir, source))
+    await writeFile(join(notices, path), bytes)
+    licenses.push({ path, source, bytes: bytes.length, sha256: digest(bytes) })
+  }
+  return licenses
+}
+
 export async function stageDesktopNotices(context, resourceMappings) {
   const architecture = { 1: 'x64', 3: 'arm64' }[context.arch]
   if (context.electronPlatformName !== 'linux' || !architecture) {
@@ -243,14 +257,7 @@ export async function stageDesktopNotices(context, resourceMappings) {
       'Rolldown modules with positive renderedLength and hash-matched emitted workers; esbuild mobile-web output contributions; hash-bound generated assets; runtime artifacts witnessed in the final desktop payload'
   })
   await stagePinnedNodeNotice(notices, `linux-${architecture}-glibc`)
-  const runtimeLicenses = []
-  for (const filename of ['LICENSE', 'LICENSES.chromium.html']) {
-    const source = join(context.appOutDir, filename)
-    const bytes = await readFile(source)
-    const target = filename === 'LICENSE' ? 'Electron-LICENSE.txt' : filename
-    await cp(source, join(notices, target))
-    runtimeLicenses.push({ path: target, bytes: bytes.length, sha256: digest(bytes) })
-  }
+  const runtimeLicenses = await stageDesktopRuntimeLicenses(context.appOutDir, notices)
   const provenance = {
     format: 1,
     target: `linux-${architecture}-dir`,

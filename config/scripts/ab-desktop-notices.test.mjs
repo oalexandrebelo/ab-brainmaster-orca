@@ -7,6 +7,7 @@ import { expect, it } from 'vitest'
 import { stageDesktopFontNotices } from './ab-desktop-asset-notices.mjs'
 import {
   collectCopiedDesktopDependencies,
+  stageDesktopRuntimeLicenses,
   verifyPackagedDesktopOutputs,
   verifyPackagedDeclarativeBundles
 } from './ab-desktop-notices.mjs'
@@ -18,6 +19,47 @@ async function copyInput(source, target) {
   await mkdir(dirname(target), { recursive: true })
   await cp(source, target)
 }
+
+it('preserves complete runtime licenses from the real packaged Electron layout and rejects missing files', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'ab-desktop-runtime-license-proof-'))
+  try {
+    const electron = join(root, 'node_modules/electron/dist')
+    const metadata = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
+    expect((await readFile(join(electron, 'version'), 'utf8')).trim()).toBe(
+      metadata.devDependencies.electron
+    )
+    const notices = join(directory, 'resources/notices/ab-desktop')
+    const files = [
+      { original: 'LICENSE', source: 'LICENSE.electron.txt', path: 'Electron-LICENSE.txt' },
+      {
+        original: 'LICENSES.chromium.html',
+        source: 'LICENSES.chromium.html',
+        path: 'LICENSES.chromium.html'
+      }
+    ]
+    const expected = []
+    for (const { original, source, path } of files) {
+      await copyInput(join(electron, original), join(directory, source))
+      const bytes = await readFile(join(electron, original))
+      expected.push({ path, source, bytes: bytes.length, sha256: digest(bytes) })
+    }
+    expect(await stageDesktopRuntimeLicenses(directory, notices)).toEqual(expected)
+    for (const { original, path } of files) {
+      const actual = await readFile(join(notices, path))
+      expect(actual.equals(await readFile(join(electron, original)))).toBe(true)
+    }
+    for (const { original, source } of files) {
+      await rm(join(directory, source))
+      await expect(stageDesktopRuntimeLicenses(directory, notices)).rejects.toMatchObject({
+        code: 'ENOENT',
+        path: join(directory, source)
+      })
+      await copyInput(join(electron, original), join(directory, source))
+    }
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+})
 
 it('binds evidence to real unpacked ASAR bytes and rejects a changed payload', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'ab-desktop-asar-proof-'))
