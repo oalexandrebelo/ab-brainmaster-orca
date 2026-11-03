@@ -12,8 +12,10 @@ import {
   MANIFEST
 } from '../../../config/scripts/ab-release-manifest.mjs'
 import {
+  acquireServiceLease,
   activateRelease,
   currentRelease,
+  reclaimServiceLease,
   stageRelease
 } from '../../../config/scripts/ab-release-store.mjs'
 import { startHost } from '../dist/host.mjs'
@@ -21,6 +23,96 @@ import { createCredential } from '../credentials.mjs'
 import { ControlClient } from '../sdk.mjs'
 import { RuntimeClient } from '../dist/runtime-adapter.mjs'
 import { orcadRoot, repoRoot } from './runtime-fixture.mjs'
+
+test(
+  'real service lease refuses live owners and recovers after SIGKILL',
+  { timeout: 30000 },
+  async (t) => {
+    const root = await mkdtemp(join(tmpdir(), 'ab-lease-real-'))
+    const path = join(root, 'service.lock')
+    let child, closed
+    try {
+      child = spawnProcess({
+        program: process.execPath,
+        args: [
+          '--input-type=module',
+          '-e',
+          "const {acquireServiceLease}=await import(process.argv[1]);await acquireServiceLease(process.argv[2]);process.stdout.write('lease-ready\\n');process.stdin.resume()",
+          pathToFileURL(join(repoRoot, 'config/scripts/ab-release-store.mjs')).href,
+          root
+        ],
+        stdio: 'pipe'
+      })
+      let diagnostic = ''
+      child.stderr.setEncoding('utf8')
+      child.stderr.on('data', (chunk) => {
+        diagnostic = (diagnostic + chunk).slice(-4000)
+      })
+      closed = new Promise((resolveClosed) =>
+        child.once('close', (code, signal) => resolveClosed({ code, signal }))
+      )
+      await new Promise((ready, reject) => {
+        const timer = setTimeout(() => reject(new Error('Lease child did not become ready')), 10000)
+        let output = ''
+        child.stdout.setEncoding('utf8')
+        child.stdout.on('data', (chunk) => {
+          output += chunk
+          if (output.includes('lease-ready\n')) {
+            clearTimeout(timer)
+            ready()
+          }
+        })
+        child.once('error', (error) => {
+          clearTimeout(timer)
+          reject(error)
+        })
+        child.once('exit', () => {
+          clearTimeout(timer)
+          reject(new Error(`Lease child exited before readiness: ${diagnostic}`))
+        })
+      })
+      const original = await readFile(path, 'utf8')
+      assert.equal(JSON.parse(original).pid, child.pid)
+      await assert.rejects(acquireServiceLease(root), { code: 'EEXIST' })
+      await assert.rejects(reclaimServiceLease(root), /owner is still alive/)
+      assert.equal(await readFile(path, 'utf8'), original)
+      child.kill('SIGKILL')
+      const result = await closed
+      if (process.platform !== 'win32') {
+        assert.equal(result.signal, 'SIGKILL')
+      }
+      const recovery = await Promise.allSettled([
+        reclaimServiceLease(root),
+        reclaimServiceLease(root)
+      ])
+      assert.equal(recovery.filter((value) => value.status === 'fulfilled').length, 1)
+      const recoveryFailure = recovery.find((value) => value.status === 'rejected').reason
+      assert.ok(
+        recoveryFailure.code === 'ENOENT' ||
+          /Another release transaction/.test(recoveryFailure.message)
+      )
+      const release = await acquireServiceLease(root)
+      assert.equal(JSON.parse(await readFile(path, 'utf8')).pid, process.pid)
+      await release()
+      await assert.rejects(readFile(path), { code: 'ENOENT' })
+      await writeFile(path, '', { mode: 0o600 })
+      await assert.rejects(reclaimServiceLease(root), SyntaxError)
+      await assert.rejects(acquireServiceLease(root), { code: 'EEXIST' })
+      assert.equal(await readFile(path, 'utf8'), '')
+      t.diagnostic(
+        'A real child held the exclusive lease; SIGKILL released the owner and concurrent reclamation serialized. Live and malformed leases were preserved. Power-loss durability remains an appliance boot gate.'
+      )
+    } finally {
+      if (child?.exitCode === null && child.signalCode === null) {
+        child.kill('SIGKILL')
+      }
+      if (closed) {
+        await closed
+      }
+      await rm(root, { recursive: true, force: true })
+    }
+  }
+)
 
 test(
   'real releases: hash verification, atomic activation, running-service fence and rollback with profile retention',

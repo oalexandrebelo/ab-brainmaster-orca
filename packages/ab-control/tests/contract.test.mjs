@@ -1,6 +1,18 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync, writeFileSync, readFileSync, chmodSync, symlinkSync } from 'node:fs'
+import {
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+  readFileSync,
+  readdirSync,
+  chmodSync,
+  statSync,
+  lstatSync,
+  symlinkSync,
+  openSync,
+  closeSync
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { OPERATIONS, validateOperation } from '../contract.mjs'
@@ -62,26 +74,71 @@ test('the public contract cannot forward arbitrary RPC or mutation parameters', 
   })
 })
 
-test('private credentials rotate without revealing the secret or following symlinks', () => {
+test('private credentials create exclusively and rotate atomically without leftover staging files', () => {
   const dir = mkdtempSync(join(tmpdir(), 'ab-control-credentials-'))
   try {
     const file = join(dir, 'token')
+    const unrelated = join(dir, 'token.unrelated.tmp')
+    writeFileSync(unrelated, 'preserve unrelated staging file', { mode: 0o600 })
     assert.equal(createCredential(file), file)
     const first = readToken(file)
+    const original = readFileSync(file)
+    assert.match(first, /^[A-Za-z0-9_-]{43}$/)
+    assert.equal(original.toString(), `${first}\n`)
     assert.equal(tokenMatches(`Bearer ${first}`, first), true)
     assert.equal(tokenMatches(`Bearer ${first}x`, first), false)
-    assert.throws(() => createCredential(file))
-    createCredential(file, { rotate: true })
+    assert.deepEqual(readdirSync(dir).sort(), ['token', 'token.unrelated.tmp'])
+    if (process.platform !== 'win32') {
+      assert.equal(statSync(file).mode & 0o777, 0o600)
+    }
+    assert.throws(() => createCredential(file), { code: 'EEXIST' })
+    assert.deepEqual(readFileSync(file), original)
+    assert.deepEqual(readdirSync(dir).sort(), ['token', 'token.unrelated.tmp'])
+    const reader = openSync(file, 'r')
+    try {
+      assert.equal(createCredential(file, { rotate: true }), file)
+      assert.deepEqual(readFileSync(reader), original)
+    } finally {
+      closeSync(reader)
+    }
     assert.notEqual(readToken(file), first)
     assert.equal(tokenMatches(`Bearer ${first}`, readToken(file)), false)
+    assert.equal(readFileSync(file, 'utf8'), `${readToken(file)}\n`)
+    assert.deepEqual(readdirSync(dir).sort(), ['token', 'token.unrelated.tmp'])
+    assert.equal(readFileSync(unrelated, 'utf8'), 'preserve unrelated staging file')
     if (process.platform !== 'win32') {
-      symlinkSync(file, join(dir, 'link'))
-      assert.throws(() => readToken(join(dir, 'link')), /private credential/)
+      assert.equal(statSync(file).mode & 0o777, 0o600)
+      const link = join(dir, 'link')
+      const rotated = readFileSync(file)
+      symlinkSync(file, link)
+      assert.throws(() => readToken(link), /private credential/)
+      assert.throws(() => createCredential(link, { rotate: true }), /private credential/)
+      assert.equal(lstatSync(link).isSymbolicLink(), true)
+      assert.deepEqual(readFileSync(file), rotated)
       chmodSync(file, 0o644)
       assert.throws(() => readToken(file), /private credential/)
+      assert.throws(() => createCredential(file, { rotate: true }), /private credential/)
+      assert.deepEqual(readFileSync(file), rotated)
+      assert.deepEqual(readdirSync(dir).sort(), ['link', 'token', 'token.unrelated.tmp'])
     }
-    writeFileSync(file, 'bad')
-    assert.throws(() => readToken(file))
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('rotation refuses missing and malformed credentials without publishing or changing bytes', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'ab-control-invalid-credentials-'))
+  try {
+    const file = join(dir, 'token')
+    assert.throws(() => createCredential(file, { rotate: true }), {
+      code: 'credential_unavailable'
+    })
+    assert.deepEqual(readdirSync(dir), [])
+    writeFileSync(file, 'bad\n', { mode: 0o600 })
+    assert.throws(() => readToken(file), /generated token/)
+    assert.throws(() => createCredential(file, { rotate: true }), /generated token/)
+    assert.equal(readFileSync(file, 'utf8'), 'bad\n')
+    assert.deepEqual(readdirSync(dir), ['token'])
   } finally {
     rmSync(dir, { recursive: true, force: true })
   }

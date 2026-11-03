@@ -23,7 +23,7 @@ RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 MemoryMax=4G
 CPUQuota=400%
 TasksMax=256
-StandardOutput=append:/dev/ttyS0
+StandardOutput=journal+console
 StandardError=journal+console
 
 [Install]

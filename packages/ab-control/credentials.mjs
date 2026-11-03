@@ -2,14 +2,16 @@ import {
   constants,
   openSync,
   fstatSync,
+  fsyncSync,
   readFileSync,
   closeSync,
   writeFileSync,
+  linkSync,
   renameSync,
   rmSync
 } from 'node:fs'
 import { randomBytes, timingSafeEqual } from 'node:crypto'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
 import { ControlError } from './contract.mjs'
 
 export function readPrivateFile(path, maxBytes = 8192) {
@@ -53,16 +55,42 @@ export function readToken(path) {
 export function createCredential(path, { rotate = false } = {}) {
   const token = randomBytes(32).toString('base64url')
   const destination = resolve(path)
-  if (!rotate) {
-    writeFileSync(destination, `${token}\n`, { mode: 0o600, flag: 'wx' })
-  } else {
+  if (rotate) {
     readToken(destination)
-    const temporary = `${destination}.${randomBytes(8).toString('hex')}.tmp`
-    try {
-      writeFileSync(temporary, `${token}\n`, { mode: 0o600, flag: 'wx' })
+  }
+  const temporary = `${destination}.${randomBytes(8).toString('hex')}.tmp`
+  let fd
+  let staged = false
+  try {
+    fd = openSync(temporary, 'wx', 0o600)
+    staged = true
+    writeFileSync(fd, `${token}\n`)
+    fsyncSync(fd)
+    closeSync(fd)
+    fd = undefined
+    if (rotate) {
       renameSync(temporary, destination)
+      staged = false
+    } else {
+      linkSync(temporary, destination)
+    }
+  } finally {
+    try {
+      if (fd !== undefined) {
+        closeSync(fd)
+      }
     } finally {
-      rmSync(temporary, { force: true })
+      if (staged) {
+        rmSync(temporary, { force: true })
+      }
+    }
+  }
+  if (process.platform !== 'win32') {
+    const directory = openSync(dirname(destination), constants.O_RDONLY)
+    try {
+      fsyncSync(directory)
+    } finally {
+      closeSync(directory)
     }
   }
   return destination

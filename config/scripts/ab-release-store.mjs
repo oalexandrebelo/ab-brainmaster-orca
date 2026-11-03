@@ -1,13 +1,56 @@
 import { randomBytes } from 'node:crypto'
+import { constants } from 'node:fs'
 import { DatabaseSync } from 'node:sqlite'
-import { cp, mkdir, readFile, rename, rm, open, lstat, writeFile } from 'node:fs/promises'
-import { join, resolve, sep } from 'node:path'
+import { cp, mkdir, readFile, readdir, rename, rm, open, lstat, link } from 'node:fs/promises'
+import { dirname, join, resolve, sep } from 'node:path'
 import { verifyRelease } from './ab-release-manifest.mjs'
 
+async function syncDirectory(path) {
+  if (process.platform === 'win32') {
+    return
+  }
+  const directory = await open(path, 'r')
+  try {
+    await directory.sync()
+  } finally {
+    await directory.close()
+  }
+}
+
+async function syncReleaseTree(directory) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name)
+    if (entry.isDirectory()) {
+      await syncReleaseTree(path)
+    } else if (entry.isFile()) {
+      const file = await open(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0))
+      try {
+        if (!(await file.stat()).isFile()) {
+          throw new Error('Release trees must contain regular files')
+        }
+        await file.sync()
+      } finally {
+        await file.close()
+      }
+    } else {
+      throw new Error('Release trees cannot contain symbolic links or special files')
+    }
+  }
+  await syncDirectory(directory)
+}
+
 async function locked(root, action) {
-  await mkdir(root, { recursive: true, mode: 0o700 })
+  const created = await mkdir(root, { recursive: true, mode: 0o700 })
   if (!(await lstat(root)).isDirectory()) {
     throw new Error('Release store must be a directory')
+  }
+  if (created) {
+    for (let directory = root; ; directory = dirname(directory)) {
+      await syncDirectory(directory)
+      if (directory === dirname(created)) {
+        break
+      }
+    }
   }
   const database = new DatabaseSync(join(root, '.release-lock.sqlite'))
   try {
@@ -60,14 +103,7 @@ async function atomicState(root, state) {
       await file.close()
     }
     await rename(temporary, join(root, 'active.json'))
-    if (process.platform !== 'win32') {
-      const directory = await open(root, 'r')
-      try {
-        await directory.sync()
-      } finally {
-        await directory.close()
-      }
-    }
+    await syncDirectory(root)
   } finally {
     await rm(temporary, { force: true })
   }
@@ -87,6 +123,9 @@ export async function stageRelease({ root, source, digest }) {
     try {
       await lstat(destination)
       await verifyRelease(destination, digest)
+      await syncReleaseTree(destination)
+      await syncDirectory(slots)
+      await syncDirectory(root)
       return { digest, directory: destination, reused: true }
     } catch (error) {
       if (error.code !== 'ENOENT') {
@@ -102,7 +141,10 @@ export async function stageRelease({ root, source, digest }) {
         force: false
       })
       await verifyRelease(temporary, digest)
+      await syncReleaseTree(temporary)
       await rename(temporary, destination)
+      await syncDirectory(slots)
+      await syncDirectory(root)
     } finally {
       await rm(temporary, { recursive: true, force: true })
     }
@@ -130,7 +172,12 @@ export async function activateRelease({ root, digest, rollback = false }) {
     if (!selected) {
       throw new Error('There is no previous release to restore')
     }
-    await verifyRelease(join(root, 'slots', selected), selected)
+    const slots = join(root, 'slots')
+    const directory = join(slots, selected)
+    await verifyRelease(directory, selected)
+    await syncReleaseTree(directory)
+    await syncDirectory(slots)
+    await syncDirectory(root)
     if (previous?.active === selected) {
       return previous
     }
@@ -157,21 +204,40 @@ export async function currentRelease(root) {
 }
 
 export async function acquireServiceLease(root) {
-  return await locked(resolve(root), async () => {
+  root = resolve(root)
+  return await locked(root, async () => {
     const path = join(root, 'service.lock')
     const token = randomBytes(16).toString('hex')
-    await writeFile(
-      path,
-      JSON.stringify({ pid: process.pid, identity: await processIdentity(process.pid), token }),
-      { flag: 'wx', mode: 0o600 }
-    )
-    return async () => {
-      const current = JSON.parse(await readFile(path, 'utf8'))
-      if (current.token !== token) {
-        throw new Error('Service lease ownership changed')
+    const temporary = join(root, `.service-${randomBytes(8).toString('hex')}.tmp`)
+    let created = false
+    try {
+      const file = await open(temporary, 'wx', 0o600)
+      created = true
+      try {
+        await file.writeFile(
+          JSON.stringify({ pid: process.pid, identity: await processIdentity(process.pid), token })
+        )
+        await file.sync()
+      } finally {
+        await file.close()
       }
-      await rm(path)
+      await link(temporary, path)
+      await syncDirectory(root)
+    } finally {
+      if (created) {
+        await rm(temporary, { force: true })
+        await syncDirectory(root)
+      }
     }
+    return async () =>
+      await locked(root, async () => {
+        const current = JSON.parse(await readFile(path, 'utf8'))
+        if (current.token !== token) {
+          throw new Error('Service lease ownership changed')
+        }
+        await rm(path)
+        await syncDirectory(root)
+      })
   })
 }
 
@@ -187,7 +253,8 @@ async function processIdentity(pid) {
 }
 
 export async function reclaimServiceLease(root) {
-  return await locked(resolve(root), async () => {
+  root = resolve(root)
+  return await locked(root, async () => {
     const path = join(root, 'service.lock')
     const lease = JSON.parse(await readFile(path, 'utf8'))
     if (!Number.isSafeInteger(lease.pid) || lease.pid < 1) {
@@ -205,6 +272,7 @@ export async function reclaimServiceLease(root) {
       }
     }
     await rm(path)
+    await syncDirectory(root)
     return { reclaimed: true }
   })
 }

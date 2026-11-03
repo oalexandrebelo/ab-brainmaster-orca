@@ -9,7 +9,7 @@ test ! -e /build/config
 node_hash=$(cat "$release/orcad/.runtime-node")
 test ${#node_hash} = 64
 "$release/runtimes/node-$node_hash/bin/node" --input-type=module -e 'const {verifyRelease}=await import(process.argv[1]);const fs=await import("node:fs/promises");await verifyRelease(process.argv[2],(await fs.readFile(process.argv[3],"utf8")).trim())' "file://$source_root/config/scripts/ab-release-manifest.mjs" "$release" "$digest_file"
-lb config --mode debian --distribution bookworm --architectures amd64 --linux-flavours amd64 --binary-images iso-hybrid --archive-areas main --apt-recommends false --debian-installer none --memtest none --firmware-binary false --firmware-chroot false --iso-volume AB_BRAINMASTER --bootappend-live 'boot=live persistence console=tty0 console=ttyS0,115200n8'
+lb config --mode debian --distribution bookworm --architectures amd64 --linux-flavours amd64 --binary-images iso-hybrid --archive-areas main --apt-recommends false --debian-installer none --memtest none --firmware-binary false --firmware-chroot false --iso-volume AB_BRAINMASTER --bootappend-live 'boot=live persistence live-config.noautologin console=tty0 console=ttyS0,115200n8'
 mkdir -p config/bootloaders
 cp -a /usr/share/live/build/bootloaders/isolinux config/bootloaders/
 python3 - <<'PY'

@@ -12,8 +12,8 @@ Group=abbrainmaster
 ExecStart=/usr/local/bin/node /opt/ab-deploy/acceptance.mjs
 ExecStartPost=+/bin/systemctl poweroff
 TimeoutStartSec=180
-StandardOutput=append:/dev/ttyS0
-StandardError=append:/dev/ttyS0
+StandardOutput=journal+console
+StandardError=journal+console
 
 [Install]
 WantedBy=multi-user.target
