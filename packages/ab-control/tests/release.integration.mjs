@@ -1,11 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, cp, readFile, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, mkdir, cp, readFile, writeFile, rm, chown } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { pathToFileURL } from 'node:url'
 import { DatabaseSync } from 'node:sqlite'
-import { spawnProcess } from '@orca/process-host'
+import { runProcess, spawnProcess } from '@orca/process-host'
 import {
   createManifest,
   verifyRelease,
@@ -22,7 +23,7 @@ import { startHost } from '../dist/host.mjs'
 import { createCredential } from '../credentials.mjs'
 import { ControlClient } from '../sdk.mjs'
 import { RuntimeClient } from '../dist/runtime-adapter.mjs'
-import { orcadRoot, repoRoot } from './runtime-fixture.mjs'
+import { orcadRoot, repoRoot, startOrcad } from './runtime-fixture.mjs'
 
 test(
   'real service lease refuses live owners and recovers after SIGKILL',
@@ -76,6 +77,31 @@ test(
       await assert.rejects(acquireServiceLease(root), { code: 'EEXIST' })
       await assert.rejects(reclaimServiceLease(root), /owner is still alive/)
       assert.equal(await readFile(path, 'utf8'), original)
+      if (process.platform === 'linux') {
+        const record = JSON.parse(original)
+        const boot = (await readFile('/proc/sys/kernel/random/boot_id', 'utf8')).trim()
+        const [recordedBoot, ticks] = record.identity.split(':')
+        assert.equal(recordedBoot, boot)
+        for (const identity of [
+          'unverifiable',
+          `00000000-0000-0000-0000-000000000000:${ticks}`,
+          `${recordedBoot}:0${ticks}`
+        ]) {
+          const unknown = JSON.stringify({ ...record, identity })
+          await writeFile(path, unknown)
+          await assert.rejects(reclaimServiceLease(root), /owner is still alive/)
+          assert.equal(await readFile(path, 'utf8'), unknown)
+        }
+        const previousBoot = randomUUID()
+        assert.notEqual(previousBoot, boot)
+        await writeFile(path, JSON.stringify({ ...record, identity: `${previousBoot}:${ticks}` }))
+        assert.deepEqual(await reclaimServiceLease(root), { reclaimed: true })
+        process.kill(child.pid, 0)
+        await writeFile(path, original, { flag: 'wx', mode: 0o600 })
+        t.diagnostic(
+          'A prior-boot record referencing a real live PID was reclaimed; an unverified identity was preserved. This fixture does not simulate a physical reboot.'
+        )
+      }
       child.kill('SIGKILL')
       const result = await closed
       if (process.platform !== 'win32') {
@@ -115,6 +141,83 @@ test(
 )
 
 test(
+  'real Linux lease preserves EPERM and reclaims a prior-boot record',
+  { timeout: 30000, skip: process.platform !== 'linux' || process.getuid?.() !== 0 },
+  async (t) => {
+    const root = await mkdtemp(join(tmpdir(), 'ab-lease-permission-'))
+    try {
+      await chown(root, 65534, 65534)
+      const boot = (await readFile('/proc/sys/kernel/random/boot_id', 'utf8')).trim()
+      const stat = await readFile(`/proc/${process.pid}/stat`, 'utf8')
+      const identity = `${boot}:${stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19]}`
+      const result = await runProcess({
+        program: process.execPath,
+        args: [
+          '--input-type=module',
+          '-e',
+          `import assert from 'node:assert/strict'
+import { randomUUID } from 'node:crypto'
+import { readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+process.setgid(65534)
+process.setuid(65534)
+const { acquireServiceLease, reclaimServiceLease } = await import(process.argv[1])
+const root = process.argv[2]
+const pid = Number(process.argv[3])
+const identity = process.argv[4]
+const path = join(root, 'service.lock')
+const boot = (await readFile('/proc/sys/kernel/random/boot_id', 'utf8')).trim()
+const [recordedBoot, ticks] = identity.split(':')
+assert.equal(recordedBoot, boot)
+let procIdentityRead = 'visible'
+try {
+  await readFile('/proc/' + pid + '/stat', 'utf8')
+} catch (error) {
+  assert.ok(['ENOENT', 'EACCES', 'EPERM'].includes(error.code))
+  procIdentityRead = error.code
+}
+await acquireServiceLease(root)
+const record = { ...JSON.parse(await readFile(path, 'utf8')), pid, identity }
+const original = JSON.stringify(record)
+await writeFile(path, original)
+assert.throws(() => process.kill(pid, 0), { code: 'EPERM' })
+await assert.rejects(reclaimServiceLease(root), { code: 'EPERM' })
+assert.equal(await readFile(path, 'utf8'), original)
+const previousBoot = randomUUID()
+assert.notEqual(previousBoot, boot)
+await writeFile(path, JSON.stringify({ ...record, identity: previousBoot + ':' + ticks }))
+assert.deepEqual(await reclaimServiceLease(root), { reclaimed: true })
+await assert.rejects(readFile(path), { code: 'ENOENT' })
+assert.throws(() => process.kill(pid, 0), { code: 'EPERM' })
+console.log(JSON.stringify({ uid: process.getuid(), sameBoot: 'EPERM-preserved', previousBoot: 'reclaimed', liveForeignPid: 'EPERM', procIdentityRead }))`,
+          pathToFileURL(join(repoRoot, 'config/scripts/ab-release-store.mjs')).href,
+          root,
+          String(process.pid),
+          identity
+        ],
+        timeoutMs: 10000,
+        maxOutputBytes: 16000
+      })
+      assert.equal(result.code, 0, result.stderr)
+      const { procIdentityRead, ...verdict } = JSON.parse(result.stdout.trim())
+      assert.ok(['visible', 'ENOENT', 'EACCES', 'EPERM'].includes(procIdentityRead))
+      assert.deepEqual(verdict, {
+        uid: 65534,
+        sameBoot: 'EPERM-preserved',
+        previousBoot: 'reclaimed',
+        liveForeignPid: 'EPERM'
+      })
+      t.diagnostic(
+        'A real UID 65534 process could not signal the live root PID. The same-boot lease remained unchanged; a distinct valid boot record was reclaimed without signaling that PID.'
+      )
+      t.diagnostic(`Real /proc identity visibility from UID 65534: ${procIdentityRead}`)
+    } finally {
+      await rm(root, { recursive: true, force: true })
+    }
+  }
+)
+
+test(
   'real releases: hash verification, atomic activation, running-service fence and rollback with profile retention',
   { timeout: 180000 },
   async (t) => {
@@ -146,7 +249,32 @@ test(
       await stageRelease({ root, source, digest: first.digest })
       assert.equal((await stageRelease({ root, source, digest: first.digest })).reused, true)
       await activateRelease({ root, digest: first.digest })
-      host = await startHost({ releaseRoot: root, profile, tokenFile })
+      const occupied = await startOrcad(profile)
+      try {
+        await assert.rejects(startHost({ releaseRoot: root, profile, tokenFile }), (error) => {
+          const prefix = 'Runtime exited before readiness: '
+          assert.ok(error.message.startsWith(prefix))
+          const result = JSON.parse(error.message.slice(prefix.length))
+          assert.ok(Number.isInteger(result.code) && result.code !== 0)
+          assert.equal(result.signal, null)
+          assert.equal(occupied.child.exitCode, null)
+          return true
+        })
+      } finally {
+        await occupied.stop()
+      }
+      host = await startHost({
+        releaseRoot: root,
+        profile,
+        tokenFile,
+        syncBootstrapFilesystem: process.platform === 'linux'
+      })
+      if (process.platform === 'linux') {
+        assert.equal((await readFile(join(profile, 'agent-session-authority.key'))).length, 32)
+        t.diagnostic(
+          'The real Linux sync --file-system completed before control startup; its measured duration is the ab_bootstrap_filesystem_sync record. Readback is not a physical power-loss test.'
+        )
+      }
       const firstClient = new ControlClient({ url: host.url, tokenFile })
       const identity = (await firstClient.call('status')).result.hostDescriptor.installationId
       assert.equal(host.releaseId, first.digest)

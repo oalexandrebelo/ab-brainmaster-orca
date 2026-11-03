@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
-import { randomBytes } from 'node:crypto'
-import { mkdir, readFile, open, access } from 'node:fs/promises'
+import { createHmac, randomBytes } from 'node:crypto'
+import { mkdir, readFile, open, access, lstat } from 'node:fs/promises'
 import { RuntimeClient } from '/opt/ab-release/ab-control/runtime-adapter.mjs'
 
 const profile = '/var/lib/ab-brainmaster/profile'
@@ -35,6 +35,33 @@ async function durableWrite(path, value) {
   }
 }
 try {
+  const identityFile = await lstat('/var/lib/dbus/machine-id')
+  assert.ok(identityFile.isFile())
+  assert.equal(identityFile.uid, 0)
+  assert.equal(identityFile.gid, 0)
+  assert.equal(identityFile.mode & 0o7777, 0o444)
+  const machineId = (await readFile('/var/lib/dbus/machine-id', 'utf8')).trim()
+  assert.match(machineId, /^[a-f0-9]{32}$/)
+  assert.notEqual(machineId, '0'.repeat(32))
+  assert.equal((await readFile('/etc/machine-id', 'utf8')).trim(), machineId)
+  const persistedMount = (await readFile('/proc/self/mountinfo', 'utf8'))
+    .split('\n')
+    .some((line) => {
+      const [mount, filesystem] = line.split(' - ')
+      const fields = mount.split(' ')
+      return (
+        fields[3] === '/var/lib/dbus' &&
+        fields[4] === '/var/lib/dbus' &&
+        filesystem?.split(' ')[0] === 'ext4'
+      )
+    })
+  assert.ok(persistedMount)
+  const machineIdFingerprint = createHmac('sha256', 'ab-brainmaster-appliance-machine-id-v1')
+    .update(machineId)
+    .digest('hex')
+  const bootId = (await readFile('/proc/sys/kernel/random/boot_id', 'utf8')).trim()
+  assert.match(bootId, /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/)
+  const osIdentity = { schemaVersion: 1, machineIdFingerprint, bootId }
   const status = (await until(() => runtime.call('status.get'))).result
   let previous
   try {
@@ -45,11 +72,15 @@ try {
     }
   }
   if (previous) {
+    assert.equal(machineIdFingerprint, previous.machineIdFingerprint)
+    assert.match(previous.bootId, /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/)
+    assert.notEqual(bootId, previous.bootId)
     assert.equal(status.hostDescriptor.installationId, previous.installationId)
     assert.notEqual(status.runtimeId, previous.runtimeId)
     const folders = (await runtime.call('folderWorkspace.list')).result.folderWorkspaces
     assert.ok(folders.some((folder) => folder.id === previous.folderId))
     assert.equal(JSON.parse(await readFile(`${folderPath}/nonce.json`, 'utf8')), previous.nonce)
+    console.log(`AB_APPLIANCE_OS_IDENTITY ${JSON.stringify(osIdentity)}`)
     console.log(`AB_APPLIANCE_SECOND_BOOT_PASS ${previous.installationId}`)
   } else {
     await mkdir(folderPath, { recursive: true })
@@ -93,11 +124,14 @@ try {
     }
     await durableWrite(`${folderPath}/nonce.json`, nonce)
     await durableWrite(witnessPath, {
+      machineIdFingerprint,
+      bootId,
       installationId: status.hostDescriptor.installationId,
       runtimeId: status.runtimeId,
       folderId: folder.id,
       nonce
     })
+    console.log(`AB_APPLIANCE_OS_IDENTITY ${JSON.stringify(osIdentity)}`)
     console.log(`AB_APPLIANCE_FIRST_BOOT_PASS ${status.hostDescriptor.installationId}`)
   }
 } catch {

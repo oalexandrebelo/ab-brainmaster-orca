@@ -1,6 +1,7 @@
 import hashlib
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import time
@@ -29,13 +30,21 @@ def boot(iso, label, marker, stop_at_marker=False):
             time.sleep(1)
         if not found:
             raise RuntimeError(f'{label}: expected serial marker absent')
+        if 'Initializing machine ID from D-Bus machine ID.' not in content:
+            raise RuntimeError(f'{label}: systemd did not initialize the persisted machine ID')
         try:
             process.wait(timeout=60)
         except subprocess.TimeoutExpired:
             raise RuntimeError(f'{label}: guest failed to power off after acceptance')
         if not stop_at_marker and process.returncode != 0:
             raise RuntimeError(f'{label}: QEMU exited {process.returncode}')
-        return {'name': label, 'marker': marker, 'seconds': round(time.monotonic() - started, 2), 'shutdown': 'host-terminated-after-ready' if stop_at_marker else 'guest-poweroff'}
+        return {
+            'name': label,
+            'marker': marker,
+            'seconds': round(time.monotonic() - started, 2),
+            'shutdown': 'host-terminated-after-ready' if stop_at_marker else 'guest-poweroff',
+            'machineIdInitialization': 'persisted-dbus',
+        }
     finally:
         if process.poll() is None:
             process.kill()
@@ -53,6 +62,46 @@ first = (output / 'qemu-first.log').read_text(errors='replace').split('AB_APPLIA
 second = (output / 'qemu-second.log').read_text(errors='replace').split('AB_APPLIANCE_SECOND_BOOT_PASS ')[1].split()[0]
 if first != second:
     raise RuntimeError('Installation identity differs across persistent boots')
-result = {'ok': True, 'emulation': 'QEMU TCG', 'network': 'none', 'productionIsoSha256': hashlib.file_digest(production_iso.open('rb'), 'sha256').hexdigest(), 'ciIsoSha256': hashlib.file_digest(ci_iso.open('rb'), 'sha256').hexdigest(), 'persistentInstallationId': first, 'boots': receipts}
+
+def os_identity(label):
+    marker = 'AB_APPLIANCE_OS_IDENTITY '
+    entries = [
+        json.loads(line.split(marker, 1)[1])
+        for line in (output / f'qemu-{label}.log').read_text(errors='replace').splitlines()
+        if marker in line
+    ]
+    if len(entries) != 1:
+        raise RuntimeError(f'{label}: expected one operating system identity receipt')
+    identity = entries[0]
+    if (
+        not isinstance(identity, dict)
+        or identity.get('schemaVersion') != 1
+        or not isinstance(identity.get('machineIdFingerprint'), str)
+        or not re.fullmatch(r'[a-f0-9]{64}', identity['machineIdFingerprint'])
+        or not isinstance(identity.get('bootId'), str)
+        or not re.fullmatch(r'[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}', identity['bootId'])
+    ):
+        raise RuntimeError(f'{label}: invalid operating system identity receipt')
+    return identity
+
+first_os, second_os = os_identity('first'), os_identity('second')
+if first_os['machineIdFingerprint'] != second_os['machineIdFingerprint'] or first_os['bootId'] == second_os['bootId']:
+    raise RuntimeError('Operating system identity did not persist across distinct boots')
+result = {
+    'ok': True,
+    'emulation': 'QEMU TCG',
+    'network': 'none',
+    'productionIsoSha256': hashlib.file_digest(production_iso.open('rb'), 'sha256').hexdigest(),
+    'ciIsoSha256': hashlib.file_digest(ci_iso.open('rb'), 'sha256').hexdigest(),
+    'persistentInstallationId': first,
+    'osIdentity': {
+        'machineIdFingerprint': first_os['machineIdFingerprint'],
+        'fingerprintAlgorithm': 'HMAC-SHA-256',
+        'fingerprintDomain': 'ab-brainmaster-appliance-machine-id-v1',
+        'bootIds': [first_os['bootId'], second_os['bootId']],
+        'initializedFromDbusEveryBoot': True,
+    },
+    'boots': receipts,
+}
 (output / 'appliance-receipt.json').write_text(json.dumps(result, indent=2) + '\n')
 print(json.dumps(result))

@@ -8,7 +8,7 @@ Type=simple
 User=abbrainmaster
 Group=abbrainmaster
 WorkingDirectory=/workspaces
-Environment=ORCA_BACKGROUND_LAUNCH=1 AB_CONTROL_PORT=8080 AB_RUNTIME_PORT=8081 SHELL=/bin/bash
+Environment=ORCA_BACKGROUND_LAUNCH=1 AB_CONTROL_PORT=8080 AB_RUNTIME_PORT=8081 SHELL=/bin/bash AB_APPLIANCE_SYNC_BOOTSTRAP=1
 ExecStart=/usr/local/bin/node /opt/ab-deploy/entrypoint.mjs
 ExecStopPost=/usr/bin/printf '{"type":"ab_service_exit","serviceResult":"%%s","exitCode":"%%s","exitStatus":"%%s"}\n' "${SERVICE_RESULT}" "${EXIT_CODE}" "${EXIT_STATUS}"
 Restart=on-failure

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { spawnProcess } from '@orca/process-host'
+import { runProcess, spawnProcess } from '@orca/process-host'
 import { readFile, mkdir } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -13,8 +13,12 @@ export async function startHost({
   port = 0,
   runtimePort = 0,
   container = false,
-  publishedPort
+  publishedPort,
+  syncBootstrapFilesystem = false
 }) {
+  if (syncBootstrapFilesystem && process.platform !== 'linux') {
+    throw new Error('Appliance bootstrap filesystem synchronization requires Linux')
+  }
   releaseRoot = resolve(releaseRoot)
   profile = resolve(profile)
   await mkdir(profile, { recursive: true, mode: 0o700 })
@@ -70,6 +74,16 @@ export async function startHost({
       env: { ...process.env, ORCA_BACKGROUND_LAUNCH: '1', ORCA_USER_DATA: profile },
       stdio: 'pipe'
     })
+    const exited = new Promise((resolveExit) =>
+      child.once('exit', (code, signal) => resolveExit({ code, signal }))
+    )
+    const assertRuntimeAlive = () => {
+      if (child.exitCode !== null || child.signalCode !== null) {
+        throw new Error(
+          `Runtime exited before control readiness: ${JSON.stringify({ code: child.exitCode, signal: child.signalCode })}`
+        )
+      }
+    }
     child.stdin.end()
     // Runtime diagnostics can contain terminal content or credentials; operators read the private profile log.
     child.stderr.resume()
@@ -105,11 +119,33 @@ export async function startHost({
         clearTimeout(timer)
         reject(error)
       })
-      child.once('exit', () => {
+      child.once('exit', (code, signal) => {
         clearTimeout(timer)
-        reject(new Error('Runtime exited before readiness'))
+        reject(new Error(`Runtime exited before readiness: ${JSON.stringify({ code, signal })}`))
       })
     })
+    if (syncBootstrapFilesystem) {
+      const started = performance.now()
+      const result = await runProcess({
+        program: '/usr/bin/sync',
+        args: ['--file-system', '--', profile],
+        timeoutMs: 30000,
+        maxOutputBytes: 4096
+      })
+      const { code, signal, timedOut, outputTruncated } = result
+      if (code !== 0 || signal !== null || timedOut || outputTruncated) {
+        throw new Error(
+          `Bootstrap filesystem synchronization failed: ${JSON.stringify({ code, signal, timedOut, outputTruncated: !!outputTruncated })}`
+        )
+      }
+      console.log(
+        JSON.stringify({
+          type: 'ab_bootstrap_filesystem_sync',
+          elapsedMs: Math.round(performance.now() - started)
+        })
+      )
+    }
+    assertRuntimeAlive()
     control = await createControlServer({
       profile,
       tokenFile,
@@ -118,9 +154,7 @@ export async function startHost({
       container,
       publishedPort
     })
-    const exited = new Promise((resolveExit) =>
-      child.once('exit', (code, signal) => resolveExit({ code, signal }))
-    )
+    assertRuntimeAlive()
     return { url: control.url, releaseId: release.active, stop, exited }
   } catch (error) {
     await stop()
@@ -136,7 +170,8 @@ export async function main() {
     port: Number(process.env.AB_CONTROL_PORT ?? 0),
     runtimePort: Number(process.env.AB_RUNTIME_PORT ?? 0),
     container: process.env.AB_CONTROL_CONTAINER === '1',
-    publishedPort: Number(process.env.AB_CONTROL_PUBLISHED_PORT)
+    publishedPort: Number(process.env.AB_CONTROL_PUBLISHED_PORT),
+    syncBootstrapFilesystem: process.env.AB_APPLIANCE_SYNC_BOOTSTRAP === '1'
   })
   console.log(JSON.stringify({ type: 'ab_host_ready', url: host.url, releaseId: host.releaseId }))
   let requestedStop = false

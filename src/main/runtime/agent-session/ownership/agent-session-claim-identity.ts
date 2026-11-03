@@ -1,11 +1,13 @@
 import { createHash, createHmac, randomBytes } from 'node:crypto'
 import {
   closeSync,
+  fsyncSync,
   mkdirSync,
   openSync,
   readFileSync,
   realpathSync,
   statSync,
+  unlinkSync,
   writeFileSync
 } from 'node:fs'
 import { dirname, isAbsolute, join, normalize } from 'node:path'
@@ -14,6 +16,8 @@ import {
   type AgentSessionExecutionClaim
 } from '../../../../shared/agent-session/agent-session-host-authority'
 import { getAgentResumeArgv } from '../../../../shared/agent-resume-argv'
+import { fsyncFileSync } from '../../../../shared/secure-file'
+import { publishFileWithoutOverwrite } from '../../../codex-accounts/fs-utils'
 import {
   isResumableTuiAgent,
   normalizeAgentProviderSession,
@@ -145,30 +149,59 @@ export function loadAgentSessionClaimSigner(
   authorityDomainId: string
 ): AgentSessionClaimSigner {
   const keyPath = join(profileDirectory, COORDINATION_KEY_FILE)
-  mkdirSync(dirname(keyPath), { recursive: true })
+  mkdirSync(dirname(keyPath), { recursive: true, mode: 0o700 })
   let key: Buffer
   try {
     key = readFileSync(keyPath)
-  } catch {
-    const candidate = randomBytes(COORDINATION_KEY_BYTES)
-    let fd: number | null = null
-    try {
-      fd = openSync(keyPath, 'wx', 0o600)
-      writeFileSync(fd, candidate)
-      key = candidate
-    } catch {
-      key = readFileSync(keyPath)
-    } finally {
-      if (fd !== null) {
-        closeSync(fd)
-      }
+  } catch (error) {
+    if (!(error instanceof Error) || !('code' in error) || error.code !== 'ENOENT') {
+      throw error
     }
+    const temporaryPath = `${keyPath}.${process.pid}.${randomBytes(16).toString('hex')}.tmp`
+    const descriptor = openSync(temporaryPath, 'wx', 0o600)
+    try {
+      try {
+        writeFileSync(descriptor, randomBytes(COORDINATION_KEY_BYTES))
+        fsyncSync(descriptor)
+      } finally {
+        closeSync(descriptor)
+      }
+      syncClaimKeyDirectories(profileDirectory)
+      publishFileWithoutOverwrite(temporaryPath, keyPath)
+    } finally {
+      unlinkSync(temporaryPath)
+    }
+    key = readFileSync(keyPath)
   }
   // Replacing a corrupt key would make surviving ownership incomparable; refuse authority instead.
   if (key.length !== COORDINATION_KEY_BYTES) {
     throw new Error('agent_session_ownership_unknown')
   }
+  // A concurrent creator can publish before its directory sync; readers complete that fence too.
+  fsyncFileSync(keyPath)
+  syncClaimKeyDirectories(profileDirectory)
   return new AgentSessionClaimSigner(authorityDomainId, key)
+}
+
+function syncClaimKeyDirectories(profileDirectory: string): void {
+  if (process.platform === 'win32') {
+    return
+  }
+  let directory = realpathSync(profileDirectory)
+  const device = statSync(directory).dev
+  for (;;) {
+    const descriptor = openSync(directory, 'r')
+    try {
+      fsyncSync(descriptor)
+    } finally {
+      closeSync(descriptor)
+    }
+    const parent = dirname(directory)
+    if (parent === directory || statSync(parent).dev !== device) {
+      return
+    }
+    directory = parent
+  }
 }
 
 export function createEphemeralAgentSessionClaimSigner(

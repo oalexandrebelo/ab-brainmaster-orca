@@ -241,15 +241,29 @@ export async function acquireServiceLease(root) {
   })
 }
 
-async function processIdentity(pid) {
+const LINUX_BOOT_ID = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/
+const LINUX_EMPTY_BOOT_ID = '00000000-0000-0000-0000-000000000000'
+const LINUX_PROCESS_IDENTITY = /^([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}):(0|[1-9][0-9]*)$/
+
+async function linuxBootIdentity() {
+  const boot = (await readFile('/proc/sys/kernel/random/boot_id', 'utf8')).trim()
+  if (!LINUX_BOOT_ID.test(boot) || boot === LINUX_EMPTY_BOOT_ID) {
+    throw new Error('Cannot prove the current Linux boot identity')
+  }
+  return boot
+}
+
+async function processIdentity(pid, boot = null) {
   if (process.platform !== 'linux') {
     return null
   }
-  const [stat, boot] = await Promise.all([
-    readFile(`/proc/${pid}/stat`, 'utf8'),
-    readFile('/proc/sys/kernel/random/boot_id', 'utf8')
-  ])
-  return `${boot.trim()}:${stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19]}`
+  boot ??= await linuxBootIdentity()
+  const stat = await readFile(`/proc/${pid}/stat`, 'utf8')
+  const ticks = stat.slice(stat.lastIndexOf(')') + 2).split(' ')[19]
+  if (stat.lastIndexOf(')') === -1 || !/^(0|[1-9][0-9]*)$/.test(ticks ?? '')) {
+    throw new Error('Cannot prove the Linux process identity')
+  }
+  return `${boot}:${ticks}`
 }
 
 export async function reclaimServiceLease(root) {
@@ -260,15 +274,28 @@ export async function reclaimServiceLease(root) {
     if (!Number.isSafeInteger(lease.pid) || lease.pid < 1) {
       throw new Error('Invalid service lease')
     }
-    try {
-      process.kill(lease.pid, 0)
-      const identity = await processIdentity(lease.pid)
-      if (!identity || !lease.identity || identity === lease.identity) {
-        throw new Error('Service lease owner is still alive')
+    const boot = process.platform === 'linux' ? await linuxBootIdentity() : null
+    const parsed =
+      typeof lease.identity === 'string' ? LINUX_PROCESS_IDENTITY.exec(lease.identity) : null
+    const recorded = parsed?.[1] === LINUX_EMPTY_BOOT_ID ? null : parsed
+    if (!boot || !recorded || recorded[1] === boot) {
+      let identity = null
+      try {
+        identity = await processIdentity(lease.pid, boot)
+      } catch (error) {
+        if (!['ESRCH', 'ENOENT', 'EACCES', 'EPERM'].includes(error.code)) {
+          throw error
+        }
       }
-    } catch (error) {
-      if (!['ESRCH', 'ENOENT'].includes(error.code)) {
-        throw error
+      try {
+        process.kill(lease.pid, 0)
+        if (!identity || (boot && !recorded) || identity === lease.identity) {
+          throw new Error('Service lease owner is still alive')
+        }
+      } catch (error) {
+        if (error.code !== 'ESRCH') {
+          throw error
+        }
       }
     }
     await rm(path)

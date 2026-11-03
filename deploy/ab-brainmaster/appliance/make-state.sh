@@ -5,8 +5,13 @@ shift
 test ! -e "$destination"
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
-mkdir -p "$stage/var/lib/ab-brainmaster" "$stage/workspaces" "$stage/etc/ab-admin"
-printf '%s\n' '/var/lib/ab-brainmaster' '/workspaces' '/etc/ab-admin' > "$stage/persistence.conf"
+mkdir -p "$stage/var/lib/ab-brainmaster" "$stage/workspaces" "$stage/etc/ab-admin" "$stage/var/lib/dbus"
+chmod 0755 "$stage/var/lib/dbus"
+machine_id=$(tr -d '-' < /proc/sys/kernel/random/uuid)
+[[ "$machine_id" =~ ^[a-f0-9]{32}$ && ! "$machine_id" =~ ^0+$ ]]
+printf '%s\n' "$machine_id" > "$stage/var/lib/dbus/machine-id"
+chmod 0444 "$stage/var/lib/dbus/machine-id"
+printf '%s\n' '/var/lib/ab-brainmaster' '/workspaces' '/etc/ab-admin' '/var/lib/dbus bind' > "$stage/persistence.conf"
 printf '%s\n' '1' > "$stage/var/lib/ab-brainmaster/.ab-persistence-enabled"
 while test "$#" -gt 0; do
   case "$1" in
@@ -27,9 +32,9 @@ for directory in /var/lib/ab-brainmaster /workspaces; do
   debugfs -w -R "set_inode_field $directory uid 1000" "$destination" >/dev/null 2>&1
   debugfs -w -R "set_inode_field $directory gid 1000" "$destination" >/dev/null 2>&1
 done
-for directory in / /etc /etc/ab-admin; do
-  debugfs -w -R "set_inode_field $directory uid 0" "$destination" >/dev/null 2>&1
-  debugfs -w -R "set_inode_field $directory gid 0" "$destination" >/dev/null 2>&1
+for path in / /etc /etc/ab-admin /var /var/lib /var/lib/dbus /var/lib/dbus/machine-id; do
+  debugfs -w -R "set_inode_field $path uid 0" "$destination" >/dev/null 2>&1
+  debugfs -w -R "set_inode_field $path gid 0" "$destination" >/dev/null 2>&1
 done
 if test -f "$stage/etc/ab-admin/authorized_keys"; then
   debugfs -w -R 'set_inode_field /etc/ab-admin/authorized_keys uid 0' "$destination" >/dev/null 2>&1

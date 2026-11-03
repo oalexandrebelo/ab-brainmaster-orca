@@ -136,10 +136,11 @@ jobs:
           tar -xzf artifact/ab-release.tar.gz -C artifact
           docker build -f deploy/ab-brainmaster/appliance/Dockerfile -t ab-live-builder:ci deploy/ab-brainmaster/appliance
           docker run --rm --privileged -v "$PWD:/source:ro" -v "$PWD/artifact:/output" ab-live-builder:ci bash /source/deploy/ab-brainmaster/appliance/build.sh /output/release /output/release.sha256 /output
-      - name: Boot the same ISO twice with a dedicated persistence disk
+      - name: Verify independent state disks and three persistent appliance boots
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends qemu-system-x86 e2fsprogs
+          python3 deploy/ab-brainmaster/appliance/make-state.test.py
           bash deploy/ab-brainmaster/appliance/make-state.sh artifact/state.img --acceptance
           python3 deploy/ab-brainmaster/appliance/qemu-acceptance.py artifact/ab-brainmaster-amd64.iso artifact/ab-brainmaster-ci-amd64.iso artifact/state.img artifact
       - name: Preserve appliance boot logs and receipt
