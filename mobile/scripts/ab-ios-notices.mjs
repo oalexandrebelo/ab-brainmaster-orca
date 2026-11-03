@@ -99,10 +99,20 @@ export async function stageIosNotices({
   const graph = metroNoticeProvenance(JSON.parse(mapBytes), mobileRoot)
   const bundle = fs.readFileSync(path.join(appPath, 'main.jsbundle'))
   const notices = path.join(appPath, NOTICES_DIRECTORY)
-  if (fs.existsSync(notices)) {
-    throw new Error('The notice resource directory already exists; use a clean AB archive build.')
+  const existing = fs.lstatSync(notices, { throwIfNoEntry: false })
+  if (existing) {
+    if (existing.isSymbolicLink() || !existing.isDirectory()) {
+      throw new Error('The notice resource path must be a real directory without symlinks.')
+    }
+    if (fs.realpathSync(notices) !== path.join(fs.realpathSync(appPath), NOTICES_DIRECTORY)) {
+      throw new Error('The notice resource directory resolves outside the application.')
+    }
+    if (fs.readdirSync(notices).length > 0) {
+      throw new Error('The notice resource directory is not empty; use a clean AB archive build.')
+    }
+  } else {
+    fs.mkdirSync(notices)
   }
-  fs.mkdirSync(notices)
   const native = copyCocoaPodsAcknowledgements(notices, podsRoot, targetName)
   copiedFile(path.join(repositoryRoot, 'LICENSE'), path.join(notices, 'Orca-MIT.txt'))
   const packages = await stageDependencyNotices(notices, {

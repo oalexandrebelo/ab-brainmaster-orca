@@ -305,11 +305,101 @@ test('staged unsigned resources verify, then missing/altered text, bundle and re
   }
 })
 
+test('an existing empty notice directory accepts fresh staging and a matching receipt', async () => {
+  const context = fixture()
+  const notices = path.join(context.appPath, NOTICES_DIRECTORY)
+  try {
+    fs.mkdirSync(notices)
+    const receipt = await stageIosNotices(context)
+    assert.equal(receipt.npmPackages, 1)
+    assert.equal(receipt.nativeAcknowledgements, 1)
+    assert.equal(
+      verifyIosNotices(context.appPath, receipt.manifestSha256).manifestSha256,
+      receipt.manifestSha256
+    )
+    const index = JSON.parse(fs.readFileSync(path.join(notices, 'dependencies.json'), 'utf8'))
+    assert.equal(index.packages[0].name, 'react')
+    assert.ok(index.packages[0].files.length > 0)
+    await assert.rejects(stageIosNotices(context), /notice resource directory is not empty/)
+    assert.equal(
+      verifyIosNotices(context.appPath, receipt.manifestSha256).manifestSha256,
+      receipt.manifestSha256
+    )
+  } finally {
+    fs.rmSync(context.directory, { recursive: true, force: true })
+  }
+})
+
+test('staging refuses a nonempty notice directory without changing existing content', async () => {
+  const context = fixture()
+  const notices = path.join(context.appPath, NOTICES_DIRECTORY)
+  try {
+    fs.mkdirSync(notices)
+    fs.writeFileSync(path.join(notices, 'existing.txt'), 'preserve this notice\n')
+    await assert.rejects(stageIosNotices(context), /notice resource directory is not empty/)
+    assert.deepEqual(fs.readdirSync(notices), ['existing.txt'])
+    assert.equal(
+      fs.readFileSync(path.join(notices, 'existing.txt'), 'utf8'),
+      'preserve this notice\n'
+    )
+  } finally {
+    fs.rmSync(context.directory, { recursive: true, force: true })
+  }
+})
+
+test('staging refuses an ordinary file at the notice resource path without overwriting it', async () => {
+  const context = fixture()
+  const notices = path.join(context.appPath, NOTICES_DIRECTORY)
+  try {
+    fs.writeFileSync(notices, 'preserve this file\n')
+    await assert.rejects(stageIosNotices(context), /must be a real directory without symlinks/)
+    assert.equal(fs.readFileSync(notices, 'utf8'), 'preserve this file\n')
+  } finally {
+    fs.rmSync(context.directory, { recursive: true, force: true })
+  }
+})
+
+test('staging refuses notice symlinks both inside and outside the app without writing through them', async () => {
+  const context = fixture()
+  const notices = path.join(context.appPath, NOTICES_DIRECTORY)
+  try {
+    for (const target of [
+      path.join(context.appPath, 'OtherNotices'),
+      path.join(context.directory, 'OutsideNotices')
+    ]) {
+      fs.mkdirSync(target)
+      fs.symlinkSync(target, notices, 'dir')
+      await assert.rejects(stageIosNotices(context), /must be a real directory without symlinks/)
+      assert.deepEqual(fs.readdirSync(target), [])
+      assert.equal(fs.readlinkSync(notices), target)
+      fs.unlinkSync(notices)
+    }
+  } finally {
+    fs.rmSync(context.directory, { recursive: true, force: true })
+  }
+})
+
+test('staging refuses a dangling notice symlink without creating its target', async () => {
+  const context = fixture()
+  const notices = path.join(context.appPath, NOTICES_DIRECTORY)
+  const target = path.join(context.directory, 'MissingNotices')
+  try {
+    fs.symlinkSync(target, notices, 'dir')
+    await assert.rejects(stageIosNotices(context), /must be a real directory without symlinks/)
+    assert.equal(fs.readlinkSync(notices), target)
+    assert.equal(fs.existsSync(target), false)
+  } finally {
+    fs.rmSync(context.directory, { recursive: true, force: true })
+  }
+})
+
 test('generation refuses signed applications and unavailable CocoaPods acknowledgement resources', async () => {
   const context = fixture()
   try {
+    fs.mkdirSync(path.join(context.appPath, NOTICES_DIRECTORY))
     fs.mkdirSync(path.join(context.appPath, '_CodeSignature'))
     await assert.rejects(stageIosNotices(context), /existing code signature/)
+    assert.deepEqual(fs.readdirSync(path.join(context.appPath, NOTICES_DIRECTORY)), [])
     fs.rmdirSync(path.join(context.appPath, '_CodeSignature'))
     fs.unlinkSync(
       path.join(
