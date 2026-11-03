@@ -135,7 +135,7 @@ jobs:
         run: |
           tar -xzf artifact/ab-release.tar.gz -C artifact
           docker build -f deploy/ab-brainmaster/appliance/Dockerfile -t ab-live-builder:ci deploy/ab-brainmaster/appliance
-          docker run --rm --privileged -v "$PWD:/source:ro" -v "$PWD/artifact:/output" ab-live-builder:ci /source/deploy/ab-brainmaster/appliance/build.sh /output/release /output/release.sha256 /output
+          docker run --rm --privileged -v "$PWD:/source:ro" -v "$PWD/artifact:/output" ab-live-builder:ci bash /source/deploy/ab-brainmaster/appliance/build.sh /output/release /output/release.sha256 /output
       - name: Boot the same ISO twice with a dedicated persistence disk
         run: |
           sudo apt-get update
