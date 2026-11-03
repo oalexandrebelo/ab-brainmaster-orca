@@ -10,6 +10,20 @@ node_hash=$(cat "$release/orcad/.runtime-node")
 test ${#node_hash} = 64
 "$release/runtimes/node-$node_hash/bin/node" --input-type=module -e 'const {verifyRelease}=await import(process.argv[1]);const fs=await import("node:fs/promises");await verifyRelease(process.argv[2],(await fs.readFile(process.argv[3],"utf8")).trim())' "file://$source_root/config/scripts/ab-release-manifest.mjs" "$release" "$digest_file"
 lb config --mode debian --distribution bookworm --architectures amd64 --linux-flavours amd64 --binary-images iso-hybrid --archive-areas main --apt-recommends false --debian-installer none --memtest none --firmware-binary false --firmware-chroot false --iso-volume AB_BRAINMASTER --bootappend-live 'boot=live persistence console=tty0 console=ttyS0,115200n8'
+mkdir -p config/bootloaders
+cp -a /usr/share/live/build/bootloaders/isolinux config/bootloaders/
+python3 - <<'PY'
+import pathlib
+import re
+path = pathlib.Path('config/bootloaders/isolinux/isolinux.cfg')
+source = path.read_text()
+updated, count = re.subn(r'(?m)^timeout 0$', 'timeout 50', source)
+if count != 1 or re.findall(r'(?m)^timeout[^\n]*$', updated) != ['timeout 50']:
+    raise SystemExit('Expected one Syslinux timeout 0 and a verified timeout 50 replacement')
+path.write_text(updated)
+if path.read_text() != updated:
+    raise SystemExit('Syslinux boot configuration write verification failed')
+PY
 mkdir -p config/package-lists config/includes.chroot/opt/ab-release config/includes.chroot/opt/ab-deploy config/includes.chroot/etc/systemd/system config/includes.chroot/etc/ssh config/hooks/normal
 cat > config/package-lists/ab.list.chroot <<'PACKAGES'
 linux-image-amd64
