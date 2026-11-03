@@ -10,6 +10,7 @@ Group=abbrainmaster
 WorkingDirectory=/workspaces
 Environment=ORCA_BACKGROUND_LAUNCH=1 AB_CONTROL_PORT=8080 AB_RUNTIME_PORT=8081 SHELL=/bin/bash
 ExecStart=/usr/local/bin/node /opt/ab-deploy/entrypoint.mjs
+ExecStopPost=/usr/bin/printf '{"type":"ab_service_exit","serviceResult":"%%s","exitCode":"%%s","exitStatus":"%%s"}\n' "${SERVICE_RESULT}" "${EXIT_CODE}" "${EXIT_STATUS}"
 Restart=on-failure
 RestartSec=10
 TimeoutStopSec=30
@@ -23,7 +24,7 @@ MemoryMax=4G
 CPUQuota=400%
 TasksMax=256
 StandardOutput=append:/dev/ttyS0
-StandardError=journal
+StandardError=journal+console
 
 [Install]
 WantedBy=multi-user.target
