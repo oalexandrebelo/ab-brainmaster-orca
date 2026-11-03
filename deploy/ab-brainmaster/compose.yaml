@@ -4,7 +4,7 @@ services:
     build:
       context: ../..
       dockerfile: deploy/ab-brainmaster/Dockerfile
-    image: ab-brainmaster-orca:local
+    image: ${AB_IMAGE:-ab-brainmaster-orca:local}
     init: false
     user: '1000:1000'
     restart: unless-stopped

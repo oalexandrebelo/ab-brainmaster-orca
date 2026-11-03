@@ -33,6 +33,32 @@ docker compose -f deploy/ab-brainmaster/compose.yaml exec core node /opt/ab-rele
 
 As expressões de porta acima são instruções de preenchimento, não números reservados. A criação do projeto remoto AB-PCSRV depende da autorização pendente da Oficina. Este repositório não pressupõe que essas portas já existam ou estejam reservadas.
 
+### Carregar a imagem testada sem reconstruir
+
+Depois da aceitação real do contêiner, o workflow exporta a imagem com a referência `ab-brainmaster-orca:COMMIT_SHA_COMPLETO`. Antes de exportar, compara seu image ID com o da imagem `:ci` ensaiada. O artefato `ab-runtime-release-linux-x64` inclui `ab-brainmaster-orca-linux-x64.docker.tar.gz`, seu `.sha256` e `docker-image-receipt.json`, além do release usado pela appliance. O recibo registra commit, referência, image ID e hash do arquivo. A exportação usa `docker image save`; não inclui os volumes, credenciais ou estado dos contêineres de aceitação.
+
+No diretório extraído do artefato, confira o checksum e carregue a imagem:
+
+```sh
+sha256sum --check ab-brainmaster-orca-linux-x64.docker.tar.gz.sha256
+docker load --input ab-brainmaster-orca-linux-x64.docker.tar.gz
+export AB_IMAGE=ab-brainmaster-orca:SHA_COMPLETO_DO_COMMIT
+docker image inspect "$AB_IMAGE" --format '{{.Id}}'
+```
+
+Preencha `AB_IMAGE` com o `imageRef` exato do recibo e compare o retorno de `docker image inspect` com seu `imageId`. O checksum usa somente o basename, portanto funciona nesse diretório após a extração. Confirme também que o commit e o run correspondem à distribuição revisada; o hash sozinho não autentica a origem.
+
+Com o checkout dessa revisão disponível localmente, execute o compose a partir de sua raiz, usando as duas portas atribuídas e a referência já carregada:
+
+```sh
+export AB_CONTROL_PORT=PORTA_ATRIBUIDA_PELA_ADMINISTRACAO
+export AB_RUNTIME_PORT=PORTA_ATRIBUIDA_PELA_ADMINISTRACAO
+docker compose -f deploy/ab-brainmaster/compose.yaml up --no-build --pull never -d
+docker compose -f deploy/ab-brainmaster/compose.yaml exec core node /opt/ab-release/ab-control/cli.mjs status
+```
+
+O compose usa `AB_IMAGE` quando definido e mantém `ab-brainmaster-orca:local` como padrão para builds locais. `--no-build --pull never` exige a imagem carregada e permite subir sem registry ou reconstrução. A existência desse caminho de exportação só constitui entrega validada depois que o respectivo job terminar com sucesso.
+
 O primeiro boot cria a credencial privada no volume, instala o release verificado e ativa esse slot. Um novo build da imagem não substitui automaticamente uma seleção persistida. Atualizações exigem staging e ativação explícitos. `restart: unless-stopped` restaura o processo após reinício do Docker/host; o healthcheck observa o runtime pela API autenticada.
 
 ## Releases locais e rollback

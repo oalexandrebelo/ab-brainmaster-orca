@@ -10,6 +10,9 @@ on:
       - 'src/main/**'
       - 'src/shared/**'
       - 'src/packages/**'
+      - 'mobile/**'
+      - '!mobile/**/*.md'
+      - '!mobile/docs/**'
       - 'native/**'
       - 'config/scripts/**'
       - 'config/tsconfig*.json'
@@ -52,8 +55,10 @@ jobs:
         run: |
           npm install --global pnpm@12.14.0
           pnpm install --frozen-lockfile
+          pnpm --dir mobile install --frozen-lockfile
           npm ci --prefix packages/ab-context-bridge --ignore-scripts --omit=optional --no-audit --no-fund
           npm ci --prefix packages/ab-control --ignore-scripts --omit=optional --no-audit --no-fund
+          pnpm run build:mobile-web
           pnpm run build:orcad
           node packages/ab-control/build.mjs
           node packages/ab-local-runtime/build.mjs

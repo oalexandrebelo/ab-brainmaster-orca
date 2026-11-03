@@ -16,6 +16,7 @@ COPY deploy/ab-brainmaster/licenses ./deploy/ab-brainmaster/licenses
 RUN npm install --global pnpm@12.14.0 && pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm run build:packages
 RUN cd mobile && pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm --dir mobile run postinstall
 RUN npm ci --prefix packages/ab-control --ignore-scripts --no-audit --no-fund
 RUN npm ci --prefix packages/ab-context-bridge --ignore-scripts --no-audit --no-fund
 RUN pnpm run build:mobile-web && pnpm run build:orcad && node packages/ab-control/build.mjs && node packages/ab-local-runtime/build.mjs

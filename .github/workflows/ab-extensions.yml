@@ -7,12 +7,20 @@ on:
       - 'packages/ab-bill-context/**'
       - 'packages/ab-upstream-review/**'
       - 'packages/ab-context-bridge/**'
+      - 'src/packages/process-host/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - '.github/workflows/ab-extensions.yml'
   pull_request:
     paths:
       - 'packages/ab-bill-context/**'
       - 'packages/ab-upstream-review/**'
       - 'packages/ab-context-bridge/**'
+      - 'src/packages/process-host/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - '.github/workflows/ab-extensions.yml'
   workflow_dispatch:
 
@@ -32,6 +40,11 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24.22.1'
+      - name: Install and build the workspace process host
+        run: |
+          npm install --global pnpm@12.14.0
+          pnpm install --frozen-lockfile --ignore-scripts
+          pnpm run build:packages
       - name: Install context adapter dependencies from shrinkwrap
         run: npm ci --prefix packages/ab-context-bridge --ignore-scripts --omit=optional --no-audit --no-fund
       - name: Run AB contracts

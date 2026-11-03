@@ -81,12 +81,39 @@ jobs:
           mkdir -p node_modules/@orca
           ln -s ../../artifact/process-host node_modules/@orca/process-host
           node deploy/ab-brainmaster/container-acceptance.mjs | tee artifact/container-receipt.json
+      - name: Export the tested Docker image for offline loading
+        run: |
+          set -euo pipefail
+          export AB_RELEASE_IMAGE_REF="ab-brainmaster-orca:${GITHUB_SHA}"
+          export AB_RELEASE_IMAGE_ID="$(docker image inspect ab-brainmaster-orca:ci --format '{{.Id}}')"
+          docker image tag ab-brainmaster-orca:ci "$AB_RELEASE_IMAGE_REF"
+          test "$(docker image inspect "$AB_RELEASE_IMAGE_REF" --format '{{.Id}}')" = "$AB_RELEASE_IMAGE_ID"
+          cd artifact
+          docker image save "$AB_RELEASE_IMAGE_REF" | gzip -1 > ab-brainmaster-orca-linux-x64.docker.tar.gz
+          sha256sum ab-brainmaster-orca-linux-x64.docker.tar.gz > ab-brainmaster-orca-linux-x64.docker.tar.gz.sha256
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs'
+          const archive = 'ab-brainmaster-orca-linux-x64.docker.tar.gz'
+          const receipt = {
+            format: 1,
+            commit: process.env.GITHUB_SHA,
+            imageRef: process.env.AB_RELEASE_IMAGE_REF,
+            imageId: process.env.AB_RELEASE_IMAGE_ID,
+            testedImageRef: 'ab-brainmaster-orca:ci',
+            archive,
+            archiveSha256: readFileSync(`${archive}.sha256`, 'utf8').trim().split(/\s+/)[0]
+          }
+          writeFileSync('docker-image-receipt.json', `${JSON.stringify(receipt, null, 2)}\n`)
+          NODE
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ab-runtime-release-linux-x64
           path: |
             artifact/ab-release.tar.gz
             artifact/container-receipt.json
+            artifact/ab-brainmaster-orca-linux-x64.docker.tar.gz
+            artifact/ab-brainmaster-orca-linux-x64.docker.tar.gz.sha256
+            artifact/docker-image-receipt.json
           if-no-files-found: error
 
   appliance:
