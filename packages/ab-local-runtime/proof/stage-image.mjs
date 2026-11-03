@@ -1,11 +1,23 @@
-import { cp, mkdir, rm } from 'node:fs/promises'
+import { cp, mkdir, realpath } from 'node:fs/promises'
 import path from 'node:path'
 
-const root = path.resolve(import.meta.dirname, '../../..')
-const assets = path.join(root, 'packages/ab-local-runtime/.proof-assets')
+const root = await realpath(path.resolve(import.meta.dirname, '../../..'))
+const configuredAssets = process.env.AB_PROOF_ASSETS
+if (!configuredAssets || !path.isAbsolute(configuredAssets)) {
+  throw new Error('Set AB_PROOF_ASSETS to an existing absolute directory outside the repository.')
+}
+const assets = await realpath(configuredAssets)
+const relativeAssets = path.relative(root, assets)
+if (
+  relativeAssets === '' ||
+  (relativeAssets !== '..' &&
+    !relativeAssets.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(relativeAssets))
+) {
+  throw new Error('AB_PROOF_ASSETS must be outside the repository, including resolved symlinks.')
+}
 const stage = path.join(assets, 'stage')
-await rm(stage, { recursive: true, force: true })
-await mkdir(stage, { recursive: true })
+await mkdir(stage)
 const copy = (source, destination, filter) =>
   cp(path.join(root, source), path.join(stage, destination), {
     recursive: true,

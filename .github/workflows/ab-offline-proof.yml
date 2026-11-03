@@ -42,7 +42,6 @@ jobs:
       ORCA_BACKGROUND_LAUNCH: '1'
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       NODE_OPTIONS: --max-old-space-size=4096
-      AB_PROOF_ASSETS: packages/ab-local-runtime/.proof-assets
       AB_PROOF_BASE_IMAGE: ubuntu:24.04@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -53,6 +52,7 @@ jobs:
           node-version: '24.22.1'
       - name: Install locked dependencies and build the real host
         run: |
+          printf 'AB_PROOF_ASSETS=%s/ab-offline-assets\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           npm install --global pnpm@12.14.0
           pnpm install --frozen-lockfile
           pnpm --dir mobile install --frozen-lockfile
